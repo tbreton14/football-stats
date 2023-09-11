@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+
+    football_stats_app:
+        container_name: football-stats-app
+        build:
+            context: ./docker
+        volumes:
+            - .:/var/www/html:rw
+        depends_on:
+            - football_stats_database
+
+    football_stats_database:
+        container_name: football-stats-database
+        image: mariadb:10.6
+        restart: on-failure
+        environment:
+            MYSQL_ROOT_PASSWORD: root
+        volumes:
+            - mariadb-data:/var/lib/mysql
+
+###> doctrine/doctrine-bundle ###
+  database:
+    image: postgres:${POSTGRES_VERSION:-15}-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      # You should definitely change the password in production
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+    volumes:
+      - database_data:/var/lib/postgresql/data:rw
+      # You may use a bind-mounted host directory instead, so that it is harder to accidentally remove the volume and lose all your data!
+      # - ./docker/db/data:/var/lib/postgresql/data:rw
+###< doctrine/doctrine-bundle ###
+
+volumes:
+    mariadb-data:
+###> doctrine/doctrine-bundle ###
+  database_data:
+###< doctrine/doctrine-bundle ###
