@@ -67,12 +67,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: false)]
     private ?string $poste;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: CategoryUser::class)]
-    private Collection $categories;
+    //#[ORM\OneToMany(mappedBy: 'user', targetEntity: CategoryUser::class)]
+    //private Collection $categories;
 
     public function __construct()
     {
-        $this->categories = new ArrayCollection();
+        //$this->categories = new ArrayCollection();
     }
 
     /*****************************************************************************************************************

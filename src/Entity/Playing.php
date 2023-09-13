@@ -42,10 +42,10 @@ class Playing
     #[ORM\Column(type: 'date', nullable: false)]
     private ?\DateTime $datePlaying;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $scoreDom;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
+    #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $scoreExt;
 
     #[ORM\OneToOne(inversedBy: 'playing')]

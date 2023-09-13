@@ -1,0 +1,7 @@
+{% for item in field.value %}
+    {% if item == 'ROLE_ADMIN'  %}
+        <span class="badge bg-primary">ADMIN</span>
+    {% elseif item != 'ROLE_USER' %}
+        <span class="badge">{{ item }}</span>
+    {% endif %}
+{% endfor %}

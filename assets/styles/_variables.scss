@@ -1,0 +1,51 @@
+/*
+CSS - Variables
+Thomas BRETON
+01 2021
+ */
+
+
+/**----------------------------------------------------------------------------
+Variables
+-----------------------------------------------------------------------------*/
+$backgroundWebSite: #F5F5F5;
+$colorPrincipal1: #e31b23; //red
+$colorPrincipal2: #2e2a67; //blue
+
+/**----------------------------------------------------------------------------
+Gestion du responsive avec sass-mq
+-----------------------------------------------------------------------------*/
+@import '~sass-mq';
+
+$mq-responsive: true;
+
+// Name your breakpoints in a way that creates a ubiquitous language
+// across team members. It will improve communication between
+// stakeholders, designers, developers, and testers.
+$mq-breakpoints: (
+        mobile:  576px, //320
+        tablet:  768px, //740
+        desktop: 992px, //980
+        wide:    1400px, //1300
+
+  // Tweakpoints
+        desktopAd: 810px,
+        mobileLandscape: 480px
+);
+
+// Define the breakpoint from the $mq-breakpoints list that should
+// be used as the target width when outputting a static stylesheet
+// (i.e. when $mq-responsive is set to 'false').
+$mq-static-breakpoint: desktop;
+
+// If you want to display the currently active breakpoint in the top
+// right corner of your site during development, add the breakpoints
+// to this list, ordered by width, e.g. (mobile, tablet, desktop).
+$mq-show-breakpoints: (mobile, mobileLandscape, tablet, desktop, wide);
+
+
+/*------------------------------------------------------------------------------
+Gestion des fonts
+------------------------------------------------------------------------------*/
+
+

@@ -1,0 +1,33 @@
+html,body {
+  height: 100%;
+  width: 100%;
+  font-size: 0.9em;
+  color: #000000;
+  background-color: $backgroundWebSite;
+  margin: 0;
+  padding: 0;
+}
+
+.content {
+
+  padding-top: 15px;
+
+  .content-block {
+
+    background-color: white;
+    border: 1px solid #E5E5E5;
+
+    .content-block-header {
+      background-color: $colorPrincipal1;
+      color: white;
+      display: flex;
+      align-items: center;
+      padding: 15px
+    }
+
+    .content-block-body {
+      padding: 15px;
+    }
+  }
+
+}

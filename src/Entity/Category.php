@@ -27,7 +27,7 @@ class Category
     private ?string $name;
 
     #[ORM\OneToMany(mappedBy: 'category', targetEntity: CategoryUser::class)]
-    private Collection $categories;
+    private $categories;
 
 
     public function __construct()

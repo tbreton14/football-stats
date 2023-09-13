@@ -6,7 +6,20 @@
  */
 
 // any CSS you import will output into a single css file (app.css in this case)
-import './styles/app.css';
+
+/********************************************************************************************************************
+ * CSS Perso
+ ********************************************************************************************************************/
+import './styles/app.scss';
 
 // start the Stimulus application
 import './bootstrap';
+
+// Icones
+import "@fortawesome/fontawesome-free/js/all";
+
+/********************************************************************************************************************
+ * Import Bootstrap
+ ********************************************************************************************************************/
+import * as bootstrap from 'bootstrap';
+window.bootstrap = bootstrap;
