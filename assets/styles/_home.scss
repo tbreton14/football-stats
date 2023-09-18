@@ -76,12 +76,33 @@ html,body {
         font-weight: bold;
         font-size: 22px;
         text-transform: uppercase;
+
+        @include mq($until: tablet) {
+          font-size: 10px;
+        }
+      }
+
+      .playing-score {
+        @include mq($until: tablet) {
+          font-size: 16px;
+        }
+      }
+
+      .playing-compo {
+        @include mq($until: tablet) {
+          font-size: 10px;
+        }
       }
 
       .playing-club {
         img {
           width: 40px;
           height: 40px;
+
+          @include mq($until: tablet) {
+            width: 30px;
+            height: 30px;
+          }
         }
       }
 
