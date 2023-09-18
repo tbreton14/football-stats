@@ -3,7 +3,7 @@
 {% block content_id %}content-home{% endblock content_id %}
 
 {% block content %}
-    <div class="col-12 p-0">
+    <div class="col-12 content-col-first">
         <div class="row">
             <div class="col-12 d-flex align-items-center justify-content-center mb-3">
                 <div>
@@ -157,11 +157,11 @@
             <div class="col-12 col-sm-7">
                 <div class="content-block mb-3">
                     <div class="content-block-header">
-                        <span v-if="seeUserDetails==false">Effectifs</span>
+                        <span v-if="seeUserDetails==false">Effectifs {{ effectifCategorie }}</span>
                         <span v-if="seeUserDetails==true">Fiche joueur</span>
                     </div>
                     <div class="content-block-body" v-if="seeUserDetails==false">
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead>
                                 <th>Joueur</th>
                                 <th>Né le</th>
@@ -211,7 +211,7 @@
                         <span>Classement</span>
                     </div>
                     <div class="content-block-body">
-                        <table class="table">
+                        <table class="table table-responsive">
                             <thead>
                                 <th>Pl</th>
                                 <th>Equipe</th>
@@ -220,11 +220,11 @@
                                 <th>G</th>
                                 <th>N</th>
                                 <th>P</th>
-                                <th>F</th>
+                                <th class="d-none d-sm-table-cell">F</th>
                                 <th>BP</th>
                                 <th>BC</th>
-                                <th>Pé</th>
-                                <th>Dif</th>
+                                <th class="d-none d-sm-table-cell">Pé</th>
+                                <th class="d-none d-sm-table-cell">Dif</th>
                             </thead>
                             <tbody>
                                 {% for equipe in classement %}
@@ -236,11 +236,11 @@
                                         <td>{{ equipe["won_games_count"] }}</td>
                                         <td>{{ equipe["draw_games_count"] }}</td>
                                         <td>{{ equipe["lost_games_count"] }}</td>
-                                        <td>{{ equipe["forfeits_games_count"] }}</td>
+                                        <td class="d-none d-sm-table-cell">{{ equipe["forfeits_games_count"] }}</td>
                                         <td>{{ equipe["goals_for_count"] }}</td>
                                         <td>{{ equipe["goals_against_count"] }}</td>
-                                        <td>{{ equipe["penalty_point_count"] }}</td>
-                                        <td>{{ equipe["goals_diff"] }}</td>
+                                        <td class="d-none d-sm-table-cell">{{ equipe["penalty_point_count"] }}</td>
+                                        <td class="d-none d-sm-table-cell">{{ equipe["goals_diff"] }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

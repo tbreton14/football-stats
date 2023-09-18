@@ -51,7 +51,7 @@ class DefaultController extends AbstractController
         $listCategories = $doctrine->getRepository(Competition::class)->findCategoriesBySeason(["season"=>$season]);
         $listCompetition = $doctrine->getRepository(Competition::class)->findBy(["season"=>$season, "category"=>$category->getId()->toBinary()]);
 
-        $playingsUser = $doctrine->getRepository(PlayingUser::class)->findAll();
+        $playingsUser = $doctrine->getRepository(PlayingUser::class)->findByCompetition($competition->getId()->toBinary());
         $playings = $doctrine->getRepository(Playing::class)->findBy(["competition"=>$competition->getId()->toBinary()]);
         $listButeurs = [];
         $listPasseurs = [];
@@ -135,7 +135,8 @@ class DefaultController extends AbstractController
             "listCategories" => $listCategories,
             "listCompetition" => $listCompetition,
             "playings" => $playings,
-            "classement" => $classement
+            "classement" => $classement,
+            "effectifCategorie" => $categorySelect
         ]);
     }
 
