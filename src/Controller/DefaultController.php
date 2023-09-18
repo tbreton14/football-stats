@@ -71,7 +71,7 @@ class DefaultController extends AbstractController
             } else {
                 $listButeurs[$idUser]["nbButs"] = $playingUser->getNbButs();
             }
-            if(array_key_exists("nbPassD",$listButeurs[$idUser])) {
+            if(array_key_exists("nbPassD",$listPasseurs[$idUser])) {
                 $listPasseurs[$idUser]["nbPassD"] = $listPasseurs[$idUser]["nbPassD"] + $playingUser->getNbPassD();
             } else {
                 $listPasseurs[$idUser]["nbPassD"] = $playingUser->getNbPassD();
