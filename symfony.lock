@@ -77,7 +77,10 @@
             "branch": "main",
             "version": "1.2",
             "ref": "e805aba9eff5372e2d149a9ff56566769e22819d"
-        }
+        },
+        "files": [
+            "config/packages/stof_doctrine_extensions.yaml"
+        ]
     },
     "symfony/console": {
         "version": "6.2",
@@ -362,6 +365,9 @@
             "branch": "main",
             "version": "1.13",
             "ref": "1b3064c2f6b255c2bc2f56461aaeb76b11e07e36"
-        }
+        },
+        "files": [
+            "config/packages/vich_uploader.yaml"
+        ]
     }
 }

@@ -1,0 +1,31 @@
+<div class="col-8 d-flex flex-column">
+    <div class="details-item details-name">
+        {{ detail.fullName }}
+    </div>
+    <div class="details-item">
+        Né le : {{ detail.birthDate | date("d/m/Y") }}
+    </div>
+    <div class="details-item">
+        Poste : {{ detail.poste }}
+    </div>
+    <div class="details-item">
+        Match joués : {{ detail.nbApparition }} (Saison {{ app_actualSeason }})
+    </div>
+    <div class="details-item">
+        Buts Marqués : {{ detail.nbButs }}
+    </div>
+    <div class="details-item">
+        Passes Décisives : {{ detail.nbPasseD }}
+    </div>
+    <div class="details-item d-flex align-items-center">
+        <img src="{{ asset('images/ico_carton_jaune.svg') }}" width="10px" height="10px" class="me-2">Carton Jaune : {{ detail.nbCartonJ }}
+    </div>
+    <div class="details-item d-flex align-items-center">
+        <img src="{{ asset('images/ico_carton_rouge.svg') }}" width="10px" height="10px" class="me-2">Carton Rouge : {{ detail.nbCartonR }}
+    </div>
+
+</div>
+<div class="col-4">
+
+    <img src="{% if detail.photo %}{{ vich_uploader_asset(user) }}{% else %}{{ asset('images/no-user-image.gif') }} {% endif %}" class="avatar" />
+</div>

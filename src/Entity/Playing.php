@@ -3,11 +3,13 @@
 namespace App\Entity;
 
 use App\Repository\PlayingRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PlayingRepository::class)]
 class Playing
@@ -48,9 +50,22 @@ class Playing
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $scoreExt;
 
-    #[ORM\OneToOne(inversedBy: 'playing')]
+    #[ORM\ManyToOne(inversedBy: 'playing')]
+    #[ORM\JoinColumn("competition_id")]
     private ?Competition $competition = null;
 
+    #[ORM\OneToMany(mappedBy: 'playing', targetEntity: PlayingUser::class)]
+    private $playingUser;
+
+    public function __construct()
+    {
+        $this->playingUser = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->clubDom . "-" . $this->clubExt;
+    }
 
     /*****************************************************************************************************************
     GETTERS + SETTERS
@@ -140,6 +155,26 @@ class Playing
     {
         $this->competition = $competition;
     }
+
+    /**
+     * @return ArrayCollection
+     */
+    public function getPlayingUser()
+    {
+        return $this->playingUser;
+    }
+
+    /**
+     * @param ArrayCollection $playingUser
+     */
+    public function setPlayingUser($playingUser)
+    {
+        $this->playingUser = $playingUser;
+    }
+
+
+
+
 
 
 }

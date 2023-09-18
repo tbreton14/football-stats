@@ -8,14 +8,29 @@ html,body {
   padding: 0;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .content {
 
   padding-top: 15px;
+
+  a {
+    color: $colorPrincipal2 !important;
+    text-decoration: none;
+  }
 
   .content-block {
 
     background-color: white;
     border: 1px solid #E5E5E5;
+
+    .accordion-button {
+      background-color: $colorPrincipal1;
+      color: white;
+      font-size: 0.9em;
+    }
 
     .content-block-header {
       background-color: $colorPrincipal1;
@@ -28,6 +43,60 @@ html,body {
     .content-block-body {
       padding: 15px;
     }
+
+    .content-block-body-fixHeight {
+      max-height: 200px;
+      overflow: auto;
+    }
+
+    .content-block-playings {
+
+      padding: 15px 45px;
+
+      .playing {
+        padding: 10px 0px;
+        border-bottom: 1px solid #E5E5E5;
+      }
+
+      .playing.last {
+        border-bottom: none;
+      }
+
+      .playing-club-title, .playing-score {
+        font-weight: bold;
+        font-size: 22px;
+        text-transform: uppercase;
+      }
+
+      .playing-club {
+        img {
+          width: 40px;
+          height: 40px;
+        }
+      }
+
+      .playing-details {
+        img {
+          width: 10px;
+          height: 10px;
+        }
+      }
+    }
+  }
+
+  .details-item {
+    margin-bottom: 15px;
+  }
+
+  .details-name {
+    font-size: 24px;
+    font-weight: bold;
+  }
+
+  .avatar {
+    border: 1px solid #E5E5E5;
+    width:100px;
+    height:100px;
   }
 
 }

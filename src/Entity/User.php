@@ -11,9 +11,12 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
+#[Vich\Uploadable]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
 
@@ -30,8 +33,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 180, unique: true)]
     private ?string $email = null;
 
-    #[ORM\Column]
-    private array $roles = [];
+    #[ORM\Column(type: 'json')]
+    private $roles = [];
 
     /**
      * @var string The hashed password
@@ -67,13 +70,23 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: false)]
     private ?string $poste;
 
-    //#[ORM\OneToMany(mappedBy: 'user', targetEntity: CategoryUser::class)]
-    //private Collection $categories;
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: CategoryUser::class)]
+    private $categories;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: PlayingUser::class)]
+    private $playingsUser;
 
     public function __construct()
     {
-        //$this->categories = new ArrayCollection();
+        $this->categories = new ArrayCollection();
+        $this->playingsUser = new ArrayCollection();
     }
+
+    public function __toString()
+    {
+        return $this->firstName." ".$this->lastName;
+    }
+
 
     /*****************************************************************************************************************
     GETTERS + SETTERS
@@ -118,11 +131,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): static
+    public function setRoles(array $roles): self
     {
         $this->roles = $roles;
 
         return $this;
+    }
+
+    public function hasRole($role)
+    {
+        return in_array($role,$this->getRoles());
     }
 
     /**
@@ -229,5 +247,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->categories = $categories;
     }
 
+    /**
+     * @return ArrayCollection
+     */
+    public function getPlayingsUser()
+    {
+        return $this->playingsUser;
+    }
+
+    /**
+     * @param ArrayCollection $playingsUser
+     */
+    public function setPlayingsUser($playingsUser)
+    {
+        $this->playingsUser = $playingsUser;
+    }
+
+    public function getFullName() {
+        return ucfirst(strtolower($this->firstName))." ".ucfirst(strtolower($this->lastName));
+    }
+
+    public function getFullNameUpper() {
+        return ucfirst(strtolower($this->firstName))." ".strtoupper($this->lastName);
+    }
 
 }

@@ -9,6 +9,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CategoryRepository::class)]
 class Category
@@ -34,6 +35,12 @@ class Category
     {
         $this->categories = new ArrayCollection();
     }
+
+    public function __toString()
+    {
+        return $this->name;
+    }
+
 
     /*****************************************************************************************************************
     GETTERS + SETTERS

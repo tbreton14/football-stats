@@ -21,20 +21,21 @@ class CategoryUserRepository extends ServiceEntityRepository
         parent::__construct($registry, Categoryuser::class);
     }
 
-//    /**
-//     * @return Categoryuser[] Returns an array of Categoryuser objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return Categoryuser[] Returns an array of Categoryuser objects
+     */
+    public function findByCategoryName($value)
+    {
+        return $this->createQueryBuilder('cu')
+            ->addSelect('c,u')
+            ->leftJoin('cu.category','c')
+            ->leftJoin('cu.user','u')
+            ->andWhere('c.name = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getArrayResult()
+        ;
+    }
 
 //    public function findOneBySomeField($value): ?Categoryuser
 //    {

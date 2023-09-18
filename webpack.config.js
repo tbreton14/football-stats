@@ -21,6 +21,7 @@ Encore
      * and one CSS file (e.g. app.css) if your JavaScript imports CSS.
      */
     .addEntry('app', './assets/app.js')
+    .addEntry('home', './assets/js/home.js')
     .addStyleEntry('easy-admin-custom', './assets/styles/easy-admin.scss')
 
 
@@ -82,7 +83,7 @@ Encore
     // uncomment if you're having problems with a jQuery plugin
     //.autoProvidejQuery()
 
-    //.enableVueLoader()
+    .enableVueLoader()
 ;
 
 module.exports = Encore.getWebpackConfig();

@@ -9,6 +9,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CompetitionRepository::class)]
 class Competition
@@ -32,11 +33,20 @@ class Competition
     private ?string $name;
 
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: CategoryUser::class)]
-    private Collection $categories;
+    private $categories;
+
+    #[ORM\OneToOne(mappedBy: 'competition', targetEntity: Playing::class)]
+    private $playing;
+
 
     public function __construct()
     {
         $this->categories = new ArrayCollection();
+    }
+
+    public function __toString()
+    {
+        return $this->name." (".$this->season.")";
     }
 
     /*****************************************************************************************************************

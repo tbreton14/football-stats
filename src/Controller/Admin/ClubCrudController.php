@@ -23,14 +23,14 @@ class ClubCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('name', 'Nom'),
-            TextField::new('adrStreet', 'Adresse (Rue)'),
-            TextField::new('adrZip', 'Code postal'),
+            TextField::new('adrStreet', 'Adresse (Rue)')->hideOnIndex(),
+            TextField::new('adrZip', 'Code postal')->hideOnIndex(),
             TextField::new('adrCity', 'Ville'),
-            CountryField::new('adrCountry', 'Pays'),
-            TextField::new('phoneContact', 'Tél. club'),
-            TextField::new('emailContact', 'Email club'),
+            CountryField::new('adrCountry', 'Pays')->hideOnIndex(),
+            TextField::new('phoneContact', 'Tél. club')->hideOnIndex(),
+            TextField::new('emailContact', 'Email club')->hideOnIndex(),
             UrlField::new('websiteUrl', 'URL site web'),
-            UrlField::new('facebookUrl', 'URL facebook'),
+            UrlField::new('facebookUrl', 'URL facebook')->hideOnIndex(),
         ];
 
     }

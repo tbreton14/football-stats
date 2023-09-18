@@ -8,6 +8,7 @@ use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Uid\Uuid;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: PlayingUserRepository::class)]
 class PlayingUser
@@ -22,11 +23,11 @@ class PlayingUser
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id;
 
-    #[ORM\ManyToOne(inversedBy: 'playings')]
+    #[ORM\ManyToOne(inversedBy: 'playingsUser')]
     #[ORM\JoinColumn("user_id")]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'playings')]
+    #[ORM\ManyToOne(inversedBy: 'playingUser')]
     #[ORM\JoinColumn("playing_id")]
     private ?Playing $playing = null;
 
@@ -35,6 +36,24 @@ class PlayingUser
 
     #[ORM\Column(type: 'integer', nullable: false)]
     private ?int $nbPassD;
+
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private ?int $nbCartonJ;
+
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private ?int $nbCartonR;
+
+    /**
+     *
+     */
+    public function __construct()
+    {
+        $this->nbButs = 0;
+        $this->nbPassD = 0;
+        $this->nbCartonJ = 0;
+        $this->nbCartonR = 0;
+    }
+
 
     /*****************************************************************************************************************
     GETTERS + SETTERS
@@ -84,6 +103,40 @@ class PlayingUser
     {
         $this->nbPassD = $nbPassD;
     }
+
+    /**
+     * @return int|null
+     */
+    public function getNbCartonJ()
+    {
+        return $this->nbCartonJ;
+    }
+
+    /**
+     * @param int|null $nbCartonJ
+     */
+    public function setNbCartonJ($nbCartonJ)
+    {
+        $this->nbCartonJ = $nbCartonJ;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getNbCartonR()
+    {
+        return $this->nbCartonR;
+    }
+
+    /**
+     * @param int|null $nbCartonR
+     */
+    public function setNbCartonR($nbCartonR)
+    {
+        $this->nbCartonR = $nbCartonR;
+    }
+
+
 
 
 }
