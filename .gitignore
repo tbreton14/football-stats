@@ -77,6 +77,7 @@ docker-compose.*.yml
 /public/images/
 /public/docs/
 /public/uploads/
+/public/.well-known
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
