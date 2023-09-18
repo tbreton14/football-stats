@@ -6,6 +6,7 @@ use App\Entity\CategoryUser;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
 class CategoryUserCrudController extends AbstractCrudController
 {
@@ -21,7 +22,7 @@ class CategoryUserCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             AssociationField::new('user', 'Joueurs'),
             AssociationField::new('category', 'Catégorie'),
-            AssociationField::new('competition', 'Compétition'),
+            TextField::new('season', 'Saison'),
         ];
     }
 

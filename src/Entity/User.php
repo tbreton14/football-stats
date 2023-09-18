@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -30,7 +31,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?Uuid $id;
 
 
-    #[ORM\Column(length: 180, unique: true)]
+    #[ORM\Column(length: 180, nullable: true)]
     private ?string $email = null;
 
     #[ORM\Column(type: 'json')]
@@ -39,7 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var string The hashed password
      */
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?string $password = null;
 
     #[Assert\Length(max: 255)]
@@ -242,7 +243,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->categories;
     }
 
-    public function setCategories(Collection $categories): void
+    public function setCategories($categories): void
     {
         $this->categories = $categories;
     }

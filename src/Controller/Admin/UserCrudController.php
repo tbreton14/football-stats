@@ -5,6 +5,7 @@ namespace App\Controller\Admin;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -40,19 +41,19 @@ class UserCrudController extends AbstractCrudController
     public function configureFields(string $pageName): iterable
     {
         yield IdField::new('id')->onlyOnDetail();
-        yield ArrayField::new('roles', 'Rôles')->setSortable(false)->onlyOnIndex()
-            ->setTemplatePath('admin/field/role.html.twig');
-        yield EmailField::new('email');
-        yield TextField::new('password')
-            ->setFormType(RepeatedType::class)
-            ->setFormTypeOptions([
-                'type' => PasswordType::class,
-                'first_options' => ['label' => 'Mot de passe'],
-                'second_options' => ['label' => 'Répéter mot de passe'],
-                'mapped' => false,
-            ])
-            ->setRequired($pageName === Crud::PAGE_NEW)
-            ->onlyOnForms();
+//        yield ArrayField::new('roles', 'Rôles')->setSortable(false)->onlyOnIndex()
+//            ->setTemplatePath('admin/field/role.html.twig');
+//        yield EmailField::new('email');
+//        yield TextField::new('password')
+//            ->setFormType(RepeatedType::class)
+//            ->setFormTypeOptions([
+//                'type' => PasswordType::class,
+//                'first_options' => ['label' => 'Mot de passe'],
+//                'second_options' => ['label' => 'Répéter mot de passe'],
+//                'mapped' => false,
+//            ])
+//            ->setRequired($pageName === Crud::PAGE_NEW)
+//            ->onlyOnForms();
         yield TextField::new('firstName', 'Prénom');
         yield TextField::new('lastName', 'Nom');
         yield ArrayField::new('roles')->hideOnIndex();
@@ -63,6 +64,9 @@ class UserCrudController extends AbstractCrudController
             'Attaquant' => 'attaquant',
         ])->renderExpanded();
         yield DateField::new('birthDate', 'Date de naissance');
+//        yield AssociationField::new('categories', "Catégorie")->setFormTypeOptions([
+//            'by_reference' => false,
+//        ]);
         yield ImageField::new('profilePicture', 'Photo')->setUploadDir('public/uploads/users/')->hideOnIndex();
         yield DateTimeField::new('createdAt')->hideOnForm()->hideOnIndex();
     }
@@ -85,6 +89,11 @@ class UserCrudController extends AbstractCrudController
     }
 
     private function hashPassword() {
+
+        return function($event) {
+
+        };
+
         return function($event) {
             $form = $event->getForm();
             if (!$form->isValid()) {

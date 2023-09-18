@@ -2,11 +2,14 @@
 
 namespace App\Controller;
 
+use App\Entity\Category;
 use App\Entity\CategoryUser;
+use App\Entity\Competition;
 use App\Entity\Coupons;
 use App\Entity\Playing;
 use App\Entity\PlayingUser;
 use App\Entity\User;
+use App\Service\FffApiClient;
 use App\Service\ManaginApiClient;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,13 +29,38 @@ use DOMDocument;
 class DefaultController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index_home(Request $request, ManagerRegistry $doctrine): Response
+    public function index_home(Request $request, ManagerRegistry $doctrine, FffApiClient $fffApiClient): Response
     {
-        $effectif = $doctrine->getRepository(CategoryUser::class)->findByCategoryName("U15");
+        $season = $request->get('season');
+        $categorySelect = $request->get('category');
+        $competitionSelect = $request->get('competition');
+        if(!$categorySelect) {
+            $categorySelect = "U15";
+        }
+        if(!$season) {
+            $season = "2023-2024";
+        }
+        if(!$competitionSelect) {
+            $competitionSelect = "REGIONAL 2 U15";
+        }
+
+        $category = $doctrine->getRepository(Category::class)->findOneBy(["name" => $categorySelect]);
+        $competition = $doctrine->getRepository(Competition::class)->findOneBy(["name" => $competitionSelect,"season"=>$season, "category"=>$category->getId()->toBinary()]);
+        $effectif = $doctrine->getRepository(CategoryUser::class)->findBy(["season"=>$season, "category"=>$category->getId()->toBinary()]);
+        $listSeasons = $doctrine->getRepository(Competition::class)->findSeasons();
+        $listCategories = $doctrine->getRepository(Competition::class)->findCategoriesBySeason(["season"=>$season]);
+        $listCompetition = $doctrine->getRepository(Competition::class)->findBy(["season"=>$season, "category"=>$category->getId()->toBinary()]);
+
         $playingsUser = $doctrine->getRepository(PlayingUser::class)->findAll();
-        $playings = $doctrine->getRepository(Playing::class)->findAll();
+        $playings = $doctrine->getRepository(Playing::class)->findBy(["competition"=>$competition->getId()->toBinary()]);
         $listButeurs = [];
         $listPasseurs = [];
+
+        $classement = [];
+        if($competition->getCodeCompetition()) {
+            $classement = $fffApiClient->getClassementEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule());
+            $classement = $classement["hydra:member"];
+        }
 
         foreach ($playingsUser as $playingUser) {
             $idUser = $playingUser->getUser()->getId()->toBase32();
@@ -65,25 +93,26 @@ class DefaultController extends AbstractController
 
         $i=0;
         foreach ($effectif as $joueur) {
-            if($joueur["user"]["poste"] == "gardien") {
-                $listJoueurGar[$i]["id"] = $joueur["user"]["id"];
-                $listJoueurGar[$i]["fullName"] = ucfirst(strtolower($joueur["user"]["firstName"]))." ".ucfirst(strtolower($joueur["user"]["lastName"]));
-                $listJoueurGar[$i]["birthDate"] = $joueur["user"]["birthDate"];
+            $userJoueur = $joueur->getUser();
+            if($userJoueur->getPoste() == "gardien") {
+                $listJoueurGar[$i]["id"] = $userJoueur->getId();
+                $listJoueurGar[$i]["fullName"] = $userJoueur->getFullName();
+                $listJoueurGar[$i]["birthDate"] = $userJoueur->getBirthDate();
                 $listJoueurGar[$i]["poste"] = "Gar.";
-            } elseif($joueur["user"]["poste"] == "défenseur") {
-                $listJoueurDef[$i]["id"] = $joueur["user"]["id"];
-                $listJoueurDef[$i]["fullName"] = ucfirst(strtolower($joueur["user"]["firstName"]))." ".ucfirst(strtolower($joueur["user"]["lastName"]));
-                $listJoueurDef[$i]["birthDate"] = $joueur["user"]["birthDate"];
+            } elseif($userJoueur->getPoste() == "défenseur") {
+                $listJoueurDef[$i]["id"] = $userJoueur->getId();
+                $listJoueurDef[$i]["fullName"] = $userJoueur->getFullName();
+                $listJoueurDef[$i]["birthDate"] = $userJoueur->getBirthDate();
                 $listJoueurDef[$i]["poste"] = "Déf.";
-            } elseif($joueur["user"]["poste"] == "milieu") {
-                $listJoueurMil[$i]["id"] = $joueur["user"]["id"];
-                $listJoueurMil[$i]["fullName"] = ucfirst(strtolower($joueur["user"]["firstName"]))." ".ucfirst(strtolower($joueur["user"]["lastName"]));
-                $listJoueurMil[$i]["birthDate"] = $joueur["user"]["birthDate"];
+            } elseif($userJoueur->getPoste() == "milieu") {
+                $listJoueurMil[$i]["id"] = $userJoueur->getId();
+                $listJoueurMil[$i]["fullName"] = $userJoueur->getFullName();
+                $listJoueurMil[$i]["birthDate"] = $userJoueur->getBirthDate();
                 $listJoueurMil[$i]["poste"] = "Mil.";
-            } elseif($joueur["user"]["poste"] == "attaquant") {
-                $listJoueurAtt[$i]["id"] = $joueur["user"]["id"];
-                $listJoueurAtt[$i]["fullName"] = ucfirst(strtolower($joueur["user"]["firstName"]))." ".ucfirst(strtolower($joueur["user"]["lastName"]));
-                $listJoueurAtt[$i]["birthDate"] = $joueur["user"]["birthDate"];
+            } elseif($userJoueur->getPoste() == "attaquant") {
+                $listJoueurAtt[$i]["id"] = $userJoueur->getId();
+                $listJoueurAtt[$i]["fullName"] = $userJoueur->getFullName();
+                $listJoueurAtt[$i]["birthDate"] = $userJoueur->getBirthDate();
                 $listJoueurAtt[$i]["poste"] = "Att.";
             }
             $i++;
@@ -102,7 +131,11 @@ class DefaultController extends AbstractController
             "listJoueurAtt" => $listJoueurAtt,
             "listButeurs" => $listButeurs,
             "listPasseurs" => $listPasseurs,
-            "playings" => $playings
+            "listSeasons" => $listSeasons,
+            "listCategories" => $listCategories,
+            "listCompetition" => $listCompetition,
+            "playings" => $playings,
+            "classement" => $classement
         ]);
     }
 
@@ -137,6 +170,33 @@ class DefaultController extends AbstractController
             "detail" => $detail,
             "user" => $user
         ]);
+    }
+
+    #[Route('/ajax/season', name: 'ajax_app_season')]
+    public function ajax_app_season(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $listCompetitions = $doctrine->getRepository(Competition::class)->findCategoriesBySeason(["season"=>$request->get('season')]);
+        $listCategories = [];
+
+        foreach ($listCompetitions as $competition) {
+            array_push($listCategories, $competition["name"]);
+        }
+
+        return new JsonResponse($listCategories);
+    }
+
+    #[Route('/ajax/category', name: 'ajax_app_category')]
+    public function ajax_app_category(Request $request, ManagerRegistry $doctrine): Response
+    {
+        $category = $doctrine->getRepository(Category::class)->findOneBy(["name" => $request->get('category')]);
+        $listCompetition = $doctrine->getRepository(Competition::class)->findBy(["season"=>$request->get('season'), "category"=>$category->getId()->toBinary()]);
+        $competitions = [];
+
+        foreach ($listCompetition as $competition) {
+            array_push($competitions, $competition->getName());
+        }
+
+        return new JsonResponse($competitions);
     }
 
 }

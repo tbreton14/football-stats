@@ -28,9 +28,25 @@ class Competition
     #[ORM\Column(length: 255, nullable: false)]
     private ?string $season;
 
+    #[ORM\ManyToOne(inversedBy: 'competitions')]
+    #[ORM\JoinColumn("category_id")]
+    private ?Category $category = null;
+
     #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255, nullable: false)]
     private ?string $name;
+
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $codeCompetition;
+
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $numPhase;
+
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $numPoule;
 
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: CategoryUser::class)]
     private $categories;
@@ -87,6 +103,49 @@ class Competition
     {
         $this->categories = $categories;
     }
+
+    public function getCodeCompetition(): ?string
+    {
+        return $this->codeCompetition;
+    }
+
+    public function setCodeCompetition(?string $codeCompetition): void
+    {
+        $this->codeCompetition = $codeCompetition;
+    }
+
+    public function getNumPhase(): ?string
+    {
+        return $this->numPhase;
+    }
+
+    public function setNumPhase(?string $numPhase): void
+    {
+        $this->numPhase = $numPhase;
+    }
+
+    public function getNumPoule(): ?string
+    {
+        return $this->numPoule;
+    }
+
+    public function setNumPoule(?string $numPoule): void
+    {
+        $this->numPoule = $numPoule;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): void
+    {
+        $this->category = $category;
+    }
+
+
+
 
 
 

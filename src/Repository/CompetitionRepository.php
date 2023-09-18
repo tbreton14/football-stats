@@ -21,20 +21,29 @@ class CompetitionRepository extends ServiceEntityRepository
         parent::__construct($registry, Competition::class);
     }
 
-//    /**
-//     * @return Competition[] Returns an array of Competition objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return Competition[] Returns an array of Competition objects
+     */
+    public function findSeasons(): array
+    {
+        return $this->createQueryBuilder('c')
+            ->select("DISTINCT c.season")
+            ->orderBy("c.season", "DESC")
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findCategoriesBySeason($season) {
+        return $this->createQueryBuilder('c')
+            ->select("DISTINCT ca.name")
+            ->leftJoin('c.category','ca')
+            ->andWhere('c.season = :val')
+            ->setParameter('val', $season)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
 
 //    public function findOneBySomeField($value): ?Competition
 //    {

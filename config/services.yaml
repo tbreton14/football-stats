@@ -7,6 +7,12 @@ parameters:
 
     timezone: '%env(APP_TIMEZONE)%'
 
+    # api FFF
+    app.api.base_url: '%env(APP_API_URL)%'
+    app.api.enable_cache: '%env(bool:APP_API_CACHE_ENABLED)%'
+    app.api.club_id: '%env(APP_API_CLUB_ID)%'
+
+
 services:
     # default configuration for services in *this* file
     _defaults:
@@ -21,6 +27,13 @@ services:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+
+    App\Service\FffApiClient:
+        arguments:
+            $options:
+                base_url: '%app.api.base_url%'
+                club_id: '%app.api.club_id%'
+                enable_cache: '%app.api.enable_cache%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones

@@ -5,6 +5,31 @@
 {% block content %}
     <div class="col-12 p-0">
         <div class="row">
+            <div class="col-12 d-flex align-items-center justify-content-center mb-3">
+                <div>
+                    <select class="form-select" id="seasonChoice" v-on:change="changeSeason" data-href="{{ path('ajax_app_season') }}">
+                        {% for season in listSeasons %}
+                            <option value="{{ season["season"] }}" {% if app.request.get('season') == season["season"] %} selected {% endif %}>{{ season["season"] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mx-3">
+                    <select class="form-select" id="categoryChoice" v-on:change="changeCategory" data-href="{{ path('ajax_app_category') }}">
+                        {% for category in listCategories %}
+                            <option value="{{ category.name }}" {% if app.request.get('category') == category.name %} selected {% endif %}>{{ category.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div>
+                    <select class="form-select" id="competitionChoice" v-on:change="changeCompetition" data-href="{{ path('app_home') }}">
+                        {% for competition in listCompetition %}
+                            <option value="{{ competition.name }}" {% if app.request.get('competition') == competition.name %} selected {% endif %}>{{ competition.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
             <div class="col-12">
                 <div class="content-block mb-3 accordion accordion-flush" id="accordionPlayings">
                     <div class="accordion-item">
@@ -113,6 +138,14 @@
                                             {% endfor %}
                                         </div>
                                     {% endif %}
+                                        <div class="row mt-3">
+                                            <div>
+                                            <b>Compositions :</b>
+                                            {% for puser in playing.playingUser %}
+                                                {{ puser.user.firstName | capitalize }} {{ puser.user.lastName | slice(0,1) | upper }}.,
+                                            {% endfor %}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -178,7 +211,40 @@
                         <span>Classement</span>
                     </div>
                     <div class="content-block-body">
-
+                        <table class="table">
+                            <thead>
+                                <th>Pl</th>
+                                <th>Equipe</th>
+                                <th>Pts</th>
+                                <th>Jo</th>
+                                <th>G</th>
+                                <th>N</th>
+                                <th>P</th>
+                                <th>F</th>
+                                <th>BP</th>
+                                <th>BC</th>
+                                <th>Pé</th>
+                                <th>Dif</th>
+                            </thead>
+                            <tbody>
+                                {% for equipe in classement %}
+                                    <tr>
+                                        <td>{{ equipe["rank"] }}</td>
+                                        <td>{{ equipe["equipe"]["short_name"] | upper }}</td>
+                                        <td>{{ equipe["point_count"] }}</td>
+                                        <td>{{ equipe["total_games_count"] }}</td>
+                                        <td>{{ equipe["won_games_count"] }}</td>
+                                        <td>{{ equipe["draw_games_count"] }}</td>
+                                        <td>{{ equipe["lost_games_count"] }}</td>
+                                        <td>{{ equipe["forfeits_games_count"] }}</td>
+                                        <td>{{ equipe["goals_for_count"] }}</td>
+                                        <td>{{ equipe["goals_against_count"] }}</td>
+                                        <td>{{ equipe["penalty_point_count"] }}</td>
+                                        <td>{{ equipe["goals_diff"] }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

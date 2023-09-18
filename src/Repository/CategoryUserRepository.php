@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Categoryuser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * @extends ServiceEntityRepository<Categoryuser>
@@ -24,14 +25,16 @@ class CategoryUserRepository extends ServiceEntityRepository
     /**
      * @return Categoryuser[] Returns an array of Categoryuser objects
      */
-    public function findByCategoryName($value)
+    public function findByCategoryAndSeasonName($category,$season)
     {
         return $this->createQueryBuilder('cu')
             ->addSelect('c,u')
             ->leftJoin('cu.category','c')
             ->leftJoin('cu.user','u')
-            ->andWhere('c.name = :val')
-            ->setParameter('val', $value)
+            ->andWhere('cu.category = :val')
+            ->setParameter('val', $category)
+            ->andWhere('cu.season = :val2')
+            ->setParameter('val2', $season)
             ->getQuery()
             ->getArrayResult()
         ;

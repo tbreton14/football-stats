@@ -30,9 +30,9 @@ class CategoryUser
     #[ORM\JoinColumn("category_id")]
     private ?Category $category = null;
 
-    #[ORM\ManyToOne(inversedBy: 'categories')]
-    #[ORM\JoinColumn("competition_id")]
-    private ?Competition $competition = null;
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, nullable: false)]
+    private ?string $season;
 
 
 
@@ -65,15 +65,17 @@ class CategoryUser
         $this->category = $category;
     }
 
-    public function getCompetition(): ?Competition
+    public function getSeason(): ?string
     {
-        return $this->competition;
+        return $this->season;
     }
 
-    public function setCompetition(?Competition $competition): void
+    public function setSeason(?string $season): void
     {
-        $this->competition = $competition;
+        $this->season = $season;
     }
+
+
 
 
 
