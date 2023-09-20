@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Category;
 use App\Entity\CategoryUser;
+use App\Entity\Club;
 use App\Entity\Competition;
 use App\Entity\Coupons;
 use App\Entity\Playing;
@@ -44,6 +45,7 @@ class DefaultController extends AbstractController
             $competitionSelect = "REGIONAL 2 U15";
         }
 
+        $club = $doctrine->getRepository(Club::class)->findAll();
         $category = $doctrine->getRepository(Category::class)->findOneBy(["name" => $categorySelect]);
         $competition = $doctrine->getRepository(Competition::class)->findOneBy(["name" => $competitionSelect,"season"=>$season, "category"=>$category->getId()->toBinary()]);
         $effectif = $doctrine->getRepository(CategoryUser::class)->findBy(["season"=>$season, "category"=>$category->getId()->toBinary()]);
@@ -124,6 +126,7 @@ class DefaultController extends AbstractController
         $key_values = array_column($listPasseurs, 'nbPassD');
         array_multisort($key_values, SORT_DESC, $listPasseurs);
 
+
         return $this->render('default/index.html.twig', [
             "listJoueurGar" => $listJoueurGar,
             "listJoueurDef" => $listJoueurDef,
@@ -136,7 +139,8 @@ class DefaultController extends AbstractController
             "listCompetition" => $listCompetition,
             "playings" => $playings,
             "classement" => $classement,
-            "effectifCategorie" => $categorySelect
+            "effectifCategorie" => $categorySelect,
+            "club" => $club[0]
         ]);
     }
 

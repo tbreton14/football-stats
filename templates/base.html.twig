@@ -27,6 +27,30 @@
                 </div>
 
             </div>
+            <footer class="container-fluid">
+                <div class="row g-0 w-100">
+                    <div class="col d-flex flex-column">
+                        <span>{{ club.name }}</span>
+                        <span>{{ club.adrStreet }}</span>
+                        <div class="d-flex">
+                            <span class="me-2">{{ club.adrZip }}</span>
+                            <span>{{ club.adrCity }}</span>
+                        </div>
+                    </div>
+                    <div class="col d-flex align-items-center justify-content-center social-media">
+                        <a href="{{ club.facebookUrl }}" target="_blank"><img src="{{ asset('images/icons8-facebook-48.png') }}" /></a>
+                        <a href="{{ club.websiteUrl }}" target="_blank" class="ms-3"><img src="{{ asset('images/icons8-wordpress-48.png') }}" /></a>
+                    </div>
+                    <div class="col d-none d-sm-flex flex-column align-items-end">
+                        <span>Tél : {{ club.phoneContact }}</span>
+                        <span>Email : {{ club.emailContact }}</span>
+                        <span>Site web : <a class="text-decoration-none text-white" href="{{ club.websiteUrl }}" target="_blank">{{ club.websiteUrl }}</a></span>
+                    </div>
+                </div>
+            </footer>
+            <div class="container-fluid subfooter">
+                Tous droits réservés / © Copyright USONM Football
+            </div>
         {% endblock %}
 
         {% block javascripts %}
