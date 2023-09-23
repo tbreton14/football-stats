@@ -268,7 +268,7 @@
                                         <td>{{ buteur["fullName"] }}</td>
                                         <td>{{ buteur["nbButs"] }}</td>
                                         <td>{{ buteur["nbPlaying"] }}</td>
-                                        <td>{{ ratio }}</td>
+                                        <td>{{ ratio|round(1) }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>
@@ -295,7 +295,7 @@
                                     <td>{{ passeur["fullName"] }}</td>
                                     <td>{{ passeur["nbPassD"] }}</td>
                                     <td>{{ passeur["nbPlaying"] }}</td>
-                                    <td>{{ ratio }}</td>
+                                    <td>{{ ratio|round(1) }}</td>
                                 </tr>
                             {% endfor %}
                             </tbody>
