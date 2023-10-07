@@ -88,7 +88,7 @@ html,body {
         }
       }
 
-      .playing-compo {
+      .playing-compo, .playing-details {
         @include mq($until: tablet) {
           font-size: 10px;
         }
