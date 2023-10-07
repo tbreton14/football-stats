@@ -50,6 +50,9 @@ class Playing
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $scoreExt;
 
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $nbButCsc;
+
     #[ORM\ManyToOne(inversedBy: 'playing')]
     #[ORM\JoinColumn("competition_id")]
     private ?Competition $competition = null;
@@ -170,6 +173,22 @@ class Playing
     public function setPlayingUser($playingUser)
     {
         $this->playingUser = $playingUser;
+    }
+
+    /**
+     * @return int|null
+     */
+    public function getNbButCsc(): ?int
+    {
+        return $this->nbButCsc;
+    }
+
+    /**
+     * @param int|null $nbButCsc
+     */
+    public function setNbButCsc(?int $nbButCsc): void
+    {
+        $this->nbButCsc = $nbButCsc;
     }
 
 
