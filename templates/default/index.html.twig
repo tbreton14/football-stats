@@ -95,7 +95,7 @@
                                     <div class="row playing-details">
                                     {% if playing.clubDom == "USON MONDEVILLE" %}
                                         <div class="col d-flex flex-column align-items-end justify-content-end">
-                                            {% for i in 0..playing.nbButCsc %}
+                                            {% for i in 1..playing.nbButCsc %}
                                                 <div class="d-flex align-items-center playing-buteur-item">
                                                     <span>csc</span>
                                                     <img src="{{ asset('images/ico_but.svg') }}" class="ms-2">
@@ -124,9 +124,9 @@
                                     {% else %}
                                         <div class="col"></div>
                                         <div class="col">
-                                            {% for i in 0..playing.nbButCsc %}
+                                            {% for i in 1..playing.nbButCsc %}
                                                 <div class="d-flex align-items-center playing-buteur-item">
-                                                    <img src="{{ asset('images/ico_but.svg') }}" class="ms-2">
+                                                    <img src="{{ asset('images/ico_but.svg') }}" class="me-2">
                                                     <span>csc</span>
                                                 </div>
                                             {% endfor %}
