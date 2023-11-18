@@ -7,6 +7,7 @@ use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ArrayField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
@@ -33,6 +34,7 @@ class PlayingCrudController extends AbstractCrudController
             TextField::new('logoClubDom', 'Logo équipe domicile')->hideOnIndex(),
             TextField::new('logoClubExt', 'Logo équipe extérieur')->hideOnIndex(),
             DateTimeField::new('datePlaying', 'Date de la rencontre'),
+            BooleanField::new('report', "Reporté ?"),
             IntegerField::new('scoreDom', 'Score domicile'),
             IntegerField::new('scoreExt', 'Score extérieur'),
             AssociationField::new('competition', 'Compétition')->hideOnIndex(),

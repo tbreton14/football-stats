@@ -57,9 +57,13 @@
                                             <span class="playing-club-title">{{ playing.clubDom }}</span>
                                         </div>
                                         <div class="col playing-score d-flex align-items-center justify-content-center cursor-pointer" data-bs-toggle="collapse" href="#collapse-playing-{{ playing.id }}">
+                                            {%  if playing.isReport %}
+                                                <span class="text-uppercase">reporté</span>
+                                            {% else %}
                                             <span>{{ playing.scoreDom }}</span>
                                             <span class="me-2 ms-2">-</span>
                                             <span>{{ playing.scoreExt }}</span>
+                                            {% endif %}
                                         </div>
                                         <div class="col playing-club playing-club-ext d-flex align-items-center justify-content-end">
                                             <span class="playing-club-title">{{ playing.clubExt }}</span>

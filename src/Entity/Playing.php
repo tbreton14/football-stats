@@ -50,6 +50,9 @@ class Playing
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $scoreExt;
 
+    #[ORM\Column(type: 'boolean')]
+    private $report;
+
     #[ORM\ManyToOne(inversedBy: 'playing')]
     #[ORM\JoinColumn("competition_id")]
     private ?Competition $competition = null;
@@ -60,6 +63,7 @@ class Playing
     public function __construct()
     {
         $this->playingUser = new ArrayCollection();
+        $this->report = false;
     }
 
     public function __toString()
@@ -171,6 +175,24 @@ class Playing
     {
         $this->playingUser = $playingUser;
     }
+
+    /**
+     * @return mixed
+     */
+    public function isReport()
+    {
+        return $this->report;
+    }
+
+    /**
+     * @param mixed $report
+     */
+    public function setReport($report): void
+    {
+        $this->report = $report;
+    }
+
+
 
 
 
