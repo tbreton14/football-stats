@@ -99,8 +99,16 @@
                                     <div class="row playing-details">
                                     {% if playing.clubDom == "USON MONDEVILLE" %}
                                         <div class="col d-flex flex-column align-items-end justify-content-end">
+                                            {% if playing.nbButCsc %}
+                                            {% for i in 1..playing.nbButCsc %}
+                                                <div class="d-flex align-items-center playing-buteur-item">
+                                                    <span>csc</span>
+                                                    <img src="{{ asset('images/ico_but.svg') }}" class="ms-2">
+                                                </div>
+                                            {% endfor %}
+                                            {% endif %}
                                             {% for lb in listB %}
-                                                <div class="d-flex align-items-center">
+                                                <div class="d-flex align-items-center playing-buteur-item">
                                                     <span>{{ lb }}</span>
                                                     <img src="{{ asset('images/ico_but.svg') }}" class="ms-2">
                                                 </div>
@@ -122,8 +130,16 @@
                                     {% else %}
                                         <div class="col"></div>
                                         <div class="col">
+                                            {% if playing.nbButCsc %}
+                                            {% for i in 1..playing.nbButCsc %}
+                                                <div class="d-flex align-items-center playing-buteur-item">
+                                                    <img src="{{ asset('images/ico_but.svg') }}" class="me-2">
+                                                    <span>csc</span>
+                                                </div>
+                                            {% endfor %}
+                                            {% endif %}
                                             {% for buteur in listB %}
-                                                <div class="d-flex align-items-center">
+                                                <div class="d-flex align-items-center playing-buteur-item">
                                                     <img src="{{ asset('images/ico_but.svg') }}" class="me-2">
                                                     <span>{{ buteur }}</span>
                                                 </div>

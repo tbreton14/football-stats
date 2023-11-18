@@ -37,6 +37,7 @@ class PlayingCrudController extends AbstractCrudController
             BooleanField::new('report', "Reporté ?"),
             IntegerField::new('scoreDom', 'Score domicile'),
             IntegerField::new('scoreExt', 'Score extérieur'),
+            IntegerField::new('nbButCsc', 'Nb buts csc')->hideOnIndex(),
             AssociationField::new('competition', 'Compétition')->hideOnIndex(),
 
         ];
