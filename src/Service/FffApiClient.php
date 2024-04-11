@@ -142,7 +142,7 @@ class FffApiClient
      */
     public function getClassementEquipe($codeCompetition,$numPhase,$numPoule): ?array
     {
-        $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/classement_journees', [
+        $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/classement_journees?page=1', [
                 'headers' => [
                     'Content-Type' => '',
                 ],
