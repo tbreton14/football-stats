@@ -48,6 +48,13 @@ class Competition
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $numPoule;
 
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $numPoulePhase2;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private $playingPersonnal;
+
     #[ORM\OneToMany(mappedBy: 'competition', targetEntity: CategoryUser::class)]
     private $categories;
 
@@ -142,6 +149,37 @@ class Competition
     public function setCategory(?Category $category): void
     {
         $this->category = $category;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPlayingPersonnal()
+    {
+        return $this->playingPersonnal;
+    }
+
+    /**
+     * @param mixed $playingPersonnal
+     */
+    public function setPlayingPersonnal($playingPersonnal): void
+    {
+        $this->playingPersonnal = $playingPersonnal;
+    }
+
+    public function isPlayingPersonnal(): ?bool
+    {
+        return $this->playingPersonnal;
+    }
+
+    public function getNumPoulePhase2(): ?string
+    {
+        return $this->numPoulePhase2;
+    }
+
+    public function setNumPoulePhase2(?string $numPoulePhase2): void
+    {
+        $this->numPoulePhase2 = $numPoulePhase2;
     }
 
 

@@ -142,7 +142,27 @@ class FffApiClient
      */
     public function getClassementEquipe($codeCompetition,$numPhase,$numPoule): ?array
     {
-        $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/classement_journees?page=1', [
+        $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/classement_journees', [
+                'headers' => [
+                    'Content-Type' => '',
+                ],
+                'extra' => [
+                    'no_cache' => true,
+                ]
+            ]
+        );
+
+        return $this->toArrayOrNullIf404($response);
+    }
+
+    /**
+     * Récupère le calendrier d'une équipe.
+     *
+     * @return array|null
+     */
+    public function getCalendrierEquipe($codeCompetition,$numPhase,$numPoule,$numClub): ?array
+    {
+        $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/matchs?clNo='.$numClub, [
                 'headers' => [
                     'Content-Type' => '',
                 ],

@@ -6,6 +6,7 @@ use App\Entity\Competition;
 use App\Service\FffApiClient;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
@@ -44,6 +45,8 @@ class CompetitionCrudController extends AbstractCrudController
             TextField::new('codeCompetition', 'API code compétition'),
             TextField::new('numPhase', 'API num phase'),
             TextField::new('numPoule', 'API num poule'),
+            TextField::new('numPoulePhase2', 'API num poule phase 2'),
+            BooleanField::new('playingPersonnal', "Gestion perso du calendrier"),
 
         ];
     }

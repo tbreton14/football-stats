@@ -39,6 +39,57 @@
                         </button>
                     </div>
                     <div id="flush-collapseOne" data-bs-parent="#accordionPlayings"class="content-block-body content-block-playings accordion-collapse collapse">
+
+                        {% if not playingsPersonnal %}
+
+                        {% for cal in playings %}
+                        <div class="playing row">
+                            <div class="col-12 d-flex align-items-center justify-content-center mb-2 mt-2">
+                                {{ cal["date"] | format_datetime('full', 'none', locale='fr') }}
+                            </div>
+                            <div class="col-12">
+                                <div class="row">
+                                    <div class="col playing-club playing-club-dom d-flex align-items-center">
+                                    {% if cal["home"] is null %}
+                                        <div class="calendrier-equipe-name">
+                                            EXEMPT
+                                        </div>
+                                    {% else %}
+                                        <span class="me-2">
+                                            <img src="{{ cal["home"]["club"]["logo"] }}" />
+                                        </span>
+                                        <span class="playing-club-title">
+                                            {{ cal["home"]["short_name"] }}
+                                        </span>
+                                    {% endif %}
+                                    </div>
+                                    <div class="col playing-score d-flex align-items-center justify-content-center">
+                                            <span>{{ cal["home_score"] }}</span>
+                                            <span class="me-2 ms-2">-</span>
+                                            <span>{{ cal["away_score"] }}</span>
+                                    </div>
+
+                                    <div class="col playing-club playing-club-ext d-flex align-items-center justify-content-end">
+                                    {% if cal["away"] is null %}
+                                        <div class="calendrier-equipe-name">
+                                            EXEMPT
+                                        </div>
+                                    {% else %}
+                                        <div class="calendrier-equipe-name">
+                                            {{ cal["away"]["short_name"] }}
+                                        </div>
+                                        <div class="calendrier-logo ps-1">
+                                            <img src="{{ cal["away"]["club"]["logo"] }}" />
+                                        </div>
+                                    {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                        {% else %}
+
                         {% for playing in playings %}
                             <div class="playing row">
                                 <div class="col-12 d-flex align-items-center justify-content-center mb-2 mt-2">
@@ -170,6 +221,8 @@
                                 </div>
                             </div>
                         {% endfor %}
+
+                        {% endif %}
                     </div>
                 </div>
                 </div>
@@ -260,7 +313,7 @@
                                         <td>{{ equipe["goals_for_count"] }}</td>
                                         <td>{{ equipe["goals_against_count"] }}</td>
                                         <td class="d-none d-sm-table-cell">{{ equipe["penalty_point_count"] }}</td>
-                                        <td class="d-none d-sm-table-cell">{{ equipe["goals_diff"] }}</td>
+                                        <td class="d-none d-sm-table-cell">{% if equipe["goals_for_count"] < equipe["goals_against_count"] %}-{% endif %}{{ equipe["goals_diff"] }}</td>
                                     </tr>
                                 {% endfor %}
                             </tbody>

@@ -13,6 +13,7 @@ use App\Entity\User;
 use App\Service\FffApiClient;
 use App\Service\ManaginApiClient;
 use Doctrine\Persistence\ManagerRegistry;
+use http\Env;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -54,13 +55,31 @@ class DefaultController extends AbstractController
         $listCompetition = $doctrine->getRepository(Competition::class)->findBy(["season"=>$season, "category"=>$category->getId()->toBinary()]);
 
         $playingsUser = $doctrine->getRepository(PlayingUser::class)->findByCompetition($competition->getId()->toBinary());
-        $playings = $doctrine->getRepository(Playing::class)->findBy(["competition"=>$competition->getId()->toBinary()]);
+
+        if($competition->isPlayingPersonnal()) {
+            $playings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()]);
+        } else {
+            if($competition->getNumPhase() == 2) {
+                $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase()-1, $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
+                $playingsPhase1 = $playingsPhase1["hydra:member"];
+            }
+            $playingsPhase2 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoulePhase2(), $_ENV['APP_API_CLUB_ID']);
+            $playingsPhase2 = $playingsPhase2["hydra:member"];
+
+            $playings = array_merge($playingsPhase1,$playingsPhase2);
+        }
+
         $listButeurs = [];
         $listPasseurs = [];
 
         $classement = [];
         if($competition->getCodeCompetition()) {
-            $classement = $fffApiClient->getClassementEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule());
+            if($competition->getNumPhase() == 2) {
+                $numPoule = $competition->getNumPoulePhase2();
+            } else {
+                $numPoule = $competition->getNumPoule();
+            }
+            $classement = $fffApiClient->getClassementEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $numPoule);
             $classement = $classement["hydra:member"];
         }
 
@@ -138,6 +157,7 @@ class DefaultController extends AbstractController
             "listCategories" => $listCategories,
             "listCompetition" => $listCompetition,
             "playings" => $playings,
+            "playingsPersonnal" => $competition->isPlayingPersonnal(),
             "classement" => $classement,
             "effectifCategorie" => $categorySelect,
             "club" => $club[0]
