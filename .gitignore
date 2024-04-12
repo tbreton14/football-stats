@@ -73,6 +73,7 @@ docker-compose.*.yml
 /node_modules/
 /public/build/
 /public/assets/
+/public/pwa/
 /public/js/
 /public/images/
 /public/docs/
