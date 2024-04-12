@@ -130,4 +130,18 @@ html,body {
     height:100px;
   }
 
+  ul.nav-phase {
+    li {
+
+      a {
+        color: white !important;
+      }
+
+      a.active {
+        background-color: white;
+        color: black !important;
+      }
+    }
+  }
+
 }

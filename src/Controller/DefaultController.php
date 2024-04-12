@@ -160,7 +160,9 @@ class DefaultController extends AbstractController
             "playingsPersonnal" => $competition->isPlayingPersonnal(),
             "classement" => $classement,
             "effectifCategorie" => $categorySelect,
-            "club" => $club[0]
+            "club" => $club[0],
+            "numPhase" => $competition->getNumPhase(),
+            "idCompetition" => $competition->getId(),
         ]);
     }
 
@@ -222,6 +224,25 @@ class DefaultController extends AbstractController
         }
 
         return new JsonResponse($competitions);
+    }
+
+    #[Route('/ajax/classement/{idCompetition}/{numPhase}', name: 'ajax_app_classement')]
+    public function ajax_app_classement(Request $request, FffApiClient $fffApiClient, ManagerRegistry $doctrine, $idCompetition, $numPhase): Response
+    {
+        $competition = $doctrine->getRepository(Competition::class)->find($idCompetition);
+
+        if($numPhase == 2) {
+            $numPoule = $competition->getNumPoulePhase2();
+        } else {
+            $numPoule = $competition->getNumPoule();
+        }
+
+        $classement = $fffApiClient->getClassementEquipe($competition->getCodeCompetition(), $numPhase, $numPoule);
+        $classement = $classement["hydra:member"];
+
+        return $this->render('default/classement.html.twig', [
+            "classement" => $classement
+        ]);
     }
 
 }

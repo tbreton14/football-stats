@@ -49,7 +49,23 @@ const appHome = createApp({
         changeCompetition(event) {
             const url = event.currentTarget.dataset.href+"?season="+document.getElementById("seasonChoice").value+"&category="+document.getElementById("categoryChoice").value+"&competition="+document.getElementById("competitionChoice").value;
             location.href = url;
+        },
+        changePhase(event) {
+            const url = event.currentTarget.dataset.href;
+            const link = event.currentTarget;
+            axios.get(url).then(response => {
+                document.querySelectorAll(".nav-link").forEach((item => {
+                    item.classList.remove("active");
+                }))
+                link.classList.add("active");
+
+                const parser = new DOMParser();
+                let dataHtml = parser.parseFromString(response.data,"text/html");
+                document.getElementById("classement-content").innerHTML = dataHtml.getElementById("classement-content").innerHTML;
+
+            });
         }
+
     }
 })
 

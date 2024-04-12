@@ -1,0 +1,36 @@
+<div class="content-block-body">
+    <table class="table table-responsive">
+        <thead>
+        <th>Pl</th>
+        <th>Equipe</th>
+        <th>Pts</th>
+        <th>Jo</th>
+        <th>G</th>
+        <th>N</th>
+        <th>P</th>
+        <th class="d-none d-sm-table-cell">F</th>
+        <th>BP</th>
+        <th>BC</th>
+        <th class="d-none d-sm-table-cell">Pé</th>
+        <th class="d-none d-sm-table-cell">Dif</th>
+        </thead>
+        <tbody id="classement-content">
+        {% for equipe in classement %}
+            <tr>
+                <td>{{ equipe["rank"] }}</td>
+                <td>{{ equipe["equipe"]["short_name"] | upper }}</td>
+                <td>{{ equipe["point_count"] }}</td>
+                <td>{{ equipe["total_games_count"] }}</td>
+                <td>{{ equipe["won_games_count"] }}</td>
+                <td>{{ equipe["draw_games_count"] }}</td>
+                <td>{{ equipe["lost_games_count"] }}</td>
+                <td class="d-none d-sm-table-cell">{{ equipe["forfeits_games_count"] }}</td>
+                <td>{{ equipe["goals_for_count"] }}</td>
+                <td>{{ equipe["goals_against_count"] }}</td>
+                <td class="d-none d-sm-table-cell">{{ equipe["penalty_point_count"] }}</td>
+                <td class="d-none d-sm-table-cell">{% if equipe["goals_for_count"] < equipe["goals_against_count"] %}-{% endif %}{{ equipe["goals_diff"] }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>

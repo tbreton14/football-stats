@@ -280,8 +280,20 @@
                     </div>
                 </div>
                 <div class="content-block mb-3">
-                    <div class="content-block-header">
+                    <div class="content-block-header d-flex align-items-center justify-content-between">
                         <span>Classement</span>
+                        {% if numPhase == 2 %}
+                        <div>
+                            <ul class="nav nav-pills nav-phase" id="nav-phase">
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#" v-on:click="changePhase" data-href="{{ path("ajax_app_classement", {"idCompetition":idCompetition, "numPhase": 1}) }}">Phase 1</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link active" href="#" v-on:click="changePhase" data-href="{{ path("ajax_app_classement", {"idCompetition":idCompetition, "numPhase": 2}) }}">Phase 2</a>
+                                </li>
+                            </ul>
+                        </div>
+                        {% endif %}
                     </div>
                     <div class="content-block-body">
                         <table class="table table-responsive">
@@ -299,7 +311,7 @@
                                 <th class="d-none d-sm-table-cell">Pé</th>
                                 <th class="d-none d-sm-table-cell">Dif</th>
                             </thead>
-                            <tbody>
+                            <tbody id="classement-content">
                                 {% for equipe in classement %}
                                     <tr>
                                         <td>{{ equipe["rank"] }}</td>
