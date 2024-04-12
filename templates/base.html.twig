@@ -6,6 +6,7 @@
         <meta name="robots" content="index, follow">
         <title>{% block title %}{% endblock %}</title>
         <link rel="icon" type="image/x-icon" href="{{ asset('images/logo-usonm.jpg') }}">
+        <link rel="manifest" href="{{ asset("pwa/manifest.json") }}">
 
         {% block stylesheets %}
             {{ encore_entry_link_tags('app') }}

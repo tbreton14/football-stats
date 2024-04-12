@@ -32,6 +32,12 @@ Encore
         to: '../images/[path][name].[ext]',
     })
 
+    .copyFiles({
+        from: "./assets/pwa",
+        to: '../pwa/[path][name].[ext]',
+    })
+
+
 
     // enables the Symfony UX Stimulus bridge (used in assets/bootstrap.js)
     .enableStimulusBridge('./assets/controllers.json')

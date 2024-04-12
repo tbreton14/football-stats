@@ -1,0 +1,19 @@
+{
+  "short_name": "usonm",
+  "name": "Usonm Mondeville",
+
+  "start_url": "/",
+
+  "background_color": "#000000",
+
+  "icons": [
+    {
+      "src": "logo-app.jpg",
+      "type": "image/png",
+      "sizes": "461x461"
+    }
+  ],
+
+  "display": "standalone",
+  "theme_color": "#ffffff"
+}
