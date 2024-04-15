@@ -68,6 +68,8 @@ class DefaultController extends AbstractController
 
             if(isset($playingsPhase1)) {
                 $playings = array_merge($playingsPhase1, $playingsPhase2);
+            } else {
+                $playings = $playingsPhase2;
             }
         }
 
