@@ -66,7 +66,9 @@ class DefaultController extends AbstractController
             $playingsPhase2 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoulePhase2(), $_ENV['APP_API_CLUB_ID']);
             $playingsPhase2 = $playingsPhase2["hydra:member"];
 
-            $playings = array_merge($playingsPhase1,$playingsPhase2);
+            if(isset($playingsPhase1)) {
+                $playings = array_merge($playingsPhase1, $playingsPhase2);
+            }
         }
 
         $listButeurs = [];
