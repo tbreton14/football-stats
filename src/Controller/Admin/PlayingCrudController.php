@@ -34,6 +34,7 @@ class PlayingCrudController extends AbstractCrudController
             TextField::new('logoClubDom', 'Logo équipe domicile')->hideOnIndex(),
             TextField::new('logoClubExt', 'Logo équipe extérieur')->hideOnIndex(),
             DateTimeField::new('datePlaying', 'Date de la rencontre'),
+            TextField::new('externalPlayer', 'Joueurs hors effectif'),
             BooleanField::new('report', "Reporté ?"),
             IntegerField::new('scoreDom', 'Score domicile'),
             IntegerField::new('scoreExt', 'Score extérieur'),

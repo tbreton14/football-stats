@@ -56,6 +56,10 @@ class Playing
     #[ORM\Column(type: 'boolean')]
     private $report;
 
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $externalPlayer;
+
     #[ORM\ManyToOne(inversedBy: 'playing')]
     #[ORM\JoinColumn("competition_id")]
     private ?Competition $competition = null;
@@ -209,6 +213,16 @@ class Playing
     public function setReport($report): void
     {
         $this->report = $report;
+    }
+
+    public function getExternalPlayer(): ?string
+    {
+        return $this->externalPlayer;
+    }
+
+    public function setExternalPlayer(?string $externalPlayer): void
+    {
+        $this->externalPlayer = $externalPlayer;
     }
 
 

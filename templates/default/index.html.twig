@@ -215,6 +215,9 @@
                                             {% for puser in playing.playingUser %}
                                                 {{ puser.user.firstName | capitalize }} {{ puser.user.lastName | slice(0,1) | upper }}.,
                                             {% endfor %}
+                                            {% if playing.externalPlayer %}
+                                                {{ playing.externalPlayer }}
+                                            {% endif %}
                                             </div>
                                         </div>
                                     </div>
