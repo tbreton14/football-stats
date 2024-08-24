@@ -246,7 +246,7 @@
                             <tbody>
                                 {% for g in listJoueurGar %}
                                     <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>
-                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':g.id }}?season=__season__">{{ g.fullName }}</a></td>
+                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':g.id }) }}?season=__season__">{{ g.fullName }}</a></td>
                                         <td>{{ g.birthDate | date('d/m/Y') }}</td>
                                         <td>{{ g.poste }}</td>
                                     </tr>
