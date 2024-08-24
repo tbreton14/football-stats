@@ -94,6 +94,7 @@
                             <div class="playing row">
                                 <div class="col-12 d-flex align-items-center justify-content-center mb-2 mt-2">
                                     {{ playing.datePlaying | date("l j F Y") | format_date('full',locale='fr') }}
+                                    {% if playing.amical %} - (<b>MATCH AMICAL</b>) {% endif %}
                                 </div>
                                 <div class="col-12">
                                     <div class="row">
