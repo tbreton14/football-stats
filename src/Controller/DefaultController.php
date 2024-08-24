@@ -37,13 +37,13 @@ class DefaultController extends AbstractController
         $categorySelect = $request->get('category');
         $competitionSelect = $request->get('competition');
         if(!$categorySelect) {
-            $categorySelect = "U15";
+            $categorySelect = "U16";
         }
         if(!$season) {
-            $season = "2023-2024";
+            $season = "2024-2025";
         }
         if(!$competitionSelect) {
-            $competitionSelect = "REGIONAL 2 U15";
+            $competitionSelect = "REGIONAL 2 U16";
         }
 
         $club = $doctrine->getRepository(Club::class)->findAll();
