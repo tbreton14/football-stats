@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\PlayingUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 
 /**
  * @extends ServiceEntityRepository<PlayingUser>
@@ -39,9 +41,10 @@ class PlayingUserRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->leftJoin('p.playing', 'pl')
             ->leftJoin('pl.competition', 'c')
-            ->where('p.user = :user')
+            ->andWhere('p.user = :user')
+//            ->setParameter('user', $user->getUuid(), UuidType::NAME)
+            ->setParameter('user', $user->getUuid()->toBinary(), ParameterType::BINARY)
             ->andWhere('c.season = :season')
-            ->setParameter('user', $user)
             ->setParameter('season', $season)
             ->getQuery()
             ->getResult()

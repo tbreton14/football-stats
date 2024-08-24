@@ -175,11 +175,13 @@ class DefaultController extends AbstractController
     {
         $season = $request->get('season');
         $user = $doctrine->getRepository(User::class)->find($id);
-        $playingsUser = $doctrine->getRepository(User::class)->findPlayingsUserBySeason($user,$season);
+        $playingsUser = $doctrine->getRepository(PlayingUser::class)->findPlayingsUserBySeason($user,$season);
         $nbButs = 0;
         $nbPasseD = 0;
         $nbCartonJ = 0;
         $nbCartonR = 0;
+
+//        dd($playingsUser);
 
         foreach ($playingsUser as $playingUser) {
             $nbButs = $nbButs + $playingUser->getNbButs();
@@ -192,12 +194,13 @@ class DefaultController extends AbstractController
         $detail["fullName"]=$user->getFullNameUpper();
         $detail["birthDate"]=$user->getBirthDate();
         $detail["poste"]=ucfirst(strtolower($user->getPoste()));
-        $detail["nbApparition"]=count($user->getPlayingsUser());
+        $detail["nbApparition"]=count($playingsUser);
         $detail["nbButs"]=$nbButs;
         $detail["nbPasseD"]=$nbPasseD;
         $detail["nbCartonJ"]=$nbCartonJ;
         $detail["nbCartonR"]=$nbCartonR;
         $detail["photo"]=$user->getProfilePicture();
+        $detail["season"]=$season;
 
         return $this->render('default/details.html.twig', [
             "detail" => $detail,
