@@ -170,16 +170,17 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    #[Route('/ajax/user/details/{id}', name: 'ajax_app_details_user')]
-    public function ajax_app_details_user(Request $request, ManagerRegistry $doctrine, $id): Response
+    #[Route('/ajax/user/details/{id}/{season}', name: 'ajax_app_details_user')]
+    public function ajax_app_details_user(Request $request, ManagerRegistry $doctrine, $id, $season): Response
     {
         $user = $doctrine->getRepository(User::class)->find($id);
+        $playingsUser = $doctrine->getRepository(User::class)->findPlayingsUserBySeason($user,$season);
         $nbButs = 0;
         $nbPasseD = 0;
         $nbCartonJ = 0;
         $nbCartonR = 0;
 
-        foreach ($user->getPlayingsUser() as $playingUser) {
+        foreach ($playingsUser as $playingUser) {
             $nbButs = $nbButs + $playingUser->getNbButs();
             $nbPasseD = $nbPasseD + $playingUser->getNbPassD();
             $nbCartonJ = $nbCartonJ + $playingUser->getNbCartonJ();

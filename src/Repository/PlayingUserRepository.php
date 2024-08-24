@@ -35,6 +35,19 @@ class PlayingUserRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findPlayingsUserBySeason($user, $season) {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.playing', 'pl')
+            ->leftJoin('pl.competition', 'c')
+            ->where('p.user = :user')
+            ->andWhere('c.season = :season')
+            ->setParameter('user', $user)
+            ->setParameter('season', $season)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 //    public function findOneBySomeField($value): ?PlayingUser
 //    {
 //        return $this->createQueryBuilder('p')
