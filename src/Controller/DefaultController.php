@@ -57,7 +57,7 @@ class DefaultController extends AbstractController
         $playingsUser = $doctrine->getRepository(PlayingUser::class)->findByCompetition($competition->getId()->toBinary());
 
         if($competition->isPlayingPersonnal()) {
-            $playings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()]);
+            $playings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()],["datePlaying"=>"ASC"]);
         } else {
             if($competition->getNumPhase() == 2) {
                 $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase()-1, $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
