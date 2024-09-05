@@ -60,7 +60,7 @@ class DefaultController extends AbstractController
             $otherPlayings = null;
             $playings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()], ["datePlaying"=>"ASC"]);
         } else {
-            $otherPlayings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary(), ["datePlaying"=>"ASC"]]);
+            $otherPlayings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()], ["datePlaying"=>"ASC"]);
             if($competition->getNumPhase() == 2) {
                 $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase()-1, $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
                 $playingsPhase1 = $playingsPhase1["hydra:member"];
