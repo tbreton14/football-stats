@@ -152,6 +152,7 @@ class DefaultController extends AbstractController
 
 
         return $this->render('default/index.html.twig', [
+            "nbTotalJoueur" => count($listJoueurGar)+count($listJoueurDef)+count($listJoueurMil)+count($listJoueurAtt),
             "listJoueurGar" => $listJoueurGar,
             "listJoueurDef" => $listJoueurDef,
             "listJoueurMil" => $listJoueurMil,
@@ -161,6 +162,7 @@ class DefaultController extends AbstractController
             "listSeasons" => $listSeasons,
             "listCategories" => $listCategories,
             "listCompetition" => $listCompetition,
+            "otherPlayings" => $otherPlayings,
             "playings" => $playings,
             "playingsPersonnal" => $competition->isPlayingPersonnal(),
             "classement" => $classement,
