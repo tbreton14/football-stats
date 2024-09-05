@@ -57,8 +57,10 @@ class DefaultController extends AbstractController
         $playingsUser = $doctrine->getRepository(PlayingUser::class)->findByCompetition($competition->getId()->toBinary());
 
         if($competition->isPlayingPersonnal()) {
+            $otherPlayings = null;
             $playings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()]);
         } else {
+            $otherPlayings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()]);
             if($competition->getNumPhase() == 2) {
                 $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase()-1, $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
                 $playingsPhase1 = $playingsPhase1["hydra:member"];
@@ -150,6 +152,7 @@ class DefaultController extends AbstractController
 
 
         return $this->render('default/index.html.twig', [
+            'nbTotalJoueur' => count($listJoueurGar)+count($listJoueurDef)+count($listJoueurMil)+count($listJoueurAtt),
             "listJoueurGar" => $listJoueurGar,
             "listJoueurDef" => $listJoueurDef,
             "listJoueurMil" => $listJoueurMil,
@@ -159,6 +162,7 @@ class DefaultController extends AbstractController
             "listSeasons" => $listSeasons,
             "listCategories" => $listCategories,
             "listCompetition" => $listCompetition,
+            "otherPlayings" => $otherPlayings,
             "playings" => $playings,
             "playingsPersonnal" => $competition->isPlayingPersonnal(),
             "classement" => $classement,

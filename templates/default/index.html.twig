@@ -42,6 +42,49 @@
 
                         {% if not playingsPersonnal %}
 
+                        {% if otherPlayings %}
+                            {% for otherPlaying in otherPlayings %}
+                                <div class="playing row">
+                                    <div class="col-12 d-flex align-items-center justify-content-center mb-2 mt-2">
+                                        {{ otherPlaying.datePlaying | date("l j F Y") | format_date('full',locale='fr') }}
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="row">
+                                            <div class="col playing-club playing-club-dom d-flex align-items-center">
+                                                    <span class="me-2">
+                                                        {% if 'https' in otherPlaying.logoClubDom %}
+                                                            <img src="{{ otherPlaying.logoClubDom }}">
+                                                        {% else %}
+                                                            <img src="{{ asset('images/'~otherPlaying.logoClubDom) }}">
+                                                        {% endif %}
+                                                    </span>
+                                                <span class="playing-club-title">{{ otherPlaying.clubDom }}</span>
+                                            </div>
+                                            <div class="col playing-score d-flex align-items-center justify-content-center">
+                                                {%  if otherPlaying.isReport %}
+                                                    <span class="text-uppercase">reporté</span>
+                                                {% else %}
+                                                    <span>{{ otherPlaying.scoreDom }}</span>
+                                                    <span class="me-2 ms-2">-</span>
+                                                    <span>{{ otherPlaying.scoreExt }}</span>
+                                                {% endif %}
+                                            </div>
+                                            <div class="col playing-club playing-club-ext d-flex align-items-center justify-content-end">
+                                                <span class="playing-club-title">{{ otherPlaying.clubExt }}</span>
+                                                <span class="ms-2">
+                                                        {% if 'https' in otherPlaying.logoClubExt %}
+                                                            <img src="{{ otherPlaying.logoClubExt }}">
+                                                        {% else %}
+                                                            <img src="{{ asset('images/'~otherPlaying.logoClubExt) }}">
+                                                        {% endif %}
+                                                    </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+
                         {% for cal in playings %}
                         <div class="playing row">
                             <div class="col-12 d-flex align-items-center justify-content-center mb-2 mt-2">
@@ -233,7 +276,7 @@
             <div class="col-12 col-sm-7">
                 <div class="content-block mb-3">
                     <div class="content-block-header">
-                        <span v-if="seeUserDetails==false">Effectifs {{ effectifCategorie }}</span>
+                        <span v-if="seeUserDetails==false">Effectifs {{ effectifCategorie }} {% if nbTotalJoueur is defined %}({{ nbTotalJoueur }}) {% endif %}</span>
                         <span v-if="seeUserDetails==true">Fiche joueur</span>
                     </div>
                     <div class="content-block-body" v-if="seeUserDetails==false">
