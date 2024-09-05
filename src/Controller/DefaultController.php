@@ -37,13 +37,13 @@ class DefaultController extends AbstractController
         $categorySelect = $request->get('category');
         $competitionSelect = $request->get('competition');
         if(!$categorySelect) {
-            $categorySelect = "U15";
+            $categorySelect = "U16";
         }
         if(!$season) {
-            $season = "2023-2024";
+            $season = "2024-2025";
         }
         if(!$competitionSelect) {
-            $competitionSelect = "REGIONAL 2 U15";
+            $competitionSelect = "REGIONAL 2 U16";
         }
 
         $club = $doctrine->getRepository(Club::class)->findAll();
@@ -152,7 +152,6 @@ class DefaultController extends AbstractController
 
 
         return $this->render('default/index.html.twig', [
-            'nbTotalJoueur' => count($listJoueurGar)+count($listJoueurDef)+count($listJoueurMil)+count($listJoueurAtt),
             "listJoueurGar" => $listJoueurGar,
             "listJoueurDef" => $listJoueurDef,
             "listJoueurMil" => $listJoueurMil,
@@ -162,7 +161,6 @@ class DefaultController extends AbstractController
             "listSeasons" => $listSeasons,
             "listCategories" => $listCategories,
             "listCompetition" => $listCompetition,
-            "otherPlayings" => $otherPlayings,
             "playings" => $playings,
             "playingsPersonnal" => $competition->isPlayingPersonnal(),
             "classement" => $classement,
@@ -176,13 +174,17 @@ class DefaultController extends AbstractController
     #[Route('/ajax/user/details/{id}', name: 'ajax_app_details_user')]
     public function ajax_app_details_user(Request $request, ManagerRegistry $doctrine, $id): Response
     {
+        $season = $request->get('season');
         $user = $doctrine->getRepository(User::class)->find($id);
+        $playingsUser = $doctrine->getRepository(PlayingUser::class)->findPlayingsUserBySeason($user,$season);
         $nbButs = 0;
         $nbPasseD = 0;
         $nbCartonJ = 0;
         $nbCartonR = 0;
 
-        foreach ($user->getPlayingsUser() as $playingUser) {
+//        dd($playingsUser);
+
+        foreach ($playingsUser as $playingUser) {
             $nbButs = $nbButs + $playingUser->getNbButs();
             $nbPasseD = $nbPasseD + $playingUser->getNbPassD();
             $nbCartonJ = $nbCartonJ + $playingUser->getNbCartonJ();
@@ -193,12 +195,13 @@ class DefaultController extends AbstractController
         $detail["fullName"]=$user->getFullNameUpper();
         $detail["birthDate"]=$user->getBirthDate();
         $detail["poste"]=ucfirst(strtolower($user->getPoste()));
-        $detail["nbApparition"]=count($user->getPlayingsUser());
+        $detail["nbApparition"]=count($playingsUser);
         $detail["nbButs"]=$nbButs;
         $detail["nbPasseD"]=$nbPasseD;
         $detail["nbCartonJ"]=$nbCartonJ;
         $detail["nbCartonR"]=$nbCartonR;
         $detail["photo"]=$user->getProfilePicture();
+        $detail["season"]=$season;
 
         return $this->render('default/details.html.twig', [
             "detail" => $detail,

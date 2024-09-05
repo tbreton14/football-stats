@@ -47,6 +47,7 @@
                                 <div class="playing row">
                                     <div class="col-12 d-flex align-items-center justify-content-center mb-2 mt-2">
                                         {{ otherPlaying.datePlaying | date("l j F Y") | format_date('full',locale='fr') }}
+                                        {% if otherPlaying.amical %} - (<b>MATCH AMICAL</b>) {% endif %}
                                     </div>
                                     <div class="col-12">
                                         <div class="row">
@@ -137,6 +138,7 @@
                             <div class="playing row">
                                 <div class="col-12 d-flex align-items-center justify-content-center mb-2 mt-2">
                                     {{ playing.datePlaying | date("l j F Y") | format_date('full',locale='fr') }}
+                                    {% if playing.amical %} - (<b>MATCH AMICAL</b>) {% endif %}
                                 </div>
                                 <div class="col-12">
                                     <div class="row">
@@ -289,28 +291,28 @@
                             <tbody>
                                 {% for g in listJoueurGar %}
                                     <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>
-                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':g.id}) }}">{{ g.fullName }}</a></td>
+                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':g.id }) }}?season=__season__">{{ g.fullName }}</a></td>
                                         <td>{{ g.birthDate | date('d/m/Y') }}</td>
                                         <td>{{ g.poste }}</td>
                                     </tr>
                                 {% endfor %}
                                 {% for d in listJoueurDef %}
                                     <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>
-                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':d.id}) }}">{{ d.fullName }}</a></td>
+                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':d.id}) }}?season=__season__">{{ d.fullName }}</a></td>
                                         <td>{{ d.birthDate | date('d/m/Y') }}</td>
                                         <td>{{ d.poste }}</td>
                                     </tr>
                                 {% endfor %}
                                 {% for m in listJoueurMil %}
                                     <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>
-                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':m.id}) }}">{{ m.fullName }}</a></td>
+                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':m.id}) }}?season=__season__">{{ m.fullName }}</a></td>
                                         <td>{{ m.birthDate | date('d/m/Y') }}</td>
                                         <td>{{ m.poste }}</td>
                                     </tr>
                                 {% endfor %}
                                 {% for a in listJoueurAtt %}
                                     <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>
-                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':a.id}) }}">{{ a.fullName }}</a></td>
+                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':a.id}) }}?season=__season__">{{ a.fullName }}</a></td>
                                         <td>{{ a.birthDate | date('d/m/Y') }}</td>
                                         <td>{{ a.poste }}</td>
                                     </tr>

@@ -56,6 +56,9 @@ class Playing
     #[ORM\Column(type: 'boolean')]
     private $report;
 
+    #[ORM\Column(type: 'boolean')]
+    private $amical;
+
     #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $externalPlayer;
@@ -224,6 +227,24 @@ class Playing
     {
         $this->externalPlayer = $externalPlayer;
     }
+
+    /**
+     * @return mixed
+     */
+    public function isAmical()
+    {
+        return $this->amical;
+    }
+
+    /**
+     * @param mixed $amical
+     */
+    public function setAmical($amical): void
+    {
+        $this->amical = $amical;
+    }
+
+
 
 
 

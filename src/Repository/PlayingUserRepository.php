@@ -4,7 +4,9 @@ namespace App\Repository;
 
 use App\Entity\PlayingUser;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Bridge\Doctrine\Types\UuidType;
 
 /**
  * @extends ServiceEntityRepository<PlayingUser>
@@ -33,6 +35,20 @@ class PlayingUserRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    public function findPlayingsUserBySeason($user, $season) {
+        return $this->createQueryBuilder('p')
+            ->leftJoin('p.playing', 'pl')
+            ->leftJoin('pl.competition', 'c')
+            ->andWhere('p.user = :user')
+//            ->setParameter('user', $user->getUuid(), UuidType::NAME)
+            ->setParameter('user', $user->getUuid()->toBinary(), ParameterType::BINARY)
+            ->andWhere('c.season = :season')
+            ->setParameter('season', $season)
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
 //    public function findOneBySomeField($value): ?PlayingUser

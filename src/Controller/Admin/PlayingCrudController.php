@@ -36,6 +36,7 @@ class PlayingCrudController extends AbstractCrudController
             DateTimeField::new('datePlaying', 'Date de la rencontre'),
             TextField::new('externalPlayer', 'Joueurs hors effectif'),
             BooleanField::new('report', "Reporté ?"),
+            BooleanField::new('amical', "Match Amical ?"),
             IntegerField::new('scoreDom', 'Score domicile'),
             IntegerField::new('scoreExt', 'Score extérieur'),
             IntegerField::new('nbButCsc', 'Nb buts csc')->hideOnIndex(),

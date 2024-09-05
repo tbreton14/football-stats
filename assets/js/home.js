@@ -10,7 +10,8 @@ const appHome = createApp({
     methods: {
         showUserDetails(event) {
             this.seeUserDetails = true;
-            axios.get(event.currentTarget.dataset.href).then(response => {
+            var url = event.currentTarget.dataset.href.replace('__season__',document.getElementById("seasonChoice").value);
+            axios.get(url).then(response => {
                //document.getElementById("detail-content-block-body").html = response.data;
                 const htmlElement = response.data;
                 document.getElementById("detail-content-block-body").innerHTML = htmlElement;
