@@ -62,14 +62,13 @@ class DefaultController extends AbstractController
             if($competition->getNumPhase() == 2) {
                 $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase()-1, $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
                 $playingsPhase1 = $playingsPhase1["hydra:member"];
-            }
-            $playingsPhase2 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoulePhase2(), $_ENV['APP_API_CLUB_ID']);
-            $playingsPhase2 = $playingsPhase2["hydra:member"];
+                $playingsPhase2 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoulePhase2(), $_ENV['APP_API_CLUB_ID']);
+                $playingsPhase2 = $playingsPhase2["hydra:member"];
 
-            if(isset($playingsPhase1)) {
                 $playings = array_merge($playingsPhase1, $playingsPhase2);
             } else {
-                $playings = $playingsPhase2;
+                $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
+                $playings = $playingsPhase1["hydra:member"];
             }
         }
 
