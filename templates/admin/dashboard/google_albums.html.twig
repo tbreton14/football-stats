@@ -1,0 +1,18 @@
+{% extends '@EasyAdmin/layout.html.twig' %}
+
+{% block main %}
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+        </tr>
+        </thead>
+        {% for item in albums %}
+            <tr>
+                <td>{{ item.id }}</td>
+                <td>{{ item.name }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

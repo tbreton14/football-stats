@@ -13,6 +13,7 @@ security:
             memory:
                 users:
                     tbreton: { password: '$2a$12$Dl5kKrj1Zl9YMFf6ozkApOQCAjPe3iYGmzi/65HqzzNIrIoQe.jrW', roles: [ 'ROLE_ADMIN' ] }
+                    dpaly: { password: '$2a$12$sQ7OrsIK/a4nASHDQDKEg.i/kxRmH8MuWgLgaAanxhJJYGLjoAduC', roles: [ 'ROLE_ADMIN' ] }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/

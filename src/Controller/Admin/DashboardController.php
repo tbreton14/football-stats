@@ -95,6 +95,9 @@ class DashboardController extends AbstractDashboardController
     {
         return [
             MenuItem::linkToDashboard('Dashboard', 'fa fa-home'),
+            MenuItem::section('Google'),
+            MenuItem::linkToRoute("Get refresh token google", "fa fa-home", "admin_google_authenticate"),
+            MenuItem::linkToRoute("Albums google", "fa fa-home", "admin_google_album_list"),
             MenuItem::section('Données'),
             MenuItem::linkToCrud('Rencontres', 'fas fa-futbol', Playing::class),
             MenuItem::linkToCrud('Joueurs-Rencontres', 'fas fa-list-check', PlayingUser::class),

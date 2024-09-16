@@ -11,6 +11,9 @@ parameters:
     app.api.base_url: '%env(APP_API_URL)%'
     app.api.enable_cache: '%env(bool:APP_API_CACHE_ENABLED)%'
     app.api.club_id: '%env(APP_API_CLUB_ID)%'
+    app.google_refresh_token: '%env(GOOGLE_REFRESH_TOKEN)%'
+    app.google_redirect_uri: admin_google_redirect
+    app.google_album_id: '%env(GOOGLE_ALBUM_ID)%'
 
 
 services:
