@@ -152,6 +152,7 @@ class DefaultController extends AbstractController
         array_multisort($key_values, SORT_DESC, $listPasseurs);
 
         // Album GooglePhotos
+        $photos = [];
         $albumGoogleId = $competition->getGoogleAlbumId();
         if($albumGoogleId) {
             $photos = $googlePhotosApiService->getPhotosInAlbum($albumGoogleId);
