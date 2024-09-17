@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\ChoiceField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\HiddenField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -41,12 +42,14 @@ class CompetitionCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             AssociationField::new('category', 'Catégorie'),
             TextField::new('season', 'Saison'),
-            ChoiceField::new('name', 'Nom de la compétition')->setChoices($this->competitions),
+            ChoiceField::new('nameCompet', 'Liste des compétitions du club')->setChoices($this->competitions)->setFormTypeOption('mapped', false),
+            TextField::new('name', 'Nom de la compétition'),
             TextField::new('codeCompetition', 'API code compétition'),
             TextField::new('numPhase', 'API num phase'),
             TextField::new('numPoule', 'API num poule'),
             TextField::new('numPoulePhase2', 'API num poule phase 2'),
             BooleanField::new('playingPersonnal', "Gestion perso du calendrier"),
+            TextField::new('googleAlbumId', 'Google Album ID')->hideOnIndex(),
 
         ];
     }

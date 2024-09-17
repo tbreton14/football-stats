@@ -1,11 +1,20 @@
 import { createApp } from 'vue';
 import axios from 'axios';
+import fslightbox from 'fslightbox';
 
 const appHome = createApp({
     data() {
         return {
             seeUserDetails: false
         }
+    },
+    mounted() {
+        console.log("mounted");
+        var googlePhotos = document.querySelectorAll(".linkGooglePhoto");
+        googlePhotos.forEach(photo => {
+           photo.setAttribute("data-fslightbox","gallery");
+        });
+        refreshFsLightbox();
     },
     methods: {
         showUserDetails(event) {

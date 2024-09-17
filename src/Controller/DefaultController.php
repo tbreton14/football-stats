@@ -11,6 +11,7 @@ use App\Entity\Playing;
 use App\Entity\PlayingUser;
 use App\Entity\User;
 use App\Service\FffApiClient;
+use App\Service\GooglePhotosApi;
 use App\Service\ManaginApiClient;
 use Doctrine\Persistence\ManagerRegistry;
 use http\Env;
@@ -31,7 +32,7 @@ use DOMDocument;
 class DefaultController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index_home(Request $request, ManagerRegistry $doctrine, FffApiClient $fffApiClient): Response
+    public function index_home(Request $request, ManagerRegistry $doctrine, FffApiClient $fffApiClient, GooglePhotosApi $googlePhotosApiService): Response
     {
         $season = $request->get('season');
         $categorySelect = $request->get('category');
@@ -150,6 +151,11 @@ class DefaultController extends AbstractController
         $key_values = array_column($listPasseurs, 'nbPassD');
         array_multisort($key_values, SORT_DESC, $listPasseurs);
 
+        // Album GooglePhotos
+        $albumGoogleId = $competition->getGoogleAlbumId();
+        if($albumGoogleId) {
+            $photos = $googlePhotosApiService->getPhotosInAlbum($albumGoogleId);
+        }
 
         return $this->render('default/index.html.twig', [
             "nbTotalJoueur" => count($listJoueurGar)+count($listJoueurDef)+count($listJoueurMil)+count($listJoueurAtt),
@@ -170,6 +176,7 @@ class DefaultController extends AbstractController
             "club" => $club[0],
             "numPhase" => $competition->getNumPhase(),
             "idCompetition" => $competition->getId(),
+            "photos" => $photos,
         ]);
     }
 

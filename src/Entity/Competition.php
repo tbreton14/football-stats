@@ -61,6 +61,10 @@ class Competition
     #[ORM\OneToOne(mappedBy: 'competition', targetEntity: Playing::class)]
     private $playing;
 
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $googleAlbumId;
+
 
     public function __construct()
     {
@@ -181,6 +185,17 @@ class Competition
     {
         $this->numPoulePhase2 = $numPoulePhase2;
     }
+
+    public function getGoogleAlbumId(): ?string
+    {
+        return $this->googleAlbumId;
+    }
+
+    public function setGoogleAlbumId(?string $googleAlbumId): void
+    {
+        $this->googleAlbumId = $googleAlbumId;
+    }
+
 
 
 
