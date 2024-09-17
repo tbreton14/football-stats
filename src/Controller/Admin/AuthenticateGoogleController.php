@@ -32,7 +32,7 @@ class AuthenticateGoogleController extends AbstractController
         return $this->redirect($urlToRedirect);
     }
 
-    #[Route(path: '/oauth/redirect', name: "redirect")]
+    #[Route(path: '/oauth/redirect', name: "redirect", schemes: ['https'])]
     public function testGooglePhotoRedirect(Request $request): Response
     {
         $code = $request->query->get("code");
