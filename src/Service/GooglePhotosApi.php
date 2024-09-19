@@ -105,6 +105,7 @@ class GooglePhotosApi
 
         $customArray = [];
         foreach ($response->iteratePages() as $page) {
+
             /** @var MediaItem $elem */
             foreach ($page as $elem) {
                 $customArray[] = [
