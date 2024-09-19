@@ -111,7 +111,8 @@ class GooglePhotosApi
                     "id" => $elem->getId(),
                     "product_url" => $elem->getProductUrl(),
                     "base_url" => $elem->getBaseUrl(),
-                    "file_name" => $elem->getFilename()
+                    "file_name" => $elem->getFilename(),
+                    "mime_type" => $elem->getMimeType(),
                 ];
             }
         }

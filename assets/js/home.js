@@ -10,10 +10,11 @@ const appHome = createApp({
     },
     mounted() {
         console.log("mounted");
-        var googlePhotos = document.querySelectorAll(".linkGooglePhoto");
-        googlePhotos.forEach(photo => {
-           photo.setAttribute("data-fslightbox","gallery");
-        });
+        // var googlePhotos = document.querySelectorAll(".linkGooglePhoto");
+        // googlePhotos.forEach(photo => {
+        //     photo.setAttribute("data-fslightbox","gallery");
+        //     photo.setAttribute("data-type","image");
+        // });
         refreshFsLightbox();
     },
     methods: {

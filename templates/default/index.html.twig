@@ -446,7 +446,7 @@
                         <div class="row" id="googlePhoto-list">
                         {% for photo in photos %}
                             <div class="col-6 col-lg-4">
-                                <a class="linkGooglePhoto" href="{{ photo.base_url }}">
+                                <a class="linkGooglePhoto" href="{{ photo.base_url }}" data-fslightbox="gallery" data-type="{% if photo.mime_type == "image/jpeg" or photo.mime_type == "image/png" or photo.mime_type == "image/gif" %}image{% else %}video{% endif %}">
                                     <img src="{{ photo.base_url }}" class="w-100 mb-2 img-google" />
                                 </a>
                             </div>
