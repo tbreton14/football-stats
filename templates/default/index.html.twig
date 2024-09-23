@@ -90,6 +90,9 @@
                         <div class="playing row">
                             <div class="col-12 d-flex align-items-center justify-content-center mb-2 mt-2">
                                 {{ cal["date"] | format_datetime('full', 'none', locale='fr') }}
+                                {% if cal["poule_journee"]["number"] %}
+                                    <a class="result-journey ms-4" v-on:click="showResultatJournee" href="#" data-numj="{{ cal["poule_journee"]["number"] }}" data-href="{{ path("ajax_app_resultat_journee", {"idCompetition":idCompetition,"numJ":cal["poule_journee"]["number"]}) }}"><i class="fa-solid fa-calendar-week"></i></a>
+                                {% endif %}
                             </div>
                             <div class="col-12">
                                 <div class="row">
