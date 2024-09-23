@@ -1,0 +1,48 @@
+<div id="resultat-journee">
+    <div class="content-block border-0">
+        <div class="content-block-body content-block-playings content-block-playings-resultJournee">
+        {% for cal in resultatJournee %}
+            <div class="playing row">
+                <div class="col-12">
+                    <div class="row">
+                        <div class="col playing-club playing-club-dom d-flex align-items-center">
+                            {% if cal["home"] is null %}
+                                <div class="calendrier-equipe-name">
+                                    EXEMPT
+                                </div>
+                            {% else %}
+                                <span class="me-2">
+                                                <img src="{{ cal["home"]["club"]["logo"] }}" />
+                                            </span>
+                                <span class="playing-club-title">
+                                                {{ cal["home"]["short_name"] }}
+                                            </span>
+                            {% endif %}
+                        </div>
+                        <div class="col playing-score d-flex align-items-center justify-content-center">
+                            <span>{{ cal["home_score"] }}</span>
+                            <span class="me-2 ms-2">-</span>
+                            <span>{{ cal["away_score"] }}</span>
+                        </div>
+
+                        <div class="col playing-club playing-club-ext d-flex align-items-center justify-content-end">
+                            {% if cal["away"] is null %}
+                                <div class="calendrier-equipe-name">
+                                    EXEMPT
+                                </div>
+                            {% else %}
+                                <div class="playing-club-title">
+                                    {{ cal["away"]["short_name"] }}
+                                </div>
+                                <div class="calendrier-logo ps-1">
+                                    <img src="{{ cal["away"]["club"]["logo"] }}" />
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        </div>
+    </div>
+</div>

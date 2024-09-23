@@ -265,4 +265,16 @@ class DefaultController extends AbstractController
         ]);
     }
 
+    #[Route('/ajax/resultat/journee/{idCompetition}/{numJ}', name: 'ajax_app_resultat_journee')]
+    public function ajax_app_resultat_journee(Request $request, FffApiClient $fffApiClient, ManagerRegistry $doctrine, $idCompetition, $numJ): Response
+    {
+        $competition = $doctrine->getRepository(Competition::class)->find($idCompetition);
+
+        $resultatJournee = $fffApiClient->getResultatsJournee($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $numJ);
+
+        return $this->render('default/resultatJournee.html.twig', [
+            "resultatJournee" => $resultatJournee["hydra:member"]
+        ]);
+    }
+
 }

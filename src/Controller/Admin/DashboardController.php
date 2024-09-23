@@ -112,13 +112,12 @@ class DashboardController extends AbstractDashboardController
         ];
     }
 
-    /*
-    public function configureAssets(Assets $assets): Assets
+    public function configureAssets(): Assets
     {
-        return $assets
-            //->addCssFile(Asset::new('build/easy-admin-custom.css')) // See webpack.config.js for the SCSS file location
-            ->addWebpackEncoreEntry('easyadmin')
+        return parent::configureAssets()
+            ->addCssFile(Asset::new('build/easy-admin-custom.css')) // See webpack.config.js for the SCSS file location
+            ->addWebpackEncoreEntry('easy-admin-custom')
             ;
     }
-    */
+
 }

@@ -113,6 +113,25 @@ html,body {
         }
       }
     }
+
+    .content-block-playings-resultJournee {
+      .playing-club-title {
+        @include mq($until: tablet) {
+          font-size: 8px;
+        }
+      }
+
+      .playing-club {
+        img {
+
+          @include mq($until: tablet) {
+            width: 20px;
+            height: 20px;
+          }
+        }
+      }
+    }
+
   }
 
   .details-item {

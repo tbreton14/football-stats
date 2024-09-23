@@ -175,4 +175,24 @@ class FffApiClient
         return $this->toArrayOrNullIf404($response);
     }
 
+    /**
+     * Récupère les résultats d'une journée spécifique
+     *
+     * @return array|null
+     */
+    public function getResultatsJournee($codeCompetition,$numPhase,$numPoule,$journee): ?array
+    {
+        $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/matchs?pjNo='.$journee, [
+                'headers' => [
+                    'Content-Type' => '',
+                ],
+                'extra' => [
+                    'no_cache' => true,
+                ]
+            ]
+        );
+
+        return $this->toArrayOrNullIf404($response);
+    }
+
 }

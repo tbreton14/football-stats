@@ -61,6 +61,10 @@ class Playing
 
     #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255, nullable: true)]
+    private ?string $numJourney;
+
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $externalPlayer;
 
     #[ORM\ManyToOne(inversedBy: 'playing')]
@@ -244,6 +248,15 @@ class Playing
         $this->amical = $amical;
     }
 
+    public function getNumJourney(): ?string
+    {
+        return $this->numJourney;
+    }
+
+    public function setNumJourney(?string $numJourney): void
+    {
+        $this->numJourney = $numJourney;
+    }
 
 
 

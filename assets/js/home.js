@@ -75,6 +75,19 @@ const appHome = createApp({
                 document.getElementById("classement-content").innerHTML = dataHtml.getElementById("classement-content").innerHTML;
 
             });
+        },
+        showResultatJournee(event) {
+            const url = event.currentTarget.dataset.href;
+            const numj = event.currentTarget.dataset.numj;
+            axios.get(url).then(response => {
+                var modalJ = document.getElementById("modal-result-journey");
+                const parser = new DOMParser();
+                let dataHtml = parser.parseFromString(response.data,"text/html");
+
+                modalJ.querySelector("#modalTitleNumJ").innerHTML = numj;
+                modalJ.querySelector(".modal-body").innerHTML = dataHtml.getElementById("resultat-journee").innerHTML;
+                bootstrap.Modal.getOrCreateInstance(modalJ).show();
+            });
         }
 
     }

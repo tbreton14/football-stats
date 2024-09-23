@@ -5,6 +5,14 @@
 .main-header #header-logo img {
   height: 50px !important;
 }
+
+form {
+  fieldset {
+    border: none;
+    background: white;
+  }
+}
+
 /*
 #input-daterange {
   .input-group-text {
