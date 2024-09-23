@@ -72,6 +72,9 @@ class DefaultController extends AbstractController
             } else {
                 $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
                 $playings = $playingsPhase1["hydra:member"];
+                usort($playings, function($a,$b) {
+                    return strcmp($a["date"], $b["date"]);
+                });
             }
         }
 
