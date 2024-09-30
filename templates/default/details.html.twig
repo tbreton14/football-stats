@@ -3,10 +3,10 @@
         {{ detail.fullName }}
     </div>
     <div class="details-item">
-        Né le : {{ detail.birthDate | date("d/m/Y") }}
+        Né le : {% if detail.birthDate %} {{ detail.birthDate | date("d/m/Y") }} {% endif %}
     </div>
     <div class="details-item">
-        Poste : {{ detail.poste }}
+        Poste : {{ detail.userPoste }}
     </div>
     <div class="details-item">
         Match joués : {{ detail.nbApparition }} (Saison {{ detail.season }})

@@ -73,10 +73,13 @@ class PlayingUserCrudController extends AbstractCrudController
                 "mapped" => false,
                 "query_builder" => function (UserRepository $er) {
                     return $er->createQueryBuilder('u')
-                        ->leftJoin("u.categories","c")
+                        ->leftJoin("u.categories","uc")
+                        ->leftJoin("uc.category","c")
                         ->leftJoin("u.userPoste","p")
-                        ->andWhere("c.season = :season")
+                        ->andWhere("uc.season = :season")
                         ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
+                        ->andWhere("c.name = :nameCategory")
+                        ->setParameter("nameCategory", "U16")
                         ->orderBy('p.zOrder','asc');
                 }
             ])
@@ -135,10 +138,13 @@ class PlayingUserCrudController extends AbstractCrudController
             AssociationField::new('user', 'Joueurs')->setFormTypeOptions([
                 "query_builder" => function (UserRepository $er) {
                     return $er->createQueryBuilder('u')
-                        ->leftJoin("u.categories","c")
+                        ->leftJoin("u.categories","uc")
+                        ->leftJoin("uc.category","c")
                         ->leftJoin("u.userPoste","p")
-                        ->andWhere("c.season = :season")
+                        ->andWhere("uc.season = :season")
                         ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
+                        ->andWhere("c.name = :nameCategory")
+                        ->setParameter("nameCategory", "U16")
                         ->orderBy('p.zOrder','asc');
                 }
             ]),

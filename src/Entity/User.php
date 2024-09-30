@@ -48,7 +48,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $firstName;
 
     #[Assert\Length(max: 255)]
-    #[ORM\Column(length: 255, nullable: false)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $lastName;
 
     #[Vich\UploadableField(mapping: "profile_pictures", fileNameProperty: "profilePicture")]
