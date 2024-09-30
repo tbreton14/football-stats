@@ -82,7 +82,7 @@ class Playing
 
     public function __toString()
     {
-        return $this->clubDom . "-" . $this->clubExt;
+        return $this->clubDom . "-" . $this->clubExt. "(".$this->competition.")";
     }
 
     /*****************************************************************************************************************

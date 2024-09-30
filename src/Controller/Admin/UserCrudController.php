@@ -63,6 +63,7 @@ class UserCrudController extends AbstractCrudController
             'Milieu' => 'milieu',
             'Attaquant' => 'attaquant',
         ])->renderExpanded();
+        yield AssociationField::new('userPoste', "Poste");
         yield DateField::new('birthDate', 'Date de naissance');
 //        yield AssociationField::new('categories', "Catégorie")->setFormTypeOptions([
 //            'by_reference' => false,

@@ -6,13 +6,12 @@ use App\Entity\Category;
 use App\Entity\CategoryUser;
 use App\Entity\Club;
 use App\Entity\Competition;
-use App\Entity\Coupons;
 use App\Entity\Playing;
 use App\Entity\PlayingUser;
 use App\Entity\User;
+use App\Repository\UserRepository;
 use App\Service\FffApiClient;
 use App\Service\GooglePhotosApi;
-use App\Service\ManaginApiClient;
 use Doctrine\Persistence\ManagerRegistry;
 use http\Env;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -24,7 +23,6 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Uid\Uuid;
-use DOMDocument;
 
 #[Route(
     path: '/',
@@ -50,7 +48,7 @@ class DefaultController extends AbstractController
         $club = $doctrine->getRepository(Club::class)->findAll();
         $category = $doctrine->getRepository(Category::class)->findOneBy(["name" => $categorySelect]);
         $competition = $doctrine->getRepository(Competition::class)->findOneBy(["name" => $competitionSelect,"season"=>$season, "category"=>$category->getId()->toBinary()]);
-        $effectif = $doctrine->getRepository(CategoryUser::class)->findBy(["season"=>$season, "category"=>$category->getId()->toBinary()]);
+        $effectif = $doctrine->getRepository(User::class)->findUsersBySeasonAndCategorie($season, $category->getId()->toBinary());
         $listSeasons = $doctrine->getRepository(Competition::class)->findSeasons();
         $listCategories = $doctrine->getRepository(Competition::class)->findCategoriesBySeason(["season"=>$season]);
         $listCompetition = $doctrine->getRepository(Competition::class)->findBy(["season"=>$season, "category"=>$category->getId()->toBinary()]);
@@ -116,37 +114,37 @@ class DefaultController extends AbstractController
 
         }
 
-        $listJoueurGar = [];
-        $listJoueurDef = [];
-        $listJoueurMil = [];
-        $listJoueurAtt = [];
-
-        $i=0;
-        foreach ($effectif as $joueur) {
-            $userJoueur = $joueur->getUser();
-            if($userJoueur->getPoste() == "gardien") {
-                $listJoueurGar[$i]["id"] = $userJoueur->getId();
-                $listJoueurGar[$i]["fullName"] = $userJoueur->getFullName();
-                $listJoueurGar[$i]["birthDate"] = $userJoueur->getBirthDate();
-                $listJoueurGar[$i]["poste"] = "Gar.";
-            } elseif($userJoueur->getPoste() == "défenseur") {
-                $listJoueurDef[$i]["id"] = $userJoueur->getId();
-                $listJoueurDef[$i]["fullName"] = $userJoueur->getFullName();
-                $listJoueurDef[$i]["birthDate"] = $userJoueur->getBirthDate();
-                $listJoueurDef[$i]["poste"] = "Déf.";
-            } elseif($userJoueur->getPoste() == "milieu") {
-                $listJoueurMil[$i]["id"] = $userJoueur->getId();
-                $listJoueurMil[$i]["fullName"] = $userJoueur->getFullName();
-                $listJoueurMil[$i]["birthDate"] = $userJoueur->getBirthDate();
-                $listJoueurMil[$i]["poste"] = "Mil.";
-            } elseif($userJoueur->getPoste() == "attaquant") {
-                $listJoueurAtt[$i]["id"] = $userJoueur->getId();
-                $listJoueurAtt[$i]["fullName"] = $userJoueur->getFullName();
-                $listJoueurAtt[$i]["birthDate"] = $userJoueur->getBirthDate();
-                $listJoueurAtt[$i]["poste"] = "Att.";
-            }
-            $i++;
-        }
+//        $listJoueurGar = [];
+//        $listJoueurDef = [];
+//        $listJoueurMil = [];
+//        $listJoueurAtt = [];
+//
+//        $i=0;
+//        foreach ($effectif as $joueur) {
+//            $userJoueur = $joueur->getUser();
+//            if($userJoueur->getPoste() == "gardien") {
+//                $listJoueurGar[$i]["id"] = $userJoueur->getId();
+//                $listJoueurGar[$i]["fullName"] = $userJoueur->getFullName();
+//                $listJoueurGar[$i]["birthDate"] = $userJoueur->getBirthDate();
+//                $listJoueurGar[$i]["poste"] = "Gar.";
+//            } elseif($userJoueur->getPoste() == "défenseur") {
+//                $listJoueurDef[$i]["id"] = $userJoueur->getId();
+//                $listJoueurDef[$i]["fullName"] = $userJoueur->getFullName();
+//                $listJoueurDef[$i]["birthDate"] = $userJoueur->getBirthDate();
+//                $listJoueurDef[$i]["poste"] = "Déf.";
+//            } elseif($userJoueur->getPoste() == "milieu") {
+//                $listJoueurMil[$i]["id"] = $userJoueur->getId();
+//                $listJoueurMil[$i]["fullName"] = $userJoueur->getFullName();
+//                $listJoueurMil[$i]["birthDate"] = $userJoueur->getBirthDate();
+//                $listJoueurMil[$i]["poste"] = "Mil.";
+//            } elseif($userJoueur->getPoste() == "attaquant") {
+//                $listJoueurAtt[$i]["id"] = $userJoueur->getId();
+//                $listJoueurAtt[$i]["fullName"] = $userJoueur->getFullName();
+//                $listJoueurAtt[$i]["birthDate"] = $userJoueur->getBirthDate();
+//                $listJoueurAtt[$i]["poste"] = "Att.";
+//            }
+//            $i++;
+//        }
 
         $key_values = array_column($listButeurs, 'nbButs');
         array_multisort($key_values, SORT_DESC, $listButeurs);
@@ -162,11 +160,12 @@ class DefaultController extends AbstractController
         }
 
         return $this->render('default/index.html.twig', [
-            "nbTotalJoueur" => count($listJoueurGar)+count($listJoueurDef)+count($listJoueurMil)+count($listJoueurAtt),
-            "listJoueurGar" => $listJoueurGar,
-            "listJoueurDef" => $listJoueurDef,
-            "listJoueurMil" => $listJoueurMil,
-            "listJoueurAtt" => $listJoueurAtt,
+            "nbTotalJoueur" => count($effectif),
+            "effectif" => $effectif,
+//            "listJoueurGar" => $listJoueurGar,
+//            "listJoueurDef" => $listJoueurDef,
+//            "listJoueurMil" => $listJoueurMil,
+//            "listJoueurAtt" => $listJoueurAtt,
             "listButeurs" => $listButeurs,
             "listPasseurs" => $listPasseurs,
             "listSeasons" => $listSeasons,

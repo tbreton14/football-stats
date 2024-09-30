@@ -8,6 +8,7 @@ use App\Entity\Club;
 use App\Entity\Competition;
 use App\Entity\Playing;
 use App\Entity\PlayingUser;
+use App\Entity\Poste;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
@@ -105,6 +106,7 @@ class DashboardController extends AbstractDashboardController
             MenuItem::section('Paramètres / Listes'),
             MenuItem::linkToCrud('Clubs', 'fas fa-building', Club::class),
             MenuItem::linkToCrud('Catégories', 'fas fa-list', Category::class),
+            MenuItem::linkToCrud('Postes', 'fas fa-list', Poste::class),
             MenuItem::linkToCrud('Championnats', 'fas fa-list', Competition::class),
             MenuItem::linkToCrud('Joueurs', 'fas fa-users', User::class),
             MenuItem::linkToCrud('Joueurs-Catégorie', 'fas fa-users-gear', CategoryUser::class),

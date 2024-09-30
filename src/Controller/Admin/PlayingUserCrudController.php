@@ -5,7 +5,9 @@ namespace App\Controller\Admin;
 use App\Entity\Playing;
 use App\Entity\PlayingUser;
 use App\Entity\User;
+use App\Repository\PlayingRepository;
 use App\Repository\UserRepository;
+use App\Repository\ZquestionRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action as EasyAdminAction;
@@ -68,12 +70,28 @@ class PlayingUserCrudController extends AbstractCrudController
                 "multiple" => true,
                 "expanded" => true,
                 "label" => "Liste des joueurs",
-                "mapped" => false
+                "mapped" => false,
+                "query_builder" => function (UserRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->leftJoin("u.categories","c")
+                        ->leftJoin("u.userPoste","p")
+                        ->andWhere("c.season = :season")
+                        ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
+                        ->orderBy('p.zOrder','asc');
+                }
             ])
             ->add('playing', EntityType::class, [
                 "class" => Playing::class,
                 "label" => "Liste des rencontres",
-                "mapped" => false
+                "mapped" => false,
+                "query_builder" => function (PlayingRepository $er) {
+                    return $er->createQueryBuilder('pl')
+                        ->leftJoin("pl.competition","c")
+                        ->andWhere("c.season = :season")
+                        ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
+                        ->orderBy('c.name','asc')
+                        ->addOrderBy('pl.datePlaying','asc');
+                }
             ])
             ->getForm();
 
@@ -114,8 +132,26 @@ class PlayingUserCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
-            AssociationField::new('user', 'Joueurs'),
-            AssociationField::new('playing', 'Rencontres'),
+            AssociationField::new('user', 'Joueurs')->setFormTypeOptions([
+                "query_builder" => function (UserRepository $er) {
+                    return $er->createQueryBuilder('u')
+                        ->leftJoin("u.categories","c")
+                        ->leftJoin("u.userPoste","p")
+                        ->andWhere("c.season = :season")
+                        ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
+                        ->orderBy('p.zOrder','asc');
+                }
+            ]),
+            AssociationField::new('playing', 'Rencontres')->setFormTypeOptions([
+                "query_builder" => function (PlayingRepository $er) {
+                    return $er->createQueryBuilder('pl')
+                        ->leftJoin("pl.competition","c")
+                        ->andWhere("c.season = :season")
+                        ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
+                        ->orderBy('c.name','asc')
+                        ->addOrderBy('pl.datePlaying','asc');
+                }
+            ]),
             IntegerField::new('nbButs', 'Nombre de buts'),
             IntegerField::new('nbPassD', 'Nombre de passe déc.'),
             IntegerField::new('nbCartonJ', 'Carton jaune'),

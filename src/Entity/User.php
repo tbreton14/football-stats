@@ -77,6 +77,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: PlayingUser::class)]
     private $playingsUser;
 
+    #[ORM\ManyToOne(inversedBy: 'users')]
+    #[ORM\JoinColumn("poste_id", nullable: true)]
+    private ?Poste $userPoste = null;
+
     public function __construct()
     {
         $this->categories = new ArrayCollection();
@@ -276,5 +280,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getFullNameUpper() {
         return ucfirst(strtolower($this->firstName))." ".strtoupper($this->lastName);
     }
+
+    public function getUserPoste(): ?Poste
+    {
+        return $this->userPoste;
+    }
+
+    public function setUserPoste(?Poste $userPoste): void
+    {
+        $this->userPoste = $userPoste;
+    }
+
+
 
 }

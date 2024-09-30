@@ -295,34 +295,43 @@
                                 <th>Poste</th>
                             </thead>
                             <tbody>
-                                {% for g in listJoueurGar %}
-                                    <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>
-                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':g.id }) }}?season=__season__">{{ g.fullName }}</a></td>
-                                        <td>{{ g.birthDate | date('d/m/Y') }}</td>
-                                        <td>{{ g.poste }}</td>
-                                    </tr>
-                                {% endfor %}
-                                {% for d in listJoueurDef %}
-                                    <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>
-                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':d.id}) }}?season=__season__">{{ d.fullName }}</a></td>
-                                        <td>{{ d.birthDate | date('d/m/Y') }}</td>
-                                        <td>{{ d.poste }}</td>
-                                    </tr>
-                                {% endfor %}
-                                {% for m in listJoueurMil %}
-                                    <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>
-                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':m.id}) }}?season=__season__">{{ m.fullName }}</a></td>
-                                        <td>{{ m.birthDate | date('d/m/Y') }}</td>
-                                        <td>{{ m.poste }}</td>
-                                    </tr>
-                                {% endfor %}
-                                {% for a in listJoueurAtt %}
-                                    <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>
-                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':a.id}) }}?season=__season__">{{ a.fullName }}</a></td>
-                                        <td>{{ a.birthDate | date('d/m/Y') }}</td>
-                                        <td>{{ a.poste }}</td>
-                                    </tr>
-                                {% endfor %}
+                            {% set poste = null%}
+                            {% for joueur in effectif %}
+                                <tr {% if poste != joueur.userPoste and poste != null %} style="border-top: 2px solid #C5C5C5;" {% endif %}>
+                                    <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':joueur.id }) }}?season=__season__">{{ joueur.fullName }}</a></td>
+                                    <td>{{ joueur.birthDate | date('d/m/Y') }}</td>
+                                    <td>{{ joueur.userPoste }}</td>
+                                </tr>
+                                {% set poste = joueur.userPoste %}
+                            {% endfor %}
+{#                                {% for g in listJoueurGar %}#}
+{#                                    <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>#}
+{#                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':g.id }) }}?season=__season__">{{ g.fullName }}</a></td>#}
+{#                                        <td>{{ g.birthDate | date('d/m/Y') }}</td>#}
+{#                                        <td>{{ g.poste }}</td>#}
+{#                                    </tr>#}
+{#                                {% endfor %}#}
+{#                                {% for d in listJoueurDef %}#}
+{#                                    <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>#}
+{#                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':d.id}) }}?season=__season__">{{ d.fullName }}</a></td>#}
+{#                                        <td>{{ d.birthDate | date('d/m/Y') }}</td>#}
+{#                                        <td>{{ d.poste }}</td>#}
+{#                                    </tr>#}
+{#                                {% endfor %}#}
+{#                                {% for m in listJoueurMil %}#}
+{#                                    <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>#}
+{#                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':m.id}) }}?season=__season__">{{ m.fullName }}</a></td>#}
+{#                                        <td>{{ m.birthDate | date('d/m/Y') }}</td>#}
+{#                                        <td>{{ m.poste }}</td>#}
+{#                                    </tr>#}
+{#                                {% endfor %}#}
+{#                                {% for a in listJoueurAtt %}#}
+{#                                    <tr {% if loop.last %} style="border-bottom: 2px solid #C5C5C5;" {% endif %}>#}
+{#                                        <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':a.id}) }}?season=__season__">{{ a.fullName }}</a></td>#}
+{#                                        <td>{{ a.birthDate | date('d/m/Y') }}</td>#}
+{#                                        <td>{{ a.poste }}</td>#}
+{#                                    </tr>#}
+{#                                {% endfor %}#}
                             </tbody>
                         </table>
                     </div>

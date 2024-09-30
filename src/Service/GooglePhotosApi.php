@@ -60,15 +60,20 @@ class GooglePhotosApi
             }
             $token = $this->client->fetchAccessTokenWithRefreshToken($refreshToken);
             if (!empty($token["error"])) {
-                throw new BadRequestHttpException("Error while refreshing token, refresh token is probably invalid");
+                return false;
+//                throw new BadRequestHttpException("Error while refreshing token, refresh token is probably invalid");
             }
             $item->expiresAfter($token["expires_in"] - 100);
             return $token["access_token"];
         });
     }
 
-    private function getGooglePhotoClient(): PhotosLibraryClient
+    private function getGooglePhotoClient()
     {
+        if(!$this->getAccessTokenFromCache()) {
+            return false;
+        }
+
         return new PhotosLibraryClient([
             "credentials" => new UserRefreshCredentials($this->client->getScopes(), [
                 "client_id" => $this->client->getClientId(),
@@ -96,8 +101,13 @@ class GooglePhotosApi
         return $customArray;
     }
 
-    public function getPhotosInAlbum(string $albumId): array
+    public function getPhotosInAlbum(string $albumId)
     {
+
+        if(!$this->getGooglePhotoClient()) {
+            return false;
+        }
+
         $response = $this->getGooglePhotoClient()->searchMediaItems([
             "albumId" => $albumId,
             "pageSize" => 100
