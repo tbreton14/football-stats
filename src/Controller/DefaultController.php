@@ -224,6 +224,10 @@ class DefaultController extends AbstractController
             $photos = $googlePhotosApiService->getPhotosInAlbum($albumGoogleId);
         }
 
+        if($categorySelect == "VETERAN") {
+            $listPasseurs=[];
+        }
+
         return $this->render('default/index.html.twig', [
             "nbTotalJoueur" => count($effectif),
             "effectif" => $effectif,
