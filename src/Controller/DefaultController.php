@@ -52,7 +52,7 @@ class DefaultController extends AbstractController
 
         $club = $doctrine->getRepository(Club::class)->findAll();
         $category = $doctrine->getRepository(Category::class)->findOneBy(["name" => $categorySelect]);
-        $competition = $doctrine->getRepository(Competition::class)->findOneBy(["name" => $competitionSelect,"season"=>$season, "category"=>$category->getId()->toBinary()]);
+        $competition = $doctrine->getRepository(Competition::class)->findOneBy(["name" => $competitionSelect,"seasonx"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
         $categoryUser = $doctrine->getRepository(CategoryUser::class)->findUsersBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category->getId()->toBinary());
         $effectif = $categoryUser[0]->getUsers();
         $listSeasons = $doctrine->getRepository(Season::class)->findBy([],['label'=>'DESC']);
