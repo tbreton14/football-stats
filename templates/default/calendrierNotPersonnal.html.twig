@@ -17,7 +17,7 @@
                         </span>
                         <span class="playing-club-title">{{ otherPlaying.clubDom }}</span>
                     </div>
-                    <div class="col playing-score d-flex align-items-center justify-content-center">
+                    <div class="col playing-score d-flex align-items-center justify-content-center cursor-pointer" data-bs-toggle="collapse" href="#collapse-playing-{{ otherPlaying.id }}">
                         {%  if otherPlaying.isReport %}
                             <span class="text-uppercase">reporté</span>
                         {% else %}
@@ -39,6 +39,103 @@
                 </div>
             </div>
         </div>
+
+        {% if season | slice(0, 4) >= 2024 %}
+            <div class="col-12 collapse mt-2" id="collapse-playing-{{ otherPlaying.id }}">
+
+                {% set listB = [] %}
+                {% set listCJ = [] %}
+                {% set listCR = [] %}
+                {% for puser in otherPlaying.playingUser %}
+                    {% if puser.nbButs > 0 %}
+                        {% for i in 1..puser.nbButs %}
+                            {% set listB = listB|merge([puser.user.getFullName()]   ) %}
+                        {% endfor %}
+                    {% endif%}
+                    {% if puser.nbCartonJ > 0 %}
+                        {% set listCJ = listCJ|merge([puser.user.getFullName()]   ) %}
+                    {% endif%}
+                    {% if puser.nbCartonR > 0 %}
+                        {% set listCR = listCR|merge([puser.user.getFullName()]   ) %}
+                    {% endif%}
+                {% endfor %}
+
+                <div class="row playing-details">
+                    {% if otherPlaying.clubDom | upper == "USON MONDEVILLE" %}
+                        <div class="col d-flex flex-column align-items-end justify-content-end">
+                            {% if otherPlaying.nbButCsc %}
+                                {% for i in 1..otherPlaying.nbButCsc %}
+                                    <div class="d-flex align-items-center playing-buteur-item">
+                                        <span>csc</span>
+                                        <img src="{{ asset('images/ico_but.svg') }}" class="ms-2">
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            {% for lb in listB %}
+                                <div class="d-flex align-items-center playing-buteur-item">
+                                    <span>{{ lb }}</span>
+                                    <img src="{{ asset('images/ico_but.svg') }}" class="ms-2">
+                                </div>
+                            {% endfor %}
+                            {% for cj in listCJ %}
+                                <div class="d-flex align-items-center">
+                                    <span>{{ cj }}</span>
+                                    <img src="{{ asset('images/ico_carton_jaune.svg') }}" class="ms-2">
+                                </div>
+                            {% endfor %}
+                            {% for cr in listCR %}
+                                <div class="d-flex align-items-center">
+                                    <span>{{ cr }}</span>
+                                    <img src="{{ asset('images/ico_carton_jaune.svg') }}" class="ms-2">
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col"></div>
+                    {% else %}
+                        <div class="col"></div>
+                        <div class="col">
+                            {% if otherPlaying.nbButCsc %}
+                                {% for i in 1..otherPlaying.nbButCsc %}
+                                    <div class="d-flex align-items-center playing-buteur-item">
+                                        <img src="{{ asset('images/ico_but.svg') }}" class="me-2">
+                                        <span>csc</span>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            {% for buteur in listB %}
+                                <div class="d-flex align-items-center playing-buteur-item">
+                                    <img src="{{ asset('images/ico_but.svg') }}" class="me-2">
+                                    <span>{{ buteur }}</span>
+                                </div>
+                            {% endfor %}
+                            {% for cj in listCJ %}
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ asset('images/ico_carton_jaune.svg') }}" class="me-2">
+                                    <span>{{ cj }}</span>
+                                </div>
+                            {% endfor %}
+                            {% for cr in listCR %}
+                                <div class="d-flex align-items-center">
+                                    <img src="{{ asset('images/ico_carton_rouge.svg') }}" class="me-2">
+                                    <span>{{ cr }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="row mt-3 playing-compo">
+                        <div>
+                            <b>Compositions :</b>
+                            {% for puser in otherPlaying.playingUser %}
+                                {{ puser.user.firstName | capitalize }} {{ puser.user.lastName | slice(0,1) | upper }}.,
+                            {% endfor %}
+                            {% if otherPlaying.externalPlayer %}
+                                {{ otherPlaying.externalPlayer }}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     {% endfor %}
 {% endif %}
 
