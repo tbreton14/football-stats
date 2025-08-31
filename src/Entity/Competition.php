@@ -77,7 +77,7 @@ class Competition
 
     public function __toString()
     {
-        return $this->name." (".$this->season.")";
+        return $this->name." (".$this->seasonx.")";
     }
 
     /*****************************************************************************************************************
