@@ -77,32 +77,34 @@ class DefaultController extends AbstractController
 
                 $playings = array_merge($playingsPhase1, $playingsPhase2);
             } else {
-                $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
-                $playings = $playingsPhase1["hydra:member"];
-                usort($playings, function($a,$b) {
-                    return strcmp($a["date"], $b["date"]);
-                });
+                if($competition->getCodeCompetition()) {
+                    $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
+                    $playings = $playingsPhase1["hydra:member"];
+                    usort($playings, function ($a, $b) {
+                        return strcmp($a["date"], $b["date"]);
+                    });
 
-                //Ajout des scorers et de la composition
-                foreach($playings as $key => $playing) {
-                    $i=0;
-                    $playings[$key]["scorers"]=[];
-                    $playings[$key]["compo"]=[];
-                    foreach($scorers as $scorer) {
-                        if($scorer->getIdPlaying() == $playing["ma_no"]) {
-                            for($j=1; $j<=$scorer->getNbGoal(); $j++) {
-                                $playings[$key]["scorers"][$i] = $scorer->getUser()->getFullName();
-                                $i++;
+                    //Ajout des scorers et de la composition
+                    foreach ($playings as $key => $playing) {
+                        $i = 0;
+                        $playings[$key]["scorers"] = [];
+                        $playings[$key]["compo"] = [];
+                        foreach ($scorers as $scorer) {
+                            if ($scorer->getIdPlaying() == $playing["ma_no"]) {
+                                for ($j = 1; $j <= $scorer->getNbGoal(); $j++) {
+                                    $playings[$key]["scorers"][$i] = $scorer->getUser()->getFullName();
+                                    $i++;
+                                }
                             }
                         }
-                    }
 
-                    foreach($summons as $summon) {
-                        if($summon->getIdPlaying() == $playing["ma_no"]) {
-                            $j=0;
-                            foreach ($summon->getUsers() as $user) {
-                                $playings[$key]["compo"][$j] = $user->getFullName();
-                                $j++;
+                        foreach ($summons as $summon) {
+                            if ($summon->getIdPlaying() == $playing["ma_no"]) {
+                                $j = 0;
+                                foreach ($summon->getUsers() as $user) {
+                                    $playings[$key]["compo"][$j] = $user->getFullName();
+                                    $j++;
+                                }
                             }
                         }
                     }
