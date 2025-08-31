@@ -369,7 +369,8 @@ class PlayingUserCrudController extends AbstractCrudController
                 "query_builder" => function (PlayingRepository $er) {
                     return $er->createQueryBuilder('pl')
                         ->leftJoin("pl.competition","c")
-                        ->andWhere("c.seasonx = :season")
+                        ->leftJoin("c.seasonx","s")
+                        ->andWhere("s.label = :season")
                         ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
                         ->orderBy('c.name','asc')
                         ->addOrderBy('pl.datePlaying','asc');
