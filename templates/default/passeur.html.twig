@@ -1,0 +1,26 @@
+<div class="content-block mb-3">
+    <div class="content-block-header">
+        Passeurs
+    </div>
+    <div class="content-block-body content-block-body-fixHeight">
+        <table class="table">
+            <thead>
+            <th>Joueur</th>
+            <th>passes</th>
+            <th>mat.</th>
+            <th>rat.</th>
+            </thead>
+            <tbody>
+            {% for passeur in listPasseurs %}
+                {% set ratio = passeur["nbPassD"]/passeur["nbPlaying"] %}
+                <tr>
+                    <td>{{ passeur["fullName"] }}</td>
+                    <td>{{ passeur["nbPassD"] }}</td>
+                    <td>{{ passeur["nbPlaying"] }}</td>
+                    <td>{{ ratio|round(1) }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

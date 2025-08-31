@@ -8,8 +8,8 @@
             <div class="col-12 d-flex align-items-center justify-content-center mb-3">
                 <div>
                     <select class="form-select" id="seasonChoice" v-on:change="changeSeason" data-href="{{ path('ajax_app_season') }}">
-                        {% for season in listSeasons %}
-                            <option value="{{ season["season"] }}" {% if app.request.get('season') == season["season"] %} selected {% endif %}>{{ season["season"] }}</option>
+                        {% for seasonx in listSeasons %}
+                            <option value="{{ seasonx.label }}" {% if app.request.get('season') == seasonx.id or season == seasonx.label %} selected {% endif %}>{{ seasonx.label }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -17,7 +17,7 @@
                 <div class="mx-3">
                     <select class="form-select" id="categoryChoice" v-on:change="changeCategory" data-href="{{ path('ajax_app_category') }}">
                         {% for category in listCategories %}
-                            <option value="{{ category.name }}" {% if app.request.get('category') == category.name %} selected {% endif %}>{{ category.name }}</option>
+                            <option value="{{ category.name }}" {% if app.request.get('category') == category.name or categorySelect == category.name %} selected {% endif %}>{{ category.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -25,7 +25,7 @@
                 <div>
                     <select class="form-select" id="competitionChoice" v-on:change="changeCompetition" data-href="{{ path('app_home') }}">
                         {% for competition in listCompetition %}
-                            <option value="{{ competition.name }}" {% if app.request.get('competition') == competition.name %} selected {% endif %}>{{ competition.name }}</option>
+                            <option value="{{ competition.name }}" {% if app.request.get('competition') == competition.name or competitionSelect == competition.name %} selected {% endif %}>{{ competition.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -42,280 +42,24 @@
 
                         {% if not playingsPersonnal %}
 
-                        {% if otherPlayings %}
-                            {% for otherPlaying in otherPlayings %}
-                                <div class="playing row">
-                                    <div class="col-12 d-flex align-items-center justify-content-center mb-4 mt-2">
-                                        {{ otherPlaying.datePlaying | date("l j F Y") | format_date('full',locale='fr') }} -
-                                        {% if otherPlaying.amical %} - (<b>MATCH AMICAL</b>) {% endif %}
-                                    </div>
-                                    <div class="col-12">
-                                        <div class="row">
-                                            <div class="col playing-club playing-club-dom d-flex align-items-center">
-                                                    <span class="me-2">
-                                                        {% if 'https' in otherPlaying.logoClubDom %}
-                                                            <img src="{{ otherPlaying.logoClubDom }}">
-                                                        {% else %}
-                                                            <img src="{{ asset('images/'~otherPlaying.logoClubDom) }}">
-                                                        {% endif %}
-                                                    </span>
-                                                <span class="playing-club-title">{{ otherPlaying.clubDom }}</span>
-                                            </div>
-                                            <div class="col playing-score d-flex align-items-center justify-content-center">
-                                                {%  if otherPlaying.isReport %}
-                                                    <span class="text-uppercase">reporté</span>
-                                                {% else %}
-                                                    <span>{{ otherPlaying.scoreDom }}</span>
-                                                    <span class="me-2 ms-2">-</span>
-                                                    <span>{{ otherPlaying.scoreExt }}</span>
-                                                {% endif %}
-                                            </div>
-                                            <div class="col playing-club playing-club-ext d-flex align-items-center justify-content-end">
-                                                <span class="playing-club-title">{{ otherPlaying.clubExt }}</span>
-                                                <span class="ms-2">
-                                                        {% if 'https' in otherPlaying.logoClubExt %}
-                                                            <img src="{{ otherPlaying.logoClubExt }}">
-                                                        {% else %}
-                                                            <img src="{{ asset('images/'~otherPlaying.logoClubExt) }}">
-                                                        {% endif %}
-                                                    </span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        {% endif %}
-
-                        {% for cal in playings %}
-                        <div class="playing row">
-                            <div class="col-12 d-flex align-items-center justify-content-center mb-4 mt-2">
-                                {{ cal["date"] | format_datetime('full', 'none', locale='fr') }}
-                                {% if cal["poule_journee"]["number"] %}
-                                    <a class="result-journey ms-4" v-on:click="showResultatJournee" href="#" data-numj="{{ cal["poule_journee"]["number"] }}" data-href="{{ path("ajax_app_resultat_journee", {"idCompetition":idCompetition,"numJ":cal["poule_journee"]["number"]}) }}"><i class="fa-solid fa-calendar-week"></i></a>
-                                {% endif %}
-                            </div>
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col playing-club playing-club-dom d-flex align-items-center">
-                                    {% if cal["home"] is null %}
-                                        <div class="calendrier-equipe-name">
-                                            EXEMPT
-                                        </div>
-                                    {% else %}
-                                        <span class="me-2">
-                                            <img src="{{ cal["home"]["club"]["logo"] }}" />
-                                        </span>
-                                        <span class="playing-club-title">
-                                            {{ cal["home"]["short_name"] }}
-                                        </span>
-                                    {% endif %}
-                                    </div>
-                                    <div class="col playing-score d-flex align-items-center justify-content-center">
-                                            <span>{{ cal["home_score"] }}</span>
-                                            <span class="me-2 ms-2">-</span>
-                                            <span>{{ cal["away_score"] }}</span>
-                                    </div>
-
-                                    <div class="col playing-club playing-club-ext d-flex align-items-center justify-content-end">
-                                    {% if cal["away"] is null %}
-                                        <div class="calendrier-equipe-name">
-                                            EXEMPT
-                                        </div>
-                                    {% else %}
-                                        <div class="playing-club-title">
-                                            {{ cal["away"]["short_name"] }}
-                                        </div>
-                                        <div class="calendrier-logo ps-1">
-                                            <img src="{{ cal["away"]["club"]["logo"] }}" />
-                                        </div>
-                                    {% endif %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        {% endfor %}
+                            {% include 'default/calendrierNotPersonnal.html.twig' %}
 
                         {% else %}
 
-                        {% for playing in playings %}
-                            <div class="playing row">
-                                <div class="col-12 d-flex align-items-center justify-content-center mb-4 mt-2">
-                                    {{ playing.datePlaying | date("l j F Y") | format_date('full',locale='fr') }}
-                                    {% if playing.amical %} - (<b>MATCH AMICAL</b>) {% endif %}
-                                    {% if playing.numJourney %}
-                                        <a class="result-journey ms-4" v-on:click="showResultatJournee" href="#" data-numj="{{ playing.numJourney }}" data-href="{{ path("ajax_app_resultat_journee", {"idCompetition":idCompetition,"numJ":playing.numJourney}) }}"><i class="fa-solid fa-calendar-week"></i></a>
-                                    {% endif %}
-                                </div>
-                                <div class="col-12">
-                                    <div class="row">
-                                        <div class="col playing-club playing-club-dom d-flex align-items-center">
-                                            <span class="me-2">
-                                                {% if 'https' in playing.logoClubDom %}
-                                                    <img src="{{ playing.logoClubDom }}">
-                                                {% else %}
-                                                    <img src="{{ asset('images/'~playing.logoClubDom) }}">
-                                                {% endif %}
-                                            </span>
-                                            <span class="playing-club-title">{{ playing.clubDom }}</span>
-                                        </div>
-                                        <div class="col playing-score d-flex align-items-center justify-content-center cursor-pointer" data-bs-toggle="collapse" href="#collapse-playing-{{ playing.id }}">
-                                            {%  if playing.isReport %}
-                                                <span class="text-uppercase">reporté</span>
-                                            {% else %}
-                                            <span>{{ playing.scoreDom }}</span>
-                                            <span class="me-2 ms-2">-</span>
-                                            <span>{{ playing.scoreExt }}</span>
-                                            {% endif %}
-                                        </div>
-                                        <div class="col playing-club playing-club-ext d-flex align-items-center justify-content-end">
-                                            <span class="playing-club-title">{{ playing.clubExt }}</span>
-                                            <span class="ms-2">
-                                                {% if 'https' in playing.logoClubExt %}
-                                                    <img src="{{ playing.logoClubExt }}">
-                                                {% else %}
-                                                    <img src="{{ asset('images/'~playing.logoClubExt) }}">
-                                                {% endif %}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-12 collapse mt-2" id="collapse-playing-{{ playing.id }}">
-
-                                    {% set listB = [] %}
-                                    {% set listCJ = [] %}
-                                    {% set listCR = [] %}
-                                    {% for puser in playing.playingUser %}
-                                        {% if puser.nbButs > 0 %}
-                                            {% for i in 1..puser.nbButs %}
-                                                {% set listB = listB|merge([puser.user.getFullName()]   ) %}
-                                            {% endfor %}
-                                        {% endif%}
-                                        {% if puser.nbCartonJ > 0 %}
-                                            {% set listCJ = listCJ|merge([puser.user.getFullName()]   ) %}
-                                        {% endif%}
-                                        {% if puser.nbCartonR > 0 %}
-                                            {% set listCR = listCR|merge([puser.user.getFullName()]   ) %}
-                                        {% endif%}
-                                    {% endfor %}
-
-                                    <div class="row playing-details">
-                                    {% if playing.clubDom | upper == "USON MONDEVILLE" %}
-                                        <div class="col d-flex flex-column align-items-end justify-content-end">
-                                            {% if playing.nbButCsc %}
-                                            {% for i in 1..playing.nbButCsc %}
-                                                <div class="d-flex align-items-center playing-buteur-item">
-                                                    <span>csc</span>
-                                                    <img src="{{ asset('images/ico_but.svg') }}" class="ms-2">
-                                                </div>
-                                            {% endfor %}
-                                            {% endif %}
-                                            {% for lb in listB %}
-                                                <div class="d-flex align-items-center playing-buteur-item">
-                                                    <span>{{ lb }}</span>
-                                                    <img src="{{ asset('images/ico_but.svg') }}" class="ms-2">
-                                                </div>
-                                            {% endfor %}
-                                            {% for cj in listCJ %}
-                                                <div class="d-flex align-items-center">
-                                                    <span>{{ cj }}</span>
-                                                    <img src="{{ asset('images/ico_carton_jaune.svg') }}" class="ms-2">
-                                                </div>
-                                            {% endfor %}
-                                            {% for cr in listCR %}
-                                                <div class="d-flex align-items-center">
-                                                    <span>{{ cr }}</span>
-                                                    <img src="{{ asset('images/ico_carton_jaune.svg') }}" class="ms-2">
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                        <div class="col"></div>
-                                    {% else %}
-                                        <div class="col"></div>
-                                        <div class="col">
-                                            {% if playing.nbButCsc %}
-                                            {% for i in 1..playing.nbButCsc %}
-                                                <div class="d-flex align-items-center playing-buteur-item">
-                                                    <img src="{{ asset('images/ico_but.svg') }}" class="me-2">
-                                                    <span>csc</span>
-                                                </div>
-                                            {% endfor %}
-                                            {% endif %}
-                                            {% for buteur in listB %}
-                                                <div class="d-flex align-items-center playing-buteur-item">
-                                                    <img src="{{ asset('images/ico_but.svg') }}" class="me-2">
-                                                    <span>{{ buteur }}</span>
-                                                </div>
-                                            {% endfor %}
-                                            {% for cj in listCJ %}
-                                                <div class="d-flex align-items-center">
-                                                    <img src="{{ asset('images/ico_carton_jaune.svg') }}" class="me-2">
-                                                    <span>{{ cj }}</span>
-                                                </div>
-                                            {% endfor %}
-                                            {% for cr in listCR %}
-                                                <div class="d-flex align-items-center">
-                                                    <img src="{{ asset('images/ico_carton_rouge.svg') }}" class="me-2">
-                                                    <span>{{ cr }}</span>
-                                                </div>
-                                            {% endfor %}
-                                        </div>
-                                    {% endif %}
-                                        <div class="row mt-3 playing-compo">
-                                            <div>
-                                            <b>Compositions :</b>
-                                            {% for puser in playing.playingUser %}
-                                                {{ puser.user.firstName | capitalize }} {{ puser.user.lastName | slice(0,1) | upper }}.,
-                                            {% endfor %}
-                                            {% if playing.externalPlayer %}
-                                                {{ playing.externalPlayer }}
-                                            {% endif %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        {% endfor %}
+                            {% include 'default/calendrierPersonnal.html.twig' %}
 
                         {% endif %}
                     </div>
                 </div>
                 </div>
             </div>
+
             <div class="col-12 col-sm-7">
+
                 {% if effectif | length > 0 %}
-                <div class="content-block mb-3">
-                    <div class="content-block-header">
-                        <span v-if="seeUserDetails==false">Effectifs {{ effectifCategorie }} {% if nbTotalJoueur is defined %}({{ nbTotalJoueur }}) {% endif %}</span>
-                        <span v-if="seeUserDetails==true">Fiche joueur</span>
-                    </div>
-                    <div class="content-block-body" v-if="seeUserDetails==false">
-                        <table class="table table-responsive">
-                            <thead>
-                                <th>Joueur</th>
-                                <th>Né le</th>
-                                <th>Poste</th>
-                            </thead>
-                            <tbody>
-                            {% set poste = null%}
-                            {% for joueur in effectif %}
-                                <tr {% if poste != joueur.userPoste and poste != null %} style="border-top: 2px solid #C5C5C5;" {% endif %}>
-                                    <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':joueur.id }) }}?season=__season__">{{ joueur.fullName }}</a></td>
-                                    <td>{% if joueur.birthDate %} {{ joueur.birthDate | date('d/m/Y') }} {% endif %}</td>
-                                    <td>{{ joueur.userPoste }}</td>
-                                </tr>
-                                {% set poste = joueur.userPoste %}
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="content-block-body" v-if="seeUserDetails==true">
-                        <div class="mb-3">
-                            <a href="#" @click="returnToList">Retour</a>
-                        </div>
-                        <div id="detail-content-block-body" class="row"></div>
-                    </div>
-                </div>
+                    {% include 'default/effectif.html.twig' %}
                 {% endif %}
+
                 <div class="content-block mb-3">
                     <div class="content-block-header d-flex align-items-center justify-content-between">
                         <span>Classement</span>
@@ -370,88 +114,20 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-12 col-sm-5">
                 {% if effectif | length > 0 %}
-                <div class="content-block mb-3">
-                    <div class="content-block-header">
-                        Buteurs
-                    </div>
-                    <div class="content-block-body content-block-body-fixHeight">
-                        <table class="table">
-                            <thead>
-                                <th>Joueur</th>
-                                <th>buts</th>
-                                <th>mat.</th>
-                                <th>rat.</th>
-                            </thead>
-                            <tbody>
-                                {% for buteur in listButeurs %}
-                                    {% set ratio = buteur["nbButs"]/buteur["nbPlaying"] %}
-                                    <tr>
-                                        <td>{{ buteur["fullName"] }}</td>
-                                        <td>{{ buteur["nbButs"] }}</td>
-                                        <td>{{ buteur["nbPlaying"] }}</td>
-                                        <td>{{ ratio|round(1) }}</td>
-                                    </tr>
-                                {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
 
-                <div class="content-block mb-3">
-                    <div class="content-block-header">
-                        Passeurs
-                    </div>
-                    <div class="content-block-body content-block-body-fixHeight">
-                        <table class="table">
-                            <thead>
-                            <th>Joueur</th>
-                            <th>passes</th>
-                            <th>mat.</th>
-                            <th>rat.</th>
-                            </thead>
-                            <tbody>
-                            {% for passeur in listPasseurs %}
-                                {% set ratio = passeur["nbPassD"]/passeur["nbPlaying"] %}
-                                <tr>
-                                    <td>{{ passeur["fullName"] }}</td>
-                                    <td>{{ passeur["nbPassD"] }}</td>
-                                    <td>{{ passeur["nbPlaying"] }}</td>
-                                    <td>{{ ratio|round(1) }}</td>
-                                </tr>
-                            {% endfor %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                    {% include 'default/buteur.html.twig' %}
+
+                    {% if listPasseurs | length > 0 %}
+                        {% include 'default/passeur.html.twig' %}
+                    {% endif %}
                 {% endif %}
             </div>
+
             {% if photos | length > 0 %}
-            <div class="col-12">
-                <div class="content-block mb-3">
-                    <div class="content-block-header">
-                        Gallerie
-                    </div>
-                    <div class="content-block-body">
-                        <div class="row" id="googlePhoto-list">
-                        {% for photo in photos %}
-                            <div class="col-6 col-lg-4">
-                                {% if photo.mime_type == "image/jpeg" or photo.mime_type == "image/png" or photo.mime_type == "image/gif" %}
-                                    <a class="linkGooglePhoto" href="{{ photo.base_url }}" data-fslightbox="gallery" data-type="image">
-                                        <img src="{{ photo.base_url }}" class="w-100 mb-2 img-google" />
-                                    </a>
-                                {% else %}
-                                    <a class="linkGooglePhoto" href="{{ photo.base_url }}=dv" data-fslightbox="gallery" data-type="video">
-                                        <video controls class="w-100 mb-2"><source src="{{ photo.base_url }}=dv" type="{{ photo.mime_type }}"></video>
-                                    </a>
-                                {% endif %}
-                            </div>
-                        {% endfor %}
-                        </div>
-                    </div>
-                </div>
-            </div>
+                {% include 'default/gallerie.html.twig' %}
             {% endif %}
 
             <div class="modal modal-xl" tabindex="-1" role="dialog" id="modal-result-journey">

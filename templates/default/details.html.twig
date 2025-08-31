@@ -6,7 +6,7 @@
         Né le : {% if detail.birthDate %} {{ detail.birthDate | date("d/m/Y") }} {% endif %}
     </div>
     <div class="details-item">
-        Poste : {{ detail.userPoste }}
+        Poste : {{ detail.poste }}
     </div>
     <div class="details-item">
         Match joués : {{ detail.nbApparition }} (Saison {{ detail.season }})

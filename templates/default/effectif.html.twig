@@ -1,0 +1,34 @@
+<div class="content-block mb-3">
+    <div class="content-block-header">
+        <span v-if="seeUserDetails==false">Effectifs {{ effectifCategorie }} {% if nbTotalJoueur is defined %}({{ nbTotalJoueur }}) {% endif %}</span>
+        <span v-if="seeUserDetails==true">Fiche joueur</span>
+    </div>
+    <div class="content-block-body" v-if="seeUserDetails==false">
+        <table class="table table-responsive">
+            <thead>
+            <th>Joueur</th>
+            <th>Né le</th>
+            <th>Poste</th>
+            <th>Matchs joués</th>
+            </thead>
+            <tbody>
+            {% set poste = null%}
+            {% for joueur in listEffectif %}
+                <tr {% if poste != joueur["userPoste"] and poste != null %} style="border-top: 2px solid #C5C5C5;" {% endif %}>
+                    <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':joueur["id"] }) }}?season=__season__">{{ joueur["fullName"] }}</a></td>
+                    <td>{% if joueur["birthDate"] %} {{ joueur["birthDate"] | date('d/m/Y') }} {% endif %}</td>
+                    <td>{{ joueur["userPoste"] }}</td>
+                    <td>{{ joueur["totalMatch"] }}</td>
+                </tr>
+                {% set poste = joueur["userPoste"] %}
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="content-block-body" v-if="seeUserDetails==true">
+        <div class="mb-3">
+            <a href="#" @click="returnToList">Retour</a>
+        </div>
+        <div id="detail-content-block-body" class="row"></div>
+    </div>
+</div>

@@ -1,0 +1,26 @@
+<div class="content-block mb-3">
+    <div class="content-block-header">
+        Buteurs
+    </div>
+    <div class="content-block-body content-block-body-fixHeight">
+        <table class="table">
+            <thead>
+            <th>Joueur</th>
+            <th>buts</th>
+            <th>mat.</th>
+            <th>rat.</th>
+            </thead>
+            <tbody>
+            {% for buteur in listButeurs %}
+                {% set ratio = buteur["nbButs"]/buteur["nbPlaying"] %}
+                <tr>
+                    <td>{{ buteur["fullName"] }}</td>
+                    <td>{{ buteur["nbButs"] }}</td>
+                    <td>{{ buteur["nbPlaying"] }}</td>
+                    <td>{{ ratio|round(1) }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>

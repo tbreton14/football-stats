@@ -20,9 +20,10 @@ class CategoryUserCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
-            AssociationField::new('user', 'Joueurs'),
+            AssociationField::new('users', 'Joueurs'),
             AssociationField::new('category', 'Catégorie'),
-            TextField::new('season', 'Saison'),
+            AssociationField::new('seasonx', 'Saison'),
+//            TextField::new('season', 'Saison'),
         ];
     }
 

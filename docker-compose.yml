@@ -10,6 +10,8 @@ services:
             - .:/var/www/html:rw
         depends_on:
             - football_stats_database
+        extra_hosts:
+            - "host.docker.internal:host-gateway"
 
     football_stats_database:
         container_name: football-stats-database
@@ -22,3 +24,7 @@ services:
 
 volumes:
     mariadb-data:
+
+networks:
+    default:
+        driver: bridge

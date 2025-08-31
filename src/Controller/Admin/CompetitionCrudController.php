@@ -41,7 +41,8 @@ class CompetitionCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             AssociationField::new('category', 'Catégorie'),
-            TextField::new('season', 'Saison'),
+//            TextField::new('season', 'Saison'),
+            AssociationField::new('seasonx', 'Saison'),
             ChoiceField::new('nameCompet', 'Liste des compétitions du club')->setChoices($this->competitions)->setFormTypeOption('mapped', false),
             TextField::new('name', 'Nom de la compétition'),
             TextField::new('codeCompetition', 'API code compétition'),

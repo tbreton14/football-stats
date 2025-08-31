@@ -1,0 +1,146 @@
+{% if otherPlayings %}
+    {% for otherPlaying in otherPlayings %}
+        <div class="playing row">
+            <div class="col-12 d-flex align-items-center justify-content-center mb-4 mt-2">
+                {{ otherPlaying.datePlaying | date("l j F Y") | format_date('full',locale='fr') }} -
+                {% if otherPlaying.amical %} - (<b>MATCH AMICAL</b>) {% endif %}
+            </div>
+            <div class="col-12">
+                <div class="row">
+                    <div class="col playing-club playing-club-dom d-flex align-items-center">
+                        <span class="me-2">
+                            {% if 'https' in otherPlaying.logoClubDom %}
+                                <img src="{{ otherPlaying.logoClubDom }}">
+                            {% else %}
+                                <img src="{{ asset('images/'~otherPlaying.logoClubDom) }}">
+                            {% endif %}
+                        </span>
+                        <span class="playing-club-title">{{ otherPlaying.clubDom }}</span>
+                    </div>
+                    <div class="col playing-score d-flex align-items-center justify-content-center">
+                        {%  if otherPlaying.isReport %}
+                            <span class="text-uppercase">reporté</span>
+                        {% else %}
+                            <span>{{ otherPlaying.scoreDom }}</span>
+                            <span class="me-2 ms-2">-</span>
+                            <span>{{ otherPlaying.scoreExt }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="col playing-club playing-club-ext d-flex align-items-center justify-content-end">
+                        <span class="playing-club-title">{{ otherPlaying.clubExt }}</span>
+                        <span class="ms-2">
+                            {% if 'https' in otherPlaying.logoClubExt %}
+                                <img src="{{ otherPlaying.logoClubExt }}">
+                            {% else %}
+                                <img src="{{ asset('images/'~otherPlaying.logoClubExt) }}">
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% for cal in playings %}
+    <div class="playing row">
+        <div class="col-12 d-flex align-items-center justify-content-center mb-4 mt-2">
+            {{ cal["date"] | format_datetime('full', 'none', locale='fr') }}
+            {% if cal["poule_journee"]["number"] %}
+                <a class="result-journey ms-4" v-on:click="showResultatJournee" href="#" data-numj="{{ cal["poule_journee"]["number"] }}" data-href="{{ path("ajax_app_resultat_journee", {"idCompetition":idCompetition,"numJ":cal["poule_journee"]["number"]}) }}"><i class="fa-solid fa-calendar-week"></i></a>
+            {% endif %}
+        </div>
+        <div class="col-12">
+            <div class="row">
+                <div class="col playing-club playing-club-dom d-flex align-items-center">
+                    {% if cal["home"] is null %}
+                        <div class="calendrier-equipe-name">
+                            EXEMPT
+                        </div>
+                    {% else %}
+                        <span class="me-2">
+                    <img src="{{ cal["home"]["club"]["logo"] }}" />
+                </span>
+                        <span class="playing-club-title">
+                    {{ cal["home"]["short_name"] }}
+                </span>
+                    {% endif %}
+                </div>
+                <div class="col playing-score d-flex align-items-center justify-content-center cursor-pointer" data-bs-toggle="collapse" href="#collapse-playing-{{ cal["ma_no"] }}">
+                    <span>{{ cal["home_score"] }}</span>
+                    <span class="me-2 ms-2">-</span>
+                    <span>{{ cal["away_score"] }}</span>
+                </div>
+
+                <div class="col playing-club playing-club-ext d-flex align-items-center justify-content-end">
+                    {% if cal["away"] is null %}
+                        <div class="calendrier-equipe-name">
+                            EXEMPT
+                        </div>
+                    {% else %}
+                        <div class="playing-club-title">
+                            {{ cal["away"]["short_name"] }}
+                        </div>
+                        <div class="calendrier-logo ps-1">
+                            <img src="{{ cal["away"]["club"]["logo"] }}" />
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% if season | slice(0, 4) >= 2024 %}
+            <div class="col-12 collapse mt-2" id="collapse-playing-{{ cal["ma_no"] }}">
+
+                <div class="row playing-details">
+                    {% if cal["home"]["short_name"] | upper == "USON MONDEVILLE" %}
+                        <div class="col d-flex flex-column align-items-end justify-content-end">
+                            {% if cal["home_score"] > cal["scorers"] | length %}
+                                {% set nbCsc = cal["home_score"] - cal["scorers"] | length %}
+                                {% for i in 1..nbCsc %}
+                                    <div class="d-flex align-items-center playing-buteur-item">
+                                        <span>csc</span>
+                                        <img src="{{ asset('images/ico_but.svg') }}" class="ms-2">
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            {% for scorer in cal["scorers"] %}
+                                <div class="d-flex align-items-center playing-buteur-item">
+                                    <span>{{ scorer }}</span>
+                                    <img src="{{ asset('images/ico_but.svg') }}" class="ms-2">
+                                </div>
+                            {% endfor %}
+                        </div>
+                        <div class="col"></div>
+                    {% else %}
+                        <div class="col"></div>
+                        <div class="col">
+                            {% if cal["away_score"] > cal["scorers"] | length %}
+                                {% set nbCsc = cal["away_score"] - cal["scorers"] | length %}
+                                {% for i in 1..nbCsc %}
+                                    <div class="d-flex align-items-center playing-buteur-item">
+                                        <img src="{{ asset('images/ico_but.svg') }}" class="me-2">
+                                        <span>csc</span>
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            {% for scorer in cal["scorers"] %}
+                                <div class="d-flex align-items-center playing-buteur-item">
+                                    <img src="{{ asset('images/ico_but.svg') }}" class="me-2">
+                                    <span>{{ scorer }}</span>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <div class="row mt-3 playing-compo">
+                        <div>
+                            <b>Compositions :</b>
+                            {% for summon in cal["compo"] %}
+                                {{ summon | capitalize }},
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+{% endfor %}

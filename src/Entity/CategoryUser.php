@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\CategoryUserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\SoftDeleteable\Traits\SoftDeleteableEntity;
 use Gedmo\Timestampable\Traits\TimestampableEntity;
@@ -22,18 +24,20 @@ class CategoryUser
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id;
 
-    #[ORM\ManyToOne(inversedBy: 'categories')]
-    #[ORM\JoinColumn("user_id")]
-    private ?User $user = null;
+    #[ORM\ManyToMany(targetEntity: User::class, inversedBy: 'categoryUsers')]
+    private Collection|null $users = null;
 
     #[ORM\ManyToOne(inversedBy: 'categories')]
     #[ORM\JoinColumn("category_id")]
     private ?Category $category = null;
 
     #[Assert\Length(max: 255)]
-    #[ORM\Column(length: 255, nullable: false)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $season;
 
+    #[ORM\ManyToOne(inversedBy: 'categories')]
+    #[ORM\JoinColumn("season_id")]
+    private ?Season $seasonx = null;
 
 
     /*****************************************************************************************************************
@@ -45,14 +49,14 @@ class CategoryUser
         return $this->id;
     }
 
-    public function getUser(): ?User
+    public function getUsers(): ?Collection
     {
-        return $this->user;
+        return $this->users;
     }
 
-    public function setUser(?User $user): void
+    public function setUsers(?Collection $users): void
     {
-        $this->user = $user;
+        $this->users = $users;
     }
 
     public function getCategory(): ?Category
@@ -75,6 +79,15 @@ class CategoryUser
         $this->season = $season;
     }
 
+    public function getSeasonx(): ?Season
+    {
+        return $this->seasonx;
+    }
+
+    public function setSeasonx(?Season $seasonx): void
+    {
+        $this->seasonx = $seasonx;
+    }
 
 
 

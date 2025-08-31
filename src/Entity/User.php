@@ -68,7 +68,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public ?string $profilePicture = null;
 
     #[Assert\Length(max: 255)]
-    #[ORM\Column(length: 255, nullable: false)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $poste;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: CategoryUser::class)]
@@ -80,6 +80,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\ManyToOne(inversedBy: 'users')]
     #[ORM\JoinColumn("poste_id", nullable: true)]
     private ?Poste $userPoste = null;
+
+    #[ORM\ManyToMany(targetEntity: CategoryUser::class, mappedBy: 'users')]
+    private Collection $categoryUsers;
+
+    #[ORM\ManyToMany(targetEntity: Summon::class, mappedBy: 'users')]
+    private Collection $summonUsers;
 
     public function __construct()
     {
@@ -96,6 +102,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /*****************************************************************************************************************
     GETTERS + SETTERS
      ****************************************************************************************************************/
+
+    public function getNbPlayingsUserBySeason($season): int
+    {
+        $total=0;
+        foreach ($this->playingsUser as $playingUser) {
+            if ($playingUser->getPlaying()->getCompetition()->getSeasonx() == $season) {
+                $total++;
+            }
+        }
+        return $total;
+    }
 
     public function getId(): ?Uuid
     {
@@ -290,6 +307,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->userPoste = $userPoste;
     }
+
+    public function getCategoryUsers(): Collection
+    {
+        return $this->categoryUsers;
+    }
+
+    public function setCategoryUsers(Collection $categoryUsers): void
+    {
+        $this->categoryUsers = $categoryUsers;
+    }
+
+    public function getSummonUsers(): Collection
+    {
+        return $this->summonUsers;
+    }
+
+    public function setSummonUsers(Collection $summonUsers): void
+    {
+        $this->summonUsers = $summonUsers;
+    }
+
 
 
 

@@ -25,8 +25,12 @@ class Competition
     private ?Uuid $id;
 
     #[Assert\Length(max: 255)]
-    #[ORM\Column(length: 255, nullable: false)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $season;
+
+    #[ORM\ManyToOne(inversedBy: 'scorersUser')]
+    #[ORM\JoinColumn("season_id")]
+    private ?Season $seasonx = null;
 
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     #[ORM\JoinColumn("category_id")]
@@ -194,6 +198,32 @@ class Competition
     public function setGoogleAlbumId(?string $googleAlbumId): void
     {
         $this->googleAlbumId = $googleAlbumId;
+    }
+
+    public function getSeasonx(): ?Season
+    {
+        return $this->seasonx;
+    }
+
+    public function setSeasonx(?Season $seasonx): void
+    {
+        $this->seasonx = $seasonx;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getPlaying()
+    {
+        return $this->playing;
+    }
+
+    /**
+     * @param mixed $playing
+     */
+    public function setPlaying($playing): void
+    {
+        $this->playing = $playing;
     }
 
 

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Competition;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\ParameterType;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -28,7 +29,7 @@ class CompetitionRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             ->select("DISTINCT c.season")
-            ->orderBy("c.season", "DESC")
+            ->orderBy("c.seasonx", "DESC")
             ->getQuery()
             ->getResult()
         ;
@@ -38,8 +39,8 @@ class CompetitionRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')
             ->select("DISTINCT ca.name")
             ->leftJoin('c.category','ca')
-            ->andWhere('c.season = :val')
-            ->setParameter('val', $season)
+            ->andWhere('c.seasonx = :val')
+            ->setParameter('val', $season["season"]->getId()->toBinary(), ParameterType::BINARY)
             ->getQuery()
             ->getResult()
             ;

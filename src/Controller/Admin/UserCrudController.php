@@ -57,12 +57,12 @@ class UserCrudController extends AbstractCrudController
         yield TextField::new('firstName', 'Prénom');
         yield TextField::new('lastName', 'Nom');
         yield ArrayField::new('roles')->hideOnIndex();
-        yield ChoiceField::new('poste')->setChoices([
-            'Gardien' => 'gardien',
-            'Défenseur' => 'défenseur',
-            'Milieu' => 'milieu',
-            'Attaquant' => 'attaquant',
-        ])->renderExpanded();
+//        yield ChoiceField::new('poste')->setChoices([
+//            'Gardien' => 'gardien',
+//            'Défenseur' => 'défenseur',
+//            'Milieu' => 'milieu',
+//            'Attaquant' => 'attaquant',
+//        ])->renderExpanded();
         yield AssociationField::new('userPoste', "Poste");
         yield DateField::new('birthDate', 'Date de naissance');
 //        yield AssociationField::new('categories', "Catégorie")->setFormTypeOptions([

@@ -14,6 +14,9 @@ parameters:
     app.google_refresh_token: '%env(GOOGLE_REFRESH_TOKEN)%'
     app.google_redirect_uri: admin_google_redirect
     app.google_album_id: '%env(GOOGLE_ALBUM_ID)%'
+    app.season_actual: '%env(APP_ACTUAL_SEASON)%'
+    app.default_category: '%env(APP_DEFAULT_CATEGORY)%'
+    app.default_competition: '%env(APP_DEFAULT_COMPETITION)%'
 
 
 services:

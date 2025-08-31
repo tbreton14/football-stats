@@ -40,6 +40,23 @@ class CategoryUserRepository extends ServiceEntityRepository
         ;
     }
 
+    public function findUsersBySeasonAndCategorie($season, $category): array
+    {
+        return $this->createQueryBuilder('c')
+            ->addSelect('u,p')
+            ->leftJoin("c.users","u")
+            ->leftJoin("u.userPoste","p")
+            ->leftJoin("c.seasonx","s")
+            ->andWhere('c.category = :category')
+            ->setParameter('category', $category)
+            ->andWhere("s.id = :season")
+            ->setParameter("season", $season)
+            ->orderBy('p.zOrder','asc')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 //    public function findOneBySomeField($value): ?Categoryuser
 //    {
 //        return $this->createQueryBuilder('c')
