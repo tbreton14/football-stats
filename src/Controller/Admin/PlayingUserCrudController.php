@@ -89,7 +89,8 @@ class PlayingUserCrudController extends AbstractCrudController
         $categorySelect = $this->getParameter('app.default_category');
         $category = $entityManager->getRepository(Category::class)->findOneBy(["name" => $categorySelect]);
         $season = $this->getParameter('app.season_actual');
-        $competitions = $entityManager->getRepository(Competition::class)->findBy(["season"=>$season, "category"=>$category->getId()->toBinary()]);
+        $seasonEntity = $entityManager->getRepository(Season::class)->findOneBy(["label"=>$season]);
+        $competitions = $entityManager->getRepository(Competition::class)->findBy(["seasonx"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
 
         $allPlayings = [];
         foreach ($competitions as $competition) {
@@ -181,7 +182,8 @@ class PlayingUserCrudController extends AbstractCrudController
         $categorySelect = $this->getParameter('app.default_category');
         $category = $entityManager->getRepository(Category::class)->findOneBy(["name" => $categorySelect]);
         $season = $this->getParameter('app.season_actual');
-        $competitions = $entityManager->getRepository(Competition::class)->findBy(["season"=>$season, "category"=>$category->getId()->toBinary()]);
+        $seasonEntity = $entityManager->getRepository(Season::class)->findOneBy(["label"=>$season]);
+        $competitions = $entityManager->getRepository(Competition::class)->findBy(["seasonx"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
 
         $allPlayings = [];
         foreach ($competitions as $competition) {

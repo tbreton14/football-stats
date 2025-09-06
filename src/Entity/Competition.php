@@ -28,7 +28,7 @@ class Competition
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $season;
 
-    #[ORM\ManyToOne(inversedBy: 'scorersUser')]
+    #[ORM\ManyToOne(inversedBy: 'competitions')]
     #[ORM\JoinColumn("season_id")]
     private ?Season $seasonx = null;
 
