@@ -79,6 +79,24 @@ class Scorer
         $this->season = $season;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getSp()
+    {
+        return $this->sp;
+    }
+
+    /**
+     * @param mixed $sp
+     */
+    public function setSp($sp): void
+    {
+        $this->sp = $sp;
+    }
+
+
+
 
 
 }

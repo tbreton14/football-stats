@@ -156,6 +156,7 @@ class PlayingUserCrudController extends AbstractCrudController
             $scorer->setIdPlaying($idPlaying);
             $scorer->setNbGoal($form->get("nbGoal")->getData());
             $scorer->setSeason($seasonEntity);
+            $scorer->setSp($form->get("sp")->getData());;
             $entityManager->persist($scorer);
             $entityManager->flush();
 
