@@ -173,17 +173,20 @@ class DefaultController extends AbstractController
                 } else {
                     $listButeurs[$idUser]["nbButs"] = $scorer->getNbGoal();
                 }
+            }
 
-                foreach ($summons as $summon) {
-                    foreach ($summon->getUsers() as $user) {
-                        $idSummonUser = $user->getId()->toBase32();
-                        if($idSummonUser == $idUser ) {
-                            if (array_key_exists("nbPlaying", $listButeurs[$idUser])) {
-                                $listButeurs[$idUser]["nbPlaying"] = $listButeurs[$idUser]["nbPlaying"] + 1;
-                            } else {
-                                $listButeurs[$idUser]["nbPlaying"] = 1;
-                            }
-                        }
+            foreach ($summons as $summon) {
+                foreach ($summon->getUsers() as $user) {
+                    $idSummonUser = $user->getId()->toBase32();
+
+                    if(!array_key_exists($idSummonUser,$listButeurs)) {
+                        $listButeurs[$idSummonUser]=[];
+                    }
+
+                    if (array_key_exists("nbPlaying", $listButeurs[$idSummonUser])) {
+                        $listButeurs[$idSummonUser]["nbPlaying"] = $listButeurs[$idSummonUser]["nbPlaying"] + 1;
+                    } else {
+                        $listButeurs[$idSummonUser]["nbPlaying"] = 1;
                     }
                 }
             }
