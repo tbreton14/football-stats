@@ -138,7 +138,8 @@ class PlayingUserCrudController extends AbstractCrudController
                 "label" => "Nombre de buts"
             ])
             ->add('sp', CheckboxType::class, [
-                "label" => "Sur penalty ?"
+                "label" => "Sur penalty ?",
+                "required" => false,
             ])
             ->getForm();
 
