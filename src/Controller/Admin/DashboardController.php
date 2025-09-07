@@ -9,7 +9,9 @@ use App\Entity\Competition;
 use App\Entity\Playing;
 use App\Entity\PlayingUser;
 use App\Entity\Poste;
+use App\Entity\Scorer;
 use App\Entity\Season;
+use App\Entity\Summon;
 use App\Entity\User;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
@@ -112,6 +114,8 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('Championnats', 'fas fa-list', Competition::class),
             MenuItem::linkToCrud('Joueurs', 'fas fa-users', User::class),
             MenuItem::linkToCrud('Joueurs-Catégorie', 'fas fa-users-gear', CategoryUser::class),
+            MenuItem::linkToCrud('Buteurs', 'fas fa-futbol', Scorer::class),
+            MenuItem::linkToCrud('Convocations', 'fas fa-list', Summon::class),
 
         ];
     }
