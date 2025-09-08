@@ -184,7 +184,7 @@ class DefaultController extends AbstractController
                     }
 
                     if(!array_key_exists("fullName",$listButeurs[$idSummonUser])) {
-                        $listButeurs[$idSummonUser]["fullName"] = $summon->getUser()->getFullName();
+                        $listButeurs[$idSummonUser]["fullName"] = $user->getFullName();
                     }
 
                     if(!array_key_exists("nbButs",$listButeurs[$idSummonUser])) {
