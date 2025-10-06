@@ -69,6 +69,12 @@ class Competition
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $googleAlbumId;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private $seeScorersRanking;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private $seePassersRanking;
+
 
     public function __construct()
     {
@@ -225,6 +231,39 @@ class Competition
     {
         $this->playing = $playing;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getSeePassersRanking()
+    {
+        return $this->seePassersRanking;
+    }
+
+    /**
+     * @param mixed $seePassersRanking
+     */
+    public function setSeePassersRanking($seePassersRanking): void
+    {
+        $this->seePassersRanking = $seePassersRanking;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getSeeScorersRanking()
+    {
+        return $this->seeScorersRanking;
+    }
+
+    /**
+     * @param mixed $seeScorersRanking
+     */
+    public function setSeeScorersRanking($seeScorersRanking): void
+    {
+        $this->seeScorersRanking = $seeScorersRanking;
+    }
+
 
 
 

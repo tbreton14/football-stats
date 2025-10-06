@@ -17,7 +17,6 @@ RUN --mount=type=cache,target=/var/cache/apt \
     done \
     && apt-get upgrade \
     && apt-get install \
-        gpgv \
         libicu-dev \
         libfreetype6-dev \
         libjpeg62-turbo-dev \

@@ -242,6 +242,8 @@ class DefaultController extends AbstractController
         return $this->render('default/index.html.twig', [
             "nbTotalJoueur" => count($effectif),
             "effectif" => $effectif,
+            "seePassersRanking" => $competition->getSeePassersRanking(),
+            "seeScorersRanking" => $competition->getSeeScorersRanking(),
 //            "listJoueurGar" => $listJoueurGar,
 //            "listJoueurDef" => $listJoueurDef,
 //            "listJoueurMil" => $listJoueurMil,

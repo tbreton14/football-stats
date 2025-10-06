@@ -118,10 +118,14 @@
             <div class="col-12 col-sm-5">
                 {% if effectif | length > 0 %}
 
-                    {% include 'default/buteur.html.twig' %}
+                    {% if seeScorersRanking %}
+                        {% include 'default/buteur.html.twig' %}
+                    {% endif %}
 
-                    {% if listPasseurs | length > 0 %}
-                        {% include 'default/passeur.html.twig' %}
+                    {% if seePassersRanking %}
+                        {% if listPasseurs | length > 0 %}
+                            {% include 'default/passeur.html.twig' %}
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             </div>
