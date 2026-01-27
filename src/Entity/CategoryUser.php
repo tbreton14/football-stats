@@ -33,13 +33,9 @@ class CategoryUser
     #[ORM\JoinColumn("category_id")]
     private ?Category $category = null;
 
-    #[Assert\Length(max: 255)]
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $season;
-
     #[ORM\ManyToOne(inversedBy: 'categories')]
     #[ORM\JoinColumn("season_id")]
-    private ?Season $seasonx = null;
+    private ?Season $season = null;
 
 
     /*****************************************************************************************************************
@@ -71,28 +67,15 @@ class CategoryUser
         $this->category = $category;
     }
 
-    public function getSeason(): ?string
+
+    public function getSeason(): ?Season
     {
         return $this->season;
     }
 
-    public function setSeason(?string $season): void
+    public function setSeason(?Season $season): void
     {
         $this->season = $season;
     }
-
-    public function getSeasonx(): ?Season
-    {
-        return $this->seasonx;
-    }
-
-    public function setSeasonx(?Season $seasonx): void
-    {
-        $this->seasonx = $seasonx;
-    }
-
-
-
-
 
 }

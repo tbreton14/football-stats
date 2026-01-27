@@ -107,7 +107,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $total=0;
         foreach ($this->playingsUser as $playingUser) {
-            if ($playingUser->getPlaying()->getCompetition()->getSeasonx() == $season) {
+            if ($playingUser->getPlaying()->getCompetition()->getSeason() == $season) {
                 $total++;
             }
         }

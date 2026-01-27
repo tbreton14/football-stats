@@ -43,6 +43,13 @@ class PlayingUser
     #[ORM\Column(type: 'integer', nullable: false)]
     private ?int $nbCartonR;
 
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, nullable: false)]
+    private ?string $external_playing_id;
+
+    #[ORM\Column(type: 'integer', nullable: false)]
+    private ?int $sp;
+
     /**
      *
      */
@@ -137,6 +144,39 @@ class PlayingUser
     }
 
 
+    /**
+     * Get the value of external_playing_id
+     */
+    public function getExternalPlayingId(): ?string
+    {
+        return $this->external_playing_id;
+    }
 
+    /**
+     * Set the value of external_playing_id
+     */
+    public function setExternalPlayingId(?string $external_playing_id): self
+    {
+        $this->external_playing_id = $external_playing_id;
 
+        return $this;
+    }
+
+    /**
+     * Get the value of sp
+     */
+    public function getSp(): ?int
+    {
+        return $this->sp;
+    }
+
+    /**
+     * Set the value of sp
+     */
+    public function setSp(?int $sp): self
+    {
+        $this->sp = $sp;
+
+        return $this;
+    }
 }

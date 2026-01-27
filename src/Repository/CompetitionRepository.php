@@ -29,7 +29,7 @@ class CompetitionRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('c')
             ->select("DISTINCT c.season")
-            ->orderBy("c.seasonx", "DESC")
+            ->orderBy("c.season", "DESC")
             ->getQuery()
             ->getResult()
         ;
@@ -39,7 +39,7 @@ class CompetitionRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('c')
             ->select("DISTINCT ca.name")
             ->leftJoin('c.category','ca')
-            ->andWhere('c.seasonx = :val')
+            ->andWhere('c.season = :val')
             ->setParameter('val', $season["season"]->getId()->toBinary(), ParameterType::BINARY)
             ->getQuery()
             ->getResult()

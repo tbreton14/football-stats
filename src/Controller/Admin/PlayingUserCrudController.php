@@ -90,7 +90,7 @@ class PlayingUserCrudController extends AbstractCrudController
         $category = $entityManager->getRepository(Category::class)->findOneBy(["name" => $categorySelect]);
         $season = $this->getParameter('app.season_actual');
         $seasonEntity = $entityManager->getRepository(Season::class)->findOneBy(["label"=>$season]);
-        $competitions = $entityManager->getRepository(Competition::class)->findBy(["seasonx"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
+        $competitions = $entityManager->getRepository(Competition::class)->findBy(["season"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
 
         $allPlayings = [];
         foreach ($competitions as $competition) {
@@ -185,7 +185,7 @@ class PlayingUserCrudController extends AbstractCrudController
         $category = $entityManager->getRepository(Category::class)->findOneBy(["name" => $categorySelect]);
         $season = $this->getParameter('app.season_actual');
         $seasonEntity = $entityManager->getRepository(Season::class)->findOneBy(["label"=>$season]);
-        $competitions = $entityManager->getRepository(Competition::class)->findBy(["seasonx"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
+        $competitions = $entityManager->getRepository(Competition::class)->findBy(["season"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
 
         $allPlayings = [];
         foreach ($competitions as $competition) {
@@ -296,7 +296,7 @@ class PlayingUserCrudController extends AbstractCrudController
                 "query_builder" => function (PlayingRepository $er) {
                     return $er->createQueryBuilder('pl')
                         ->leftJoin("pl.competition","c")
-                        ->leftJoin("c.seasonx","s")
+                        ->leftJoin("c.season","s")
                         ->andWhere("s.label = :season")
                         ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
                         ->orderBy('c.name','asc')
@@ -349,7 +349,7 @@ class PlayingUserCrudController extends AbstractCrudController
 //                        ->leftJoin("u.categoryUsers","cus")
 //                        ->leftJoin("uc.category","c")
                         ->leftJoin("u.userPoste","p")
-//                        ->andWhere("uc.seasonx = :season")
+//                        ->andWhere("uc.season = :season")
 //                        ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
 //                        ->andWhere("c.name = :nameCategory")
 //                        ->setParameter("nameCategory", "U16")
@@ -362,7 +362,7 @@ class PlayingUserCrudController extends AbstractCrudController
 //                        ->leftJoin("cu.users","u")
 //                        ->leftJoin("cu.category","c")
 //                        ->leftJoin("u.userPoste","p")
-//                        ->andWhere("cu.seasonx = :season")
+//                        ->andWhere("cu.season = :season")
 //                        ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
 //                        ->andWhere("c.name = :nameCategory")
 //                        ->setParameter("nameCategory", "U16")
@@ -373,7 +373,7 @@ class PlayingUserCrudController extends AbstractCrudController
                 "query_builder" => function (PlayingRepository $er) {
                     return $er->createQueryBuilder('pl')
                         ->leftJoin("pl.competition","c")
-                        ->leftJoin("c.seasonx","s")
+                        ->leftJoin("c.season","s")
                         ->andWhere("s.label = :season")
                         ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
                         ->orderBy('c.name','asc')

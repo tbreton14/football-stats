@@ -37,27 +37,32 @@ class DefaultController extends AbstractController
     {
         $season = $request->get('season');
         $categorySelect = $request->get('category');
-        $competitionSelect = $request->get('competition');
+
         if(!$categorySelect) {
             $categorySelect = $this->getParameter('app.default_category');
         }
         if(!$season) {
             $season = $this->getParameter('app.season_actual');
         }
-        if(!$competitionSelect) {
-            $competitionSelect = $this->getParameter('app.default_competition');
-        }
-
-        $seasonEntity = $doctrine->getRepository(Season::class)->findOneBy(["label"=>$season]);
 
         $club = $doctrine->getRepository(Club::class)->findAll();
+        $seasonEntity = $doctrine->getRepository(Season::class)->findOneBy(["label"=>$season]);
         $category = $doctrine->getRepository(Category::class)->findOneBy(["name" => $categorySelect]);
-        $competition = $doctrine->getRepository(Competition::class)->findOneBy(["name" => $competitionSelect,"seasonx"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
         $categoryUser = $doctrine->getRepository(CategoryUser::class)->findUsersBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category->getId()->toBinary());
+        $competitions = $doctrine->getRepository(Competition::class)->findBy(["season"=>$seasonEntity,"category"=>$category]);
+
+        foreach ($competitions as $competition)
+            
+        
+
+        
+       
+        $competition = $doctrine->getRepository(Competition::class)->findOneBy(["name" => $competitionSelect,"season"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
+        
         $effectif = $categoryUser[0]->getUsers();
         $listSeasons = $doctrine->getRepository(Season::class)->findBy([],['label'=>'DESC']);
         $listCategories = $doctrine->getRepository(Competition::class)->findCategoriesBySeason(["season"=>$seasonEntity]);
-        $listCompetition = $doctrine->getRepository(Competition::class)->findBy(["seasonx"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
+        $listCompetition = $doctrine->getRepository(Competition::class)->findBy(["season"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
 
         $playingsUser = $doctrine->getRepository(PlayingUser::class)->findByCompetition($competition->getId()->toBinary());
 
@@ -218,22 +223,18 @@ class DefaultController extends AbstractController
             $listEffectif[$idUser]["userPoste"] = $joueur->getUserPoste()->getName();
             $listEffectif[$idUser]["totalMatch"] = 0;
 
-            foreach ($joueur->getSummonUsers() as $summonUser) {
-                if($summonUser->getSeason()==$seasonEntity) {
-                    $listEffectif[$idUser]["totalMatch"] = $listEffectif[$idUser]["totalMatch"] + 1;
-                }
-            };
-
             $listEffectif[$idUser]["totalMatch"] = $listEffectif[$idUser]["totalMatch"] + $joueur->getNbPlayingsUserBySeason($seasonEntity);
         }
 
 
         // Album GooglePhotos
+        /*
         $photos = [];
         $albumGoogleId = $competition->getGoogleAlbumId();
         if($albumGoogleId) {
             $photos = $googlePhotosApiService->getPhotosInAlbum($albumGoogleId);
         }
+            */
 
         if($categorySelect == "VETERAN") {
             $listPasseurs=[];
@@ -242,8 +243,8 @@ class DefaultController extends AbstractController
         return $this->render('default/index.html.twig', [
             "nbTotalJoueur" => count($effectif),
             "effectif" => $effectif,
-            "seePassersRanking" => $competition->getSeePassersRanking(),
-            "seeScorersRanking" => $competition->getSeeScorersRanking(),
+            "seePassersRanking" => null,
+            "seeScorersRanking" => null,
 //            "listJoueurGar" => $listJoueurGar,
 //            "listJoueurDef" => $listJoueurDef,
 //            "listJoueurMil" => $listJoueurMil,
@@ -262,7 +263,7 @@ class DefaultController extends AbstractController
             "club" => $club[0],
             "numPhase" => $competition->getNumPhase(),
             "idCompetition" => $competition->getId(),
-            "photos" => $photos,
+            "photos" => null,
             "season" => $season,
             "categorySelect" => $categorySelect,
             "competitionSelect" => $competitionSelect
@@ -326,7 +327,7 @@ class DefaultController extends AbstractController
     {
         $category = $doctrine->getRepository(Category::class)->findOneBy(["name" => $request->get('category')]);
         $season = $doctrine->getRepository(Season::class)->findOneBy(["label"=>$request->get('season')]);
-        $listCompetition = $doctrine->getRepository(Competition::class)->findBy(["seasonx"=>$season, "category"=>$category->getId()->toBinary()]);
+        $listCompetition = $doctrine->getRepository(Competition::class)->findBy(["season"=>$season, "category"=>$category->getId()->toBinary()]);
         $competitions = [];
 
         foreach ($listCompetition as $competition) {

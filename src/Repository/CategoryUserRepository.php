@@ -46,7 +46,7 @@ class CategoryUserRepository extends ServiceEntityRepository
             ->addSelect('u,p')
             ->leftJoin("c.users","u")
             ->leftJoin("u.userPoste","p")
-            ->leftJoin("c.seasonx","s")
+            ->leftJoin("c.season","s")
             ->andWhere('c.category = :category')
             ->setParameter('category', $category)
             ->andWhere("s.id = :season")

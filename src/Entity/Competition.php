@@ -24,13 +24,9 @@ class Competition
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id;
 
-    #[Assert\Length(max: 255)]
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $season;
-
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     #[ORM\JoinColumn("season_id")]
-    private ?Season $seasonx = null;
+    private ?Season $season = null;
 
     #[ORM\ManyToOne(inversedBy: 'competitions')]
     #[ORM\JoinColumn("category_id")]
@@ -69,12 +65,6 @@ class Competition
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $googleAlbumId;
 
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private $seeScorersRanking;
-
-    #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private $seePassersRanking;
-
 
     public function __construct()
     {
@@ -83,7 +73,7 @@ class Competition
 
     public function __toString()
     {
-        return $this->name." (".$this->seasonx.")";
+        return $this->name." (".$this->season.")";
     }
 
     /*****************************************************************************************************************
@@ -95,15 +85,6 @@ class Competition
         return $this->id;
     }
 
-    public function getSeason(): ?string
-    {
-        return $this->season;
-    }
-
-    public function setSeason(?string $season): void
-    {
-        $this->season = $season;
-    }
 
     public function getName(): ?string
     {
@@ -206,14 +187,14 @@ class Competition
         $this->googleAlbumId = $googleAlbumId;
     }
 
-    public function getSeasonx(): ?Season
+    public function getSeason(): ?Season
     {
-        return $this->seasonx;
+        return $this->season;
     }
 
-    public function setSeasonx(?Season $seasonx): void
+    public function setSeason(?Season $season): void
     {
-        $this->seasonx = $seasonx;
+        $this->season = $season;
     }
 
     /**
@@ -231,45 +212,4 @@ class Competition
     {
         $this->playing = $playing;
     }
-
-    /**
-     * @return mixed
-     */
-    public function getSeePassersRanking()
-    {
-        return $this->seePassersRanking;
-    }
-
-    /**
-     * @param mixed $seePassersRanking
-     */
-    public function setSeePassersRanking($seePassersRanking): void
-    {
-        $this->seePassersRanking = $seePassersRanking;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getSeeScorersRanking()
-    {
-        return $this->seeScorersRanking;
-    }
-
-    /**
-     * @param mixed $seeScorersRanking
-     */
-    public function setSeeScorersRanking($seeScorersRanking): void
-    {
-        $this->seeScorersRanking = $seeScorersRanking;
-    }
-
-
-
-
-
-
-
-
-
 }
