@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Category;
-use App\Entity\CategoryUser;
+use App\Entity\CategorySeason;
 use App\Entity\Club;
 use App\Entity\Competition;
 use App\Entity\Playing;
@@ -45,99 +45,175 @@ class DefaultController extends AbstractController
             $season = $this->getParameter('app.season_actual');
         }
 
-        $club = $doctrine->getRepository(Club::class)->findAll();
+        //dd($categorySelect);
+
+        $listClub = $doctrine->getRepository(Club::class)->findAll();
+        $club = $listClub[0];
         $seasonEntity = $doctrine->getRepository(Season::class)->findOneBy(["label"=>$season]);
         $category = $doctrine->getRepository(Category::class)->findOneBy(["name" => $categorySelect]);
-        $categoryUser = $doctrine->getRepository(CategoryUser::class)->findUsersBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category->getId()->toBinary());
+        $categorySeason = $doctrine->getRepository(CategorySeason::class)->findOneBy(["season"=>$seasonEntity,"category"=>$category]);
         $competitions = $doctrine->getRepository(Competition::class)->findBy(["season"=>$seasonEntity,"category"=>$category]);
+        $playingsUsers = $doctrine->getRepository(PlayingUser::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category->getId()->toBinary());
+        $listSeasons = $doctrine->getRepository(Season::class)->findAll();
+        $listCategories = $doctrine->getRepository(Category::class)->findBySeason($seasonEntity->getId()->toBinary());
 
-        foreach ($competitions as $competition)
-            
-        
+        //dd($listCategories);
 
-        
-       
-        $competition = $doctrine->getRepository(Competition::class)->findOneBy(["name" => $competitionSelect,"season"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
-        
-        $effectif = $categoryUser[0]->getUsers();
-        $listSeasons = $doctrine->getRepository(Season::class)->findBy([],['label'=>'DESC']);
-        $listCategories = $doctrine->getRepository(Competition::class)->findCategoriesBySeason(["season"=>$seasonEntity]);
-        $listCompetition = $doctrine->getRepository(Competition::class)->findBy(["season"=>$seasonEntity, "category"=>$category->getId()->toBinary()]);
-
-        $playingsUser = $doctrine->getRepository(PlayingUser::class)->findByCompetition($competition->getId()->toBinary());
-
-        $scorers = $doctrine->getRepository(Scorer::class)->findBy(["season"=>$seasonEntity]);
-        $summons = $doctrine->getRepository(Summon::class)->findBy(["season"=>$seasonEntity]);
-
-        if($competition->isPlayingPersonnal()) {
-            $otherPlayings = null;
-            $playings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()], ["datePlaying"=>"ASC"]);
-        } else {
-            $otherPlayings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()], ["datePlaying"=>"ASC"]);
-            if($competition->getNumPhase() == 2) {
-                $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase()-1, $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
-                $playingsPhase1 = $playingsPhase1["hydra:member"];
-                $playingsPhase2 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoulePhase2(), $_ENV['APP_API_CLUB_ID']);
-                $playingsPhase2 = $playingsPhase2["hydra:member"];
-
-                $playings = array_merge($playingsPhase1, $playingsPhase2);
+        //calendrier
+        $playingGlobal = [];
+        foreach ($competitions as $competition) {
+            if($competition->isPlayingPersonnal()) {
+                $otherPlayings = null;
+                $playings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()], ["datePlaying"=>"ASC"]);
+                array_push($playingGlobal, $playings);
             } else {
-                $playings = [];
-                if($competition->getCodeCompetition()) {
-                    $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
-                    $playings = $playingsPhase1["hydra:member"];
-                    usort($playings, function ($a, $b) {
-                        return strcmp($a["date"], $b["date"]);
-                    });
+                $otherPlayings = $doctrine->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()], ["datePlaying"=>"ASC"]);
+                if($otherPlayings){
+                    array_push($playingGlobal, $otherPlayings);
+                }
+                if($competition->getNumPhase() == 2) {
+                    $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase()-1, $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
+                    $playingsPhase1 = $playingsPhase1["hydra:member"];
+                    $playingsPhase2 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoulePhase2(), $_ENV['APP_API_CLUB_ID']);
+                    $playingsPhase2 = $playingsPhase2["hydra:member"];
 
-                    //Ajout des scorers et de la composition
-                    foreach ($playings as $key => $playing) {
-                        $i = 0;
-                        $playings[$key]["scorers"] = [];
-                        $playings[$key]["compo"] = [];
-                        foreach ($scorers as $scorer) {
-                            if ($scorer->getIdPlaying() == $playing["ma_no"]) {
-                                for ($j = 1; $j <= $scorer->getNbGoal(); $j++) {
-                                    $playings[$key]["scorers"][$i] = $scorer->getUser()->getFullName();
-                                    $i++;
-                                }
-                            }
-                        }
-
-                        foreach ($summons as $summon) {
-                            if ($summon->getIdPlaying() == $playing["ma_no"]) {
-                                $j = 0;
-                                foreach ($summon->getUsers() as $user) {
-                                    $playings[$key]["compo"][$j] = $user->getFullName();
-                                    $j++;
-                                }
-                            }
-                        }
+                    $playings = array_merge($playingsPhase1, $playingsPhase2);
+                    array_push($playingGlobal, $playings);
+                } else {
+                    
+                    if($competition->getCodeCompetition()) {
+                        $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
+                        $playings = $playingsPhase1["hydra:member"];
+                        usort($playings, function ($a, $b) {
+                            return strcmp($a["date"], $b["date"]);
+                        });
+                        array_push($playingGlobal, $playings);
                     }
                 }
-
-//                dd($playings);
             }
         }
 
+        $playingList = [];
+        //dd($playings);
+
+        foreach ($playingGlobal as $playings) {
+            foreach ($playings as $playing) {
+
+                if ($playing instanceof Playing) {
+                    $playingUsers = $doctrine->getRepository(PlayingUser::class)->findByPlaying($playing);
+
+                    $totalButs = 0;
+                    foreach ($playingUsers as $puser) {
+                        $totalButs = $totalButs + $puser['nbButs'];
+                    }
+
+                    $playingList[] = [
+                        'date'        => $playing->getDatePlaying(),
+                        'competitionName' => $playing->getCompetition()->getName(),
+                        'competitionCode' => $playing->getCompetition()->getCodeCompetition(),
+                        'scoreDom'    => $playing->getScoreDom(),
+                        'scoreExt'    => $playing->getScoreExt(),
+                        'isAmical'    => $playing->isAmical(),
+                        'equipeDom'   => $playing->getClubDom(),
+                        'logoDom'   => $playing->getLogoClubDom(),
+                        'equipeExt'   => $playing->getClubExt(),
+                        'logoExt'   => $playing->getLogoClubExt(),
+                        'numJournee'   => $playing->getNumJourney(),
+                        'playingUsers' => $playingUsers,
+                        'externalPlayers' => $playing->getExternalPlayer(),
+                        'id' => $playing->getId(),
+                        'isReport' => $playing->isReport(),
+                        'terrain' => null,
+                        'totalButs' => $totalButs,
+                    ];
+
+                    } else {
+
+                    $idPlaying = $playing['ma_no'];
+                    $playingUsers = $doctrine->getRepository(PlayingUser::class)
+                        ->findByExternalPlayingId($idPlaying);
+
+                    $totalButs = 0;
+                    foreach ($playingUsers as $puser) {
+                        $totalButs = $totalButs + $puser['nbButs'];
+                    }
+
+                    $equipeDom = $playing['home']['short_name'] ?? null;
+                    $equipeExt = $playing['away']['short_name'] ?? null;
+
+                    $isClubDom = $equipeDom && $equipeDom == $club->getName();
+                    $isClubExt = $equipeExt && $equipeExt == $club->getName();
+
+                    $logoClub = $club->getLogo();
+
+                    $logoDom = $isClubDom
+                        ? $logoClub
+                        : ($playing['home']['club']['logo'] ?? null);
+
+                    $logoExt = $isClubExt
+                        ? $logoClub
+                        : ($playing['away']['club']['logo'] ?? null);
+
+                    $playingList[] = [
+                        'date' => new \DateTime($playing['date']),
+                        'competitionName' => $playing['competition']['name'] ?? null,
+                        'competitionCode' => $playing['competition']['cp_no'] ?? null,
+                        'scoreDom' => $playing['home_score'] ?? null,
+                        'scoreExt' => $playing['away_score'] ?? null,
+                        'equipeDom' => $equipeDom,
+                        'logoDom' => $logoDom,
+                        'equipeExt' => $equipeExt,
+                        'logoExt' => $logoExt,
+                        'numJournee' => $playing['poule_journee']['number'] ?? null,
+                        'terrain' => isset($playing['terrain']) ? [
+                            'nom'     => $playing['terrain']['name'] ?? null,
+                            'adresse' => $playing['terrain']['address'] ?? null,
+                            'ville'   => $playing['terrain']['city'] ?? null,
+                            'codePostal' => $playing['terrain']['zip_code'] ?? null,
+                            'surface' => $playing['terrain']['libelle_surface'] ?? null,
+                        ] : null,
+                        'playingUsers' => $playingUsers,
+                        'externalPlayers' => null,
+                        'isAmical' => null,
+                        'id' => $idPlaying,
+                        'isReport' => null,
+                        'totalButs' => $totalButs,
+                    ];
+                }
+
+
+            }
+        }
+
+        usort($playingList, function ($a, $b) {
+            return strcmp($a["date"]->format('Ymd'), $b["date"]->format('Ymd'));
+        });
+
+
+        //dd($playingGlobal);
+        //dd($playingList);
+        
+        //Effectif
+        $effectif = $doctrine->getRepository(User::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category->getId()->toBinary());
+        $listEffectif = [];
+        foreach ($effectif as $key => $joueur) {
+            $idUser = $joueur->getId()->toBase32();
+            $listEffectif[$idUser]["id"] = $joueur->getId();
+            $listEffectif[$idUser]["fullName"] = $joueur->getFullName();
+            $listEffectif[$idUser]["birthDate"] = $joueur->getBirthDate();
+            $listEffectif[$idUser]["userPoste"] = $joueur->getUserPoste()->getName();
+            $listEffectif[$idUser]["totalMatch"] = 0;
+
+            $listEffectif[$idUser]["totalMatch"] = $listEffectif[$idUser]["totalMatch"] + $joueur->getNbPlayingsUserBySeason($seasonEntity);
+        }
+
+        //dd($listEffectif);
+
+        // Buteurs+Passeurs
         $listButeurs = [];
         $listPasseurs = [];
 
-        $classement = [];
-        if($competition->getCodeCompetition()) {
-            if($competition->getNumPhase() == 2) {
-                $numPoule = $competition->getNumPoulePhase2();
-            } else {
-                $numPoule = $competition->getNumPoule();
-            }
-            $classement = $fffApiClient->getClassementEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $numPoule);
-            $classement = $classement["hydra:member"];
-        }
-
-        /***
-         * Calcul des buteurs
-         */
-        foreach ($playingsUser as $playingUser) {
+        foreach ($playingsUsers as $playingUser) {
             $idUser = $playingUser->getUser()->getId()->toBase32();
             $listButeurs[$idUser]["fullName"] = $playingUser->getUser()->getFullName();
             $listPasseurs[$idUser]["fullName"] = $playingUser->getUser()->getFullName();
@@ -158,73 +234,39 @@ class DefaultController extends AbstractController
                 $listButeurs[$idUser]["nbPlaying"] = 1;
                 $listPasseurs[$idUser]["nbPlaying"] = 1;
             }
-
         }
 
-        if(!$competition->isPlayingPersonnal()) {
-            foreach($scorers as $scorer) {
-                $idUser = $scorer->getUser()->getId()->toBase32();
+        usort($listButeurs, function ($a, $b) {
+            return $b['nbButs'] <=> $a['nbButs'];
+        });
+        usort($listPasseurs, function ($a, $b) {
+            return $b['nbPassD'] <=> $a['nbPassD'];
+        });
 
-                if(!array_key_exists($idUser,$listButeurs)) {
-                    $listButeurs[$idUser]=[];
-                }
+        //dd($listPasseurs);
 
-                if(!array_key_exists("fullName",$listButeurs[$idUser])) {
-                    $listButeurs[$idUser]["fullName"] = $scorer->getUser()->getFullName();
-                }
+        //classement
+        $classement = [];
+        $defaultCompetition = null;
 
-                if(array_key_exists("nbButs",$listButeurs[$idUser])) {
-                    $listButeurs[$idUser]["nbButs"] = $listButeurs[$idUser]["nbButs"] + $scorer->getNbGoal();
+        foreach ($competitions as $competition) {
+
+            if($competition->isDefault()){
+                $defaultCompetition = $competition;
+            }
+
+            if($competition->getCodeCompetition()) {
+                if($competition->getNumPhase() == 2) {
+                    $numPoule = $competition->getNumPoulePhase2();
                 } else {
-                    $listButeurs[$idUser]["nbButs"] = $scorer->getNbGoal();
+                    $numPoule = $competition->getNumPoule();
                 }
-            }
-
-            foreach ($summons as $summon) {
-                foreach ($summon->getUsers() as $user) {
-                    $idSummonUser = $user->getId()->toBase32();
-
-                    if(!array_key_exists($idSummonUser,$listButeurs)) {
-                        $listButeurs[$idSummonUser]=[];
-                    }
-
-                    if(!array_key_exists("fullName",$listButeurs[$idSummonUser])) {
-                        $listButeurs[$idSummonUser]["fullName"] = $user->getFullName();
-                    }
-
-                    if(!array_key_exists("nbButs",$listButeurs[$idSummonUser])) {
-                        $listButeurs[$idSummonUser]["nbButs"] = 0;
-                    }
-
-                    if (array_key_exists("nbPlaying", $listButeurs[$idSummonUser])) {
-                        $listButeurs[$idSummonUser]["nbPlaying"] = $listButeurs[$idSummonUser]["nbPlaying"] + 1;
-                    } else {
-                        $listButeurs[$idSummonUser]["nbPlaying"] = 1;
-                    }
-                }
+                $c = $fffApiClient->getClassementEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $numPoule);
+                $classement[$competition->getCodeCompetition()] = $c["hydra:member"];
             }
         }
 
-        $key_values = array_column($listButeurs, 'nbButs');
-        array_multisort($key_values, SORT_DESC, $listButeurs);
-
-        $key_values = array_column($listPasseurs, 'nbPassD');
-        array_multisort($key_values, SORT_DESC, $listPasseurs);
-
-        /***
-         * Effectif
-         */
-        $listEffectif = [];
-        foreach ($effectif as $key => $joueur) {
-            $idUser = $joueur->getId()->toBase32();
-            $listEffectif[$idUser]["id"] = $joueur->getId();
-            $listEffectif[$idUser]["fullName"] = $joueur->getFullName();
-            $listEffectif[$idUser]["birthDate"] = $joueur->getBirthDate();
-            $listEffectif[$idUser]["userPoste"] = $joueur->getUserPoste()->getName();
-            $listEffectif[$idUser]["totalMatch"] = 0;
-
-            $listEffectif[$idUser]["totalMatch"] = $listEffectif[$idUser]["totalMatch"] + $joueur->getNbPlayingsUserBySeason($seasonEntity);
-        }
+        //dd($classement);
 
 
         // Album GooglePhotos
@@ -234,48 +276,38 @@ class DefaultController extends AbstractController
         if($albumGoogleId) {
             $photos = $googlePhotosApiService->getPhotosInAlbum($albumGoogleId);
         }
-            */
+        */
 
-        if($categorySelect == "VETERAN") {
-            $listPasseurs=[];
-        }
+        //dd($playingList);
 
         return $this->render('default/index.html.twig', [
             "nbTotalJoueur" => count($effectif),
-            "effectif" => $effectif,
-            "seePassersRanking" => null,
-            "seeScorersRanking" => null,
-//            "listJoueurGar" => $listJoueurGar,
-//            "listJoueurDef" => $listJoueurDef,
-//            "listJoueurMil" => $listJoueurMil,
-//            "listJoueurAtt" => $listJoueurAtt,
+            "seePassersRanking" => $categorySeason->getSeePasserssRanking(),
+            "seeScorersRanking" => $categorySeason->getSeeScorersRanking(),
             "listEffectif" => $listEffectif,
             "listButeurs" => $listButeurs,
             "listPasseurs" => $listPasseurs,
             "listSeasons" => $listSeasons,
             "listCategories" => $listCategories,
-            "listCompetition" => $listCompetition,
-            "otherPlayings" => $otherPlayings,
-            "playings" => $playings,
-            "playingsPersonnal" => $competition->isPlayingPersonnal(),
             "classement" => $classement,
-            "effectifCategorie" => $categorySelect,
-            "club" => $club[0],
-            "numPhase" => $competition->getNumPhase(),
-            "idCompetition" => $competition->getId(),
+            "club" => $club,
             "photos" => null,
             "season" => $season,
             "categorySelect" => $categorySelect,
-            "competitionSelect" => $competitionSelect
+            "playingList" => $playingList,
+            "competitions" => $competitions,
+            "defaultCompetition" => $defaultCompetition
         ]);
     }
+    
 
     #[Route('/ajax/user/details/{id}', name: 'ajax_app_details_user')]
     public function ajax_app_details_user(Request $request, ManagerRegistry $doctrine, $id): Response
     {
         $season = $request->get('season');
         $user = $doctrine->getRepository(User::class)->find($id);
-        $playingsUser = $doctrine->getRepository(PlayingUser::class)->findPlayingsUserBySeason($user,$season);
+        $seasonEntity = $doctrine->getRepository(Season::class)->findOneBy(["label"=>$season]);
+        $playingsUser = $doctrine->getRepository(PlayingUser::class)->findPlayingsUserBySeason($user->getId()->toBinary(),$seasonEntity->getId()->toBinary());
         $nbButs = 0;
         $nbPasseD = 0;
         $nbCartonJ = 0;
@@ -322,25 +354,10 @@ class DefaultController extends AbstractController
         return new JsonResponse($listCategories);
     }
 
-    #[Route('/ajax/category', name: 'ajax_app_category')]
-    public function ajax_app_category(Request $request, ManagerRegistry $doctrine): Response
+    #[Route('/ajax/classement/{codeCompetition}/{numPhase}', name: 'ajax_app_classement')]
+    public function ajax_app_classement(Request $request, FffApiClient $fffApiClient, ManagerRegistry $doctrine, $codeCompetition, $numPhase): Response
     {
-        $category = $doctrine->getRepository(Category::class)->findOneBy(["name" => $request->get('category')]);
-        $season = $doctrine->getRepository(Season::class)->findOneBy(["label"=>$request->get('season')]);
-        $listCompetition = $doctrine->getRepository(Competition::class)->findBy(["season"=>$season, "category"=>$category->getId()->toBinary()]);
-        $competitions = [];
-
-        foreach ($listCompetition as $competition) {
-            array_push($competitions, $competition->getName());
-        }
-
-        return new JsonResponse($competitions);
-    }
-
-    #[Route('/ajax/classement/{idCompetition}/{numPhase}', name: 'ajax_app_classement')]
-    public function ajax_app_classement(Request $request, FffApiClient $fffApiClient, ManagerRegistry $doctrine, $idCompetition, $numPhase): Response
-    {
-        $competition = $doctrine->getRepository(Competition::class)->find($idCompetition);
+        $competition = $doctrine->getRepository(Competition::class)->findOneByCodeCompetition($codeCompetition);
 
         if($numPhase == 2) {
             $numPoule = $competition->getNumPoulePhase2();
@@ -356,12 +373,12 @@ class DefaultController extends AbstractController
         ]);
     }
 
-    #[Route('/ajax/resultat/journee/{idCompetition}/{numJ}', name: 'ajax_app_resultat_journee')]
-    public function ajax_app_resultat_journee(Request $request, FffApiClient $fffApiClient, ManagerRegistry $doctrine, $idCompetition, $numJ): Response
+    #[Route('/ajax/resultat/journee/{codeCompetition}/{numJ}', name: 'ajax_app_resultat_journee')]
+    public function ajax_app_resultat_journee(Request $request, FffApiClient $fffApiClient, ManagerRegistry $doctrine, $codeCompetition, $numJ): Response
     {
-        $competition = $doctrine->getRepository(Competition::class)->find($idCompetition);
+        $competition = $doctrine->getRepository(Competition::class)->findOneByCodeCompetition($codeCompetition);
 
-        $resultatJournee = $fffApiClient->getResultatsJournee($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $numJ);
+        $resultatJournee = $fffApiClient->getResultatsJournee($codeCompetition, $competition->getNumPhase(), $competition->getNumPoule(), $numJ);
 
         return $this->render('default/resultatJournee.html.twig', [
             "resultatJournee" => $resultatJournee["hydra:member"]

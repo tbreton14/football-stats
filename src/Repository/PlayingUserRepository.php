@@ -38,17 +38,55 @@ class PlayingUserRepository extends ServiceEntityRepository
     }
 
     public function findPlayingsUserBySeason($user, $season) {
-        return $this->createQueryBuilder('p')
-            ->leftJoin('p.playing', 'pl')
-            ->leftJoin('pl.competition', 'c')
-            ->andWhere('p.user = :user')
-//            ->setParameter('user', $user->getUuid(), UuidType::NAME)
-            ->setParameter('user', $user->getUuid()->toBinary(), ParameterType::BINARY)
-            ->andWhere('c.season = :season')
+        return $this->createQueryBuilder('plu')
+            ->andWhere('plu.user = :user')
+            ->setParameter('user', $user)
+            ->andWhere('plu.season = :season')
             ->setParameter('season', $season)
             ->getQuery()
             ->getResult()
             ;
+    }
+
+    public function findByPlaying($playing) {
+        return $this->createQueryBuilder('plu')
+            ->select('u.firstName, u.lastName, plu.nbButs, plu.nbPassD, plu.sp, plu.nbCartonJ, plu.nbCartonR')
+            ->leftJoin('plu.playing', 'p')
+            ->leftJoin('plu.user', 'u')
+            ->leftJoin('u.userPoste', 'po')
+            ->andWhere('plu.playing = :playing')
+            ->setParameter('playing', $playing->getId()->toBinary(), ParameterType::BINARY)
+            ->orderBy('po.zOrder')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function findByExternalPlayingId($externalPlayingId) {
+        return $this->createQueryBuilder('plu')
+            ->select('u.firstName, u.lastName, plu.nbButs, plu.sp, plu.nbPassD, plu.sp, plu.nbCartonJ, plu.nbCartonR')
+            ->leftJoin('plu.user', 'u')
+            ->leftJoin('u.userPoste', 'po')
+            ->andWhere('plu.external_playing_id = :externalPlayingId')
+            ->setParameter('externalPlayingId', $externalPlayingId)
+            ->orderBy('po.zOrder')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function findBySeasonAndCategorie($season, $category): array
+    {
+        return $this->createQueryBuilder('plu')
+            ->leftJoin('plu.user', 'u')
+            ->leftJoin('u.categorySeasons', 'cs')
+            ->andWhere('cs.category = :category')
+            ->setParameter('category', $category)
+            ->andWhere('plu.season = :season')
+            ->setParameter('season', $season)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
 //    public function findOneBySomeField($value): ?PlayingUser

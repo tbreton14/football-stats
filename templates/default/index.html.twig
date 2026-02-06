@@ -15,20 +15,13 @@
                 </div>
 
                 <div class="mx-3">
-                    <select class="form-select" id="categoryChoice" v-on:change="changeCategory" data-href="{{ path('ajax_app_category') }}">
+                    <select class="form-select" id="categoryChoice" v-on:change="changeCategory" data-href="{{ path('app_home') }}">
                         {% for category in listCategories %}
                             <option value="{{ category.name }}" {% if app.request.get('category') == category.name or categorySelect == category.name %} selected {% endif %}>{{ category.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
 
-                <div>
-                    <select class="form-select" id="competitionChoice" v-on:change="changeCompetition" data-href="{{ path('app_home') }}">
-                        {% for competition in listCompetition %}
-                            <option value="{{ competition.name }}" {% if app.request.get('competition') == competition.name or competitionSelect == competition.name %} selected {% endif %}>{{ competition.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
             </div>
             <div class="col-12">
                 <div class="content-block mb-3 accordion accordion-flush" id="accordionPlayings">
@@ -40,15 +33,8 @@
                     </div>
                     <div id="flush-collapseOne" data-bs-parent="#accordionPlayings" class="content-block-body content-block-playings accordion-collapse collapse">
 
-                        {% if not playingsPersonnal %}
+                            {% include 'default/calendrier.html.twig' %}
 
-                            {% include 'default/calendrierNotPersonnal.html.twig' %}
-
-                        {% else %}
-
-                            {% include 'default/calendrierPersonnal.html.twig' %}
-
-                        {% endif %}
                     </div>
                 </div>
                 </div>
@@ -56,25 +42,35 @@
 
             <div class="col-12 col-sm-7">
 
-                {% if effectif | length > 0 %}
+                {% if listEffectif | length > 0 %}
                     {% include 'default/effectif.html.twig' %}
-                {% endif %}
+                {% endif %} 
 
                 <div class="content-block mb-3">
                     <div class="content-block-header d-flex align-items-center justify-content-between">
                         <span>Classement</span>
-                        {% if numPhase == 2 %}
-                        <div>
-                            <ul class="nav nav-pills nav-phase" id="nav-phase">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#" v-on:click="changePhase" data-href="{{ path("ajax_app_classement", {"idCompetition":idCompetition, "numPhase": 1}) }}">Phase 1</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link active" href="#" v-on:click="changePhase" data-href="{{ path("ajax_app_classement", {"idCompetition":idCompetition, "numPhase": 2}) }}">Phase 2</a>
-                                </li>
-                            </ul>
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <select class="form-select" name="competitions" id="competitions" v-on:change="changePhase" data-phase="1" data-href="{{ path("ajax_app_classement", {"codeCompetition":"__codeCompetition__", "numPhase": 1}) }}">
+                                    {% for competition in competitions %}
+                                        <option value={{competition.codeCompetition}}>{{competition.name}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            
+                            {% if defaultCompetition.numPhase == 2 %}
+                            <div class="ms-3">
+                                <ul class="nav nav-pills nav-phase" id="nav-phase">
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="nav-link-phase1" href="#" v-on:click="changePhase" data-phase="1" data-href="{{ path("ajax_app_classement", {"codeCompetition":"__codeCompetition__", "numPhase": 1}) }}">Phase 1</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="nav-link-phase2" href="#" v-on:click="changePhase" data-phase="2" data-href="{{ path("ajax_app_classement", {"codeCompetition":"__codeCompetition__", "numPhase": 2}) }}">Phase 2</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            {% endif %}
                         </div>
-                        {% endif %}
                     </div>
                     <div class="content-block-body">
                         <table class="table table-responsive">
@@ -93,7 +89,7 @@
                                 <th class="d-none d-sm-table-cell">Dif</th>
                             </thead>
                             <tbody id="classement-content">
-                                {% for equipe in classement %}
+                                {% for equipe in classement[defaultCompetition.codeCompetition] %}
                                     <tr>
                                         <td>{{ equipe["rank"] }}</td>
                                         <td>{{ equipe["equipe"]["short_name"] | upper }}</td>
@@ -116,7 +112,7 @@
             </div>
 
             <div class="col-12 col-sm-5">
-                {% if effectif | length > 0 %}
+                {% if listEffectif | length > 0 %}
 
                     {% if seeScorersRanking %}
                         {% include 'default/buteur.html.twig' %}
@@ -139,6 +135,20 @@
                     <div class="modal-content">
                         <div class="modal-header">
                             <h5 class="modal-title" id="exampleModalLabel">Résultat Journée <span id="modalTitleNumJ"></span></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal modal-xl" tabindex="-1" role="dialog" id="modal-terrain">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Terrain</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">

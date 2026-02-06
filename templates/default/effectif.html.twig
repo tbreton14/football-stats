@@ -1,6 +1,6 @@
 <div class="content-block mb-3">
     <div class="content-block-header">
-        <span v-if="seeUserDetails==false">Effectifs {{ effectifCategorie }} {% if nbTotalJoueur is defined %}({{ nbTotalJoueur }}) {% endif %}</span>
+        <span v-if="seeUserDetails==false">Effectifs {{ categorySelect }} {% if nbTotalJoueur is defined %}({{ nbTotalJoueur }}) {% endif %}</span>
         <span v-if="seeUserDetails==true">Fiche joueur</span>
     </div>
     <div class="content-block-body" v-if="seeUserDetails==false">

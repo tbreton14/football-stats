@@ -31,24 +31,32 @@ class PlayingUser
     #[ORM\JoinColumn("playing_id")]
     private ?Playing $playing = null;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $nbButs;
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $nbButs = 0;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $nbPassD;
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $nbPassD = 0;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $nbCartonJ;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $nbCartonR;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $nbCartonJ = 0;
+
+    #[ORM\Column(type: 'integer', options: ['default' => 0])]
+    private int $nbCartonR = 0;
 
     #[Assert\Length(max: 255)]
-    #[ORM\Column(length: 255, nullable: false)]
-    private ?string $external_playing_id;
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $external_playing_id = null;
 
     #[ORM\Column(type: 'integer', nullable: false)]
     private ?int $sp;
+
+    #[ORM\ManyToOne(inversedBy: 'playingUsers')]
+    #[ORM\JoinColumn("season_id")]
+    private ?Season $season = null;
+
+
 
     /**
      *
@@ -110,6 +118,17 @@ class PlayingUser
     {
         $this->nbPassD = $nbPassD;
     }
+
+ public function getSeason(): ?Season
+    {
+        return $this->season;
+    }
+
+    public function setSeason(?Season $season): void
+    {
+        $this->season = $season;
+    }
+
 
     /**
      * @return int|null

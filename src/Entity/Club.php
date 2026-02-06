@@ -49,6 +49,10 @@ class Club
 
     #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255, nullable: true)]
+    private ?string $logo;
+
+    #[Assert\Length(max: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $emailContact;
 
     #[Assert\Length(max: 255)]
@@ -159,4 +163,22 @@ class Club
     }
 
 
+
+    /**
+     * Get the value of logo
+     */
+    public function getLogo(): ?string
+    {
+        return $this->logo;
+    }
+
+    /**
+     * Set the value of logo
+     */
+    public function setLogo(?string $logo): self
+    {
+        $this->logo = $logo;
+
+        return $this;
+    }
 }

@@ -55,7 +55,7 @@ class Competition
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private $playingPersonnal;
 
-    #[ORM\OneToMany(mappedBy: 'competition', targetEntity: CategoryUser::class)]
+    #[ORM\OneToMany(mappedBy: 'competition', targetEntity: CategorySeason::class)]
     private $categories;
 
     #[ORM\OneToOne(mappedBy: 'competition', targetEntity: Playing::class)]
@@ -64,6 +64,9 @@ class Competition
     #[Assert\Length(max: 255)]
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $googleAlbumId;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isDefault = false;
 
 
     public function __construct()
@@ -195,6 +198,18 @@ class Competition
     public function setSeason(?Season $season): void
     {
         $this->season = $season;
+    }
+
+        public function isDefault(): bool
+    {
+        return $this->isDefault;
+    }
+
+    public function setIsDefault(bool $isDefault): self
+    {
+        $this->isDefault = $isDefault;
+
+        return $this;
     }
 
     /**

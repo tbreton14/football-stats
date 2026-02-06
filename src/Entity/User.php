@@ -71,9 +71,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $poste;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: CategoryUser::class)]
-    private $categories;
-
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: PlayingUser::class)]
     private $playingsUser;
 
@@ -81,15 +78,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\JoinColumn("poste_id", nullable: true)]
     private ?Poste $userPoste = null;
 
-    #[ORM\ManyToMany(targetEntity: CategoryUser::class, mappedBy: 'users')]
-    private Collection $categoryUsers;
+    #[ORM\ManyToMany(targetEntity: CategorySeason::class, mappedBy: 'users')]
+    private Collection $categorySeasons;
 
     #[ORM\ManyToMany(targetEntity: Summon::class, mappedBy: 'users')]
     private Collection $summonUsers;
 
     public function __construct()
     {
-        $this->categories = new ArrayCollection();
         $this->playingsUser = new ArrayCollection();
     }
 
@@ -107,7 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $total=0;
         foreach ($this->playingsUser as $playingUser) {
-            if ($playingUser->getPlaying()->getCompetition()->getSeason() == $season) {
+            if ($playingUser->getSeason() == $season) {
                 $total++;
             }
         }
@@ -264,16 +260,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->poste = $poste;
     }
 
-    public function getCategories(): Collection
-    {
-        return $this->categories;
-    }
-
-    public function setCategories($categories): void
-    {
-        $this->categories = $categories;
-    }
-
     /**
      * @return ArrayCollection
      */
@@ -308,15 +294,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->userPoste = $userPoste;
     }
 
-    public function getCategoryUsers(): Collection
-    {
-        return $this->categoryUsers;
-    }
-
-    public function setCategoryUsers(Collection $categoryUsers): void
-    {
-        $this->categoryUsers = $categoryUsers;
-    }
+    
 
     public function getSummonUsers(): Collection
     {
@@ -328,7 +306,21 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->summonUsers = $summonUsers;
     }
 
+    /**
+     * Get the value of categorySeasons
+     */
+    public function getCategorySeasons(): Collection
+    {
+        return $this->categorySeasons;
+    }
 
+    /**
+     * Set the value of categorySeasons
+     */
+    public function setCategorySeasons(Collection $categorySeasons): self
+    {
+        $this->categorySeasons = $categorySeasons;
 
-
+        return $this;
+    }
 }

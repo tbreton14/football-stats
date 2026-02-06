@@ -21,6 +21,22 @@ class CategoryRepository extends ServiceEntityRepository
         parent::__construct($registry, Category::class);
     }
 
+    /**
+     * @return Category[] Returns an array of Category objects
+     */
+    public function findBySeason($season): array
+    {
+        return $this->createQueryBuilder('c')
+            ->leftJoin('c.categorySeasons','cs')
+            ->andWhere('cs.season = :season')
+            ->setParameter('season', $season)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+
+
 //    /**
 //     * @return Category[] Returns an array of Category objects
 //     */

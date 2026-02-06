@@ -18,28 +18,12 @@ use Symfony\Component\Uid\Uuid;
 
 final class Version20260127103630 extends AbstractMigration
 {
-    /*
-    private ?EntityManagerInterface $em = null;
-*/
+
     public function getDescription(): string
     {
         return 'Create Planning entities from Summons and Scores';
     }
-/*
-    private function getEntityManager(): EntityManagerInterface
-    {
-        if ($this->em === null) {
-            $config = ORMSetup::createAttributeMetadataConfiguration(
-                paths: [__DIR__ . '/../../src/Entity'],
-                isDevMode: true
-            );
 
-            $this->em = new EntityManager($this->connection, $config);
-        }
-
-        return $this->em;
-    }
-*/
     public function up(Schema $schema): void
     {
 

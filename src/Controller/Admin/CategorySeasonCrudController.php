@@ -2,17 +2,17 @@
 
 namespace App\Controller\Admin;
 
-use App\Entity\CategoryUser;
+use App\Entity\CategorySeason;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
-class CategoryUserCrudController extends AbstractCrudController
+class CategorySeasonCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return CategoryUser::class;
+        return CategorySeason::class;
     }
 
 

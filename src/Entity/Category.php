@@ -27,13 +27,13 @@ class Category
     #[ORM\Column(length: 255, nullable: false)]
     private ?string $name;
 
-    #[ORM\OneToMany(mappedBy: 'category', targetEntity: CategoryUser::class)]
-    private $categories;
+    #[ORM\OneToMany(mappedBy: 'category', targetEntity: CategorySeason::class)]
+    private $categorySeasons;
 
 
     public function __construct()
     {
-        $this->categories = new ArrayCollection();
+        $this->categorySeasons = new ArrayCollection();
     }
 
     public function __toString()
@@ -61,15 +61,22 @@ class Category
         $this->name = $name;
     }
 
-    public function getCategories(): Collection
+
+    /**
+     * Get the value of categorySeasons
+     */
+    public function getCategorySeasons()
     {
-        return $this->categories;
+        return $this->categorySeasons;
     }
 
-    public function setCategories(Collection $categories): void
+    /**
+     * Set the value of categorySeasons
+     */
+    public function setCategorySeasons($categorySeasons): self
     {
-        $this->categories = $categories;
+        $this->categorySeasons = $categorySeasons;
+
+        return $this;
     }
-
-
 }

@@ -40,6 +40,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    public function findBySeasonAndCategorie($season, $category): array
+    {
+        return $this->createQueryBuilder('u')
+            ->addSelect('u,p')
+            ->leftJoin("u.categorySeasons","cs")
+            ->leftJoin("u.userPoste","p")
+            ->andWhere('cs.category = :category')
+            ->setParameter('category', $category)
+            ->andWhere("cs.season = :season")
+            ->setParameter("season", $season)
+            ->orderBy('p.zOrder','asc')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */

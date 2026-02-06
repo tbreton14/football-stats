@@ -96,7 +96,7 @@ html,body {
 
       .playing-club {
         img {
-          width: 40px;
+          width: auto;
           height: 40px;
 
           @include mq($until: tablet) {

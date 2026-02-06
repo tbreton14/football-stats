@@ -1,0 +1,184 @@
+{% for playing in playingList %}
+    <div class="playing row mb-4">
+        <div class="col-12 text-center mb-2">
+            {{ playing.date | date("l j F Y") | format_date('full', locale='fr') }}
+            {% if playing.isAmical %}
+                - (<b>MATCH AMICAL</b>)
+            {% endif %}
+
+            {% if playing.numJournee %}
+                <a class="result-journey ms-3"
+                   v-on:click="showResultatJournee"
+                   href="#"
+                   data-numj="{{ playing.numJournee }}"
+                   data-href="{{ path('ajax_app_resultat_journee', {
+                        'codeCompetition': playing.competitionCode,
+                        'numJ': playing.numJournee
+                   }) }}">
+                    <i class="fa-solid fa-calendar-week"></i>
+                </a>
+            {% endif %}
+
+            {% if playing.terrain %}
+            <a class="ms-3"
+                   v-on:click="showTerrain"
+                   href="#"
+                   data-terrain='{{ playing.terrain | json_encode | e("html_attr") }}'>
+                <i class="fa-solid fa-location-dot"></i>
+                </a>
+            {% endif %}
+
+            {% if not playing.isAmical %}
+                <span class="ms-3">{{ playing.competitionName }}</span>
+            {% endif %}
+        </div>
+
+
+        <div class="col-12">
+            <div class="row align-items-center">
+                <div class="col playing-club playing-club-dom d-flex align-items-center">
+                    {% if playing.logoDom %} 
+                    <div class="d-flex align-items-center justify-content-center" style= 'width: 50px'>
+                        <img src="{{ playing.logoDom starts with 'https' ? playing.logoDom : asset('images/' ~ playing.logoDom) }}"
+                             alt="{{ playing.equipeDom }}" class="me-2" />
+                             </div>
+                    {% endif %}
+                    <span class="playing-club-title">{{ playing.equipeDom }}</span>
+                </div>
+
+                <div class="col playing-score text-center cursor-pointer" data-bs-toggle="collapse"
+                     data-bs-target="#collapse-playing-{{ playing.id }}">
+                    {% if playing.scoreDom is not null and playing.scoreExt is not null %}
+                        {{ playing.scoreDom }} - {{ playing.scoreExt }}
+                    {% else %}
+                        {%  if playing.isReport %}
+                            <span class="text-uppercase">reporté</span>
+                        {% endif %}
+                    {% endif %}
+                </div>
+
+                <div class="col playing-club playing-club-ext d-flex align-items-center justify-content-end">
+                    <span class="playing-club-title">{{ playing.equipeExt }}</span>
+                    {% if playing.logoExt %}
+                    <div class="d-flex align-items-center justify-content-center" style= 'width: 50px'>
+                        <img src="{{ playing.logoExt starts with 'https' ? playing.logoExt : asset('images/' ~ playing.logoExt) }}"
+                             alt="{{ playing.equipeExt }}" class="ms-2" />
+                             </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 collapse mt-2" id="collapse-playing-{{ playing.id }}">
+            <div class="row playing-details">
+                {% if playing.equipeDom | upper == "USON MONDEVILLE" %}
+                    <div class="col d-flex flex-column align-items-end justify-content-end">
+
+                        {% if playing.totalButs < playing.scoreDom and playing.playingUsers %}   
+                        {% for i in playing.totalButs..playing.scoreDom-1 %}
+                            <div class="d-flex align-items-center mb-1">
+                                <img src="{{ asset('images/ico_but.svg') }}" class="me-2" width="16" height="16" />
+                                <span>csc</span>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
+
+                        {% for puser in playing.playingUsers %}
+                            {% set fullName = puser.firstName ~ ' ' ~ puser.lastName %}
+                            {% if puser.nbButs > 0 %}
+                                {% set nbPenalties = puser.sp %}
+                                {% for i in 1..puser.nbButs %}
+                                    <div class="d-flex align-items-center mb-1">
+                                        <span>{{ fullName }}</span>
+                                        {% if nbPenalties > 0 %}
+                                            <span class="ms-2">(sp)</span>
+                                            {% set nbPenalties = nbPenalties - 1 %}
+                                        {% endif %}
+                                        <img src="{{ asset('images/ico_but.svg') }}" class="ms-2" width="16" height="16" />
+                                    </div>
+                                {% endfor %}
+                            {% endif %}    
+                            {% if puser.nbCartonJ > 0 %}
+                                <div class="d-flex align-items-center mb-1">
+                                    <span>{{ fullName }}</span>
+                                    <img src="{{ asset('images/ico_carton_jaune.svg') }}" class="ms-2" width="16" height="16" />
+                                </div>
+                            {% endif %}
+                            {% if puser.nbCartonR > 0 %}
+                                <div class="d-flex align-items-center mb-1">
+                                    <span>{{ fullName }}</span>
+                                    <img src="{{ asset('images/ico_carton_rouge.svg') }}" class="ms-2" width="16" height="16" />
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <div class="col"></div>
+                {% else %}
+                    <div class="col"></div>
+                    <div class="col">
+                        {% if playing.totalButs < playing.scoreExt  and playing.playingUsers %}   
+                        {% for i in playing.totalButs..playing.scoreExt-1 %}
+                            <div class="d-flex align-items-center mb-1">
+                                <img src="{{ asset('images/ico_but.svg') }}" class="me-2" width="16" height="16" />
+                                <span>csc</span>
+                            </div>
+                        {% endfor %}
+                        {% endif %}
+                               
+                        {% for puser in playing.playingUsers %}
+                            {% set fullName = puser.firstName ~ ' ' ~ puser.lastName %}
+                            {% if puser.nbButs > 0 %}
+                                {% set nbPenalties = puser.sp %}
+                                {% for i in 1..puser.nbButs %}
+                                
+                                    <div class="d-flex align-items-center mb-1">
+                                        <img src="{{ asset('images/ico_but.svg') }}" class="me-2" width="16" height="16" />
+                                        <span>{{ fullName }}</span>
+                                        {% if nbPenalties > 0 %}
+                                            <span class="ms-2">(sp)</span>
+                                            {% set nbPenalties = nbPenalties - 1 %}
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                            
+                            {% if puser.nbCartonJ > 0 %}
+                                <div class="d-flex align-items-center mb-1">
+                                    <img src="{{ asset('images/ico_carton_jaune.svg') }}" class="me-2" width="16" height="16" />
+                                    <span>{{ fullName }}</span>
+                                </div>
+                            {% endif %}
+                            {% if puser.nbCartonR > 0 %}
+                                <div class="d-flex align-items-center mb-1">
+                                    <img src="{{ asset('images/ico_carton_rouge.svg') }}" class="me-2" width="16" height="16" />
+                                    <span>{{ fullName }}</span>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="row playing-details">
+                <div class="col-12 col-sm-8 offset-sm-2 mt-4 mb-4 text-center">
+                    <div style="display:inline-flex;justify-content:center;align-items:center;
+                                background:#164575;color:white;
+                                padding:6px 14px;
+                                border-radius:4px;
+                                margin-bottom:10px;">
+                        <b>Composition</b>
+                    </div>
+                    <div>
+                        {% for puser in playing.playingUsers %}
+                            {{ puser.firstName|capitalize }} {{ puser.lastName|slice(0,1)|upper }}.{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                        {% if playing.externalPlayers %}
+                            , {{ playing.externalPlayers }}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endfor %}
+
