@@ -14,19 +14,25 @@ use App\Entity\Scorer;
 use App\Entity\Season;
 use App\Entity\Summon;
 use App\Entity\User;
+use App\Service\GooglePhotosApi;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CategoryRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Contracts\Cache\CacheInterface;
+use Symfony\Contracts\Cache\ItemInterface;
 
 
 
@@ -35,10 +41,20 @@ class DashboardController extends AbstractDashboardController
 {
 
     private EntityManagerInterface $em;
+    private AdminUrlGenerator $adminUrlGenerator;
+    private GooglePhotosApi $googlePhotosApiService;
+    private CacheInterface $cache;
 
-    public function __construct(EntityManagerInterface $em)
-    {
+    public function __construct(
+        EntityManagerInterface $em,
+        AdminUrlGenerator $adminUrlGenerator,
+        GooglePhotosApi $googlePhotosApiService,
+        CacheInterface $cache
+    ) {
         $this->em = $em;
+        $this->adminUrlGenerator = $adminUrlGenerator;
+        $this->googlePhotosApiService = $googlePhotosApiService;
+        $this->cache = $cache;
     }
 
     #[Route('/admin', name: 'admin')]
@@ -50,22 +66,82 @@ class DashboardController extends AbstractDashboardController
         return $this->render('admin/dashboard/index.html.twig', [
             'categories' => $categories,
         ]);
+    }
 
-        // Option 1. You can make your dashboard redirect to some common page of your backend
-        //
-        // $adminUrlGenerator = $this->container->get(AdminUrlGenerator::class);
-        // return $this->redirect($adminUrlGenerator->setController(OneOfYourCrudController::class)->generateUrl());
- 
-        // Option 2. You can make your dashboard redirect to different pages depending on the user
-        //
-        // if ('jane' === $this->getUser()->getUsername()) {
-        //     return $this->redirect('...');
-        // }
- 
-        // Option 3. You can render some custom template to display a proper dashboard with widgets, etc.
-        // (tip: it's easier if your template extends from @EasyAdmin/page/content.html.twig)
-        //
-        // return $this->render('some/path/my-dashboard.html.twig');
+    #[Route(path: '/admin/choiceCompo', name: 'app_choice_compo', methods: ['POST'])]
+    public function choice_compo(Request $request): Response
+    {
+        return $this->redirectToRoute('app_saisie_compo', [
+            'category' => $request->request->get('categoryChoice')
+        ]);
+    }
+
+    #[Route(path: '/admin/saisieCompo/{category}', name: 'app_saisie_compo')]
+    public function saisie_compo(Request $request, $category): Response
+    {
+        $seasonEntity = $this->em->getRepository(Season::class)->findOneBy(["label"=>$_ENV["APP_ACTUAL_SEASON"]]);
+        $categoryEntity = $this->em->getRepository(Category::class)->find($category);
+        $competitions = $this->em->getRepository(Competition::class)->findBy(["season"=>$seasonEntity,"category"=>$category]);
+        $effectif = $this->em->getRepository(User::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category);
+
+        $url = $this->adminUrlGenerator
+            ->setController(DashboardController::class)
+            ->generateUrl();
+
+        return $this->render('admin/saisiecompo.html.twig', [
+            'returnLink' => $url,
+        ]);
+    }
+
+    #[Route(path: '/admin/google/authenticate', name: "admin_google_authenticate")]
+    public function indexTestGooglePhoto(Request $request): Response
+    {
+        $urlToRedirect = $this->googlePhotosApiService->generateGoogleRedirectUrl();
+        return $this->redirect($urlToRedirect);
+    }
+
+    #[Route(path: '/admin/google/oauth/redirect', name: "admin_google_redirect")]
+    public function testGooglePhotoRedirect(Request $request): Response
+    {
+        $code = $request->query->get("code");
+        if (!$code) {
+            throw new BadRequestHttpException("Missing params");
+        }
+
+        $token = $this->googlePhotosApiService->handleRedirect($code);
+
+        if (!empty($token["error"])) {
+            throw new BadRequestHttpException("Cannot get access token from google, try to authenticate again");
+        }
+
+        // Delete old access token
+        $this->cache->delete("google_access_token");
+
+        // Only to set access token in cache
+        $this->cache->get("google_access_token", function (ItemInterface $item) use ($token) {
+            $item->expiresAfter($token["expires_in"] - 100);
+            return $token["access_token"];
+        });
+
+        return new Response($token["refresh_token"]);
+    }
+
+    #[Route(path: "/admin/google/albums/list", name: "admin_google_album_list")]
+    public function getAlbums(Request $request): Response
+    {
+        $url = $this->adminUrlGenerator
+            ->setController(DashboardController::class)
+            ->generateUrl();
+
+        try {
+            $albums = $this->googlePhotosApiService->getAlbums();
+            return $this->render('admin/dashboard/google_albums.html.twig', [
+                "albums" => $albums,
+                "returnLink" => $url
+            ]);
+        } catch (\Exception $exception) {
+            throw new BadRequestHttpException($exception->getMessage());
+        }
     }
 
     public function configureDashboard(): Dashboard
