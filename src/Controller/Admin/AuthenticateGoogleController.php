@@ -2,8 +2,9 @@
 
 namespace App\Controller\Admin;
 
+use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use App\Service\GooglePhotosApi;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -16,11 +17,12 @@ use Symfony\Contracts\Cache\ItemInterface;
     path: '/admin/google',
     name: "admin_google_"
 )]
-class AuthenticateGoogleController extends AbstractController
+class AuthenticateGoogleController extends AbstractDashboardController
 {
     public function __construct(
         private readonly GooglePhotosApi $googlePhotosApiService,
-        private readonly CacheInterface $cache
+        private readonly CacheInterface $cache,
+        private readonly AdminUrlGenerator $adminUrlGenerator
     )
     {
     }
@@ -61,10 +63,15 @@ class AuthenticateGoogleController extends AbstractController
     #[Route(path: "/albums/list", name: "album_list")]
     public function getAlbums(Request $request): Response
     {
+        $url = $this->adminUrlGenerator
+            ->setController(DashboardController::class)
+            ->generateUrl();
+
         try {
             $albums = $this->googlePhotosApiService->getAlbums();
             return $this->render('admin/dashboard/google_albums.html.twig', [
-                "albums" => $albums
+                "albums" => $albums,
+                "returnLink" => $url
             ]);
         } catch (\Exception $exception) {
             throw new BadRequestHttpException($exception->getMessage());
