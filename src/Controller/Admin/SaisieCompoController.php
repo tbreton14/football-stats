@@ -2,7 +2,7 @@
 
 namespace App\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,7 +13,7 @@ use App\Entity\Competition;
 use App\Entity\Season;
 use App\Entity\User;
 
-class SaisieCompoController extends AbstractDashboardController
+class SaisieCompoController extends AbstractController
 {   
     private AdminUrlGenerator $adminUrlGenerator;
 

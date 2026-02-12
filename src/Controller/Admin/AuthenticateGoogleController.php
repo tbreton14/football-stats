@@ -2,14 +2,13 @@
 
 namespace App\Controller\Admin;
 
-use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
-use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use App\Service\GooglePhotosApi;
+use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
@@ -17,7 +16,7 @@ use Symfony\Contracts\Cache\ItemInterface;
     path: '/admin/google',
     name: "admin_google_"
 )]
-class AuthenticateGoogleController extends AbstractDashboardController
+class AuthenticateGoogleController extends AbstractController
 {
     public function __construct(
         private readonly GooglePhotosApi $googlePhotosApiService,
