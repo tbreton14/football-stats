@@ -8,6 +8,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\CountryField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\UrlField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 
 class ClubCrudController extends AbstractCrudController
 {
@@ -31,6 +32,11 @@ class ClubCrudController extends AbstractCrudController
             TextField::new('emailContact', 'Email club')->hideOnIndex(),
             UrlField::new('websiteUrl', 'URL site web'),
             UrlField::new('facebookUrl', 'URL facebook')->hideOnIndex(),
+            ImageField::new('logo', 'Logo')
+                ->setBasePath('public/uploads')
+                ->setUploadDir('public/uploads')
+                ->setUploadedFileNamePattern('[slug]-[timestamp].[extension]')
+                ->setRequired(false),
         ];
 
     }

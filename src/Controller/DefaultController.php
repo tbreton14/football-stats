@@ -107,6 +107,23 @@ class DefaultController extends AbstractController
                         $totalButs = $totalButs + $puser['nbButs'];
                     }
 
+                    $equipeDom = strtoupper($playing->getClubDom()) ?? null;
+                    $equipeExt = strtoupper($playing->getClubExt()) ?? null;
+
+                    $isClubDom = $equipeDom && $equipeDom == $club->getName();
+                    $isClubExt = $equipeExt && $equipeExt == $club->getName();
+
+                    $logoClub = $club->getLogo();
+                    $logoClub = $_ENV["APP_SITE_URL"]."/uploads/".$logoClub;
+
+                    $logoDom = $isClubDom
+                        ? $logoClub
+                        : ($playing->getLogoClubDom() ?? null);
+
+                    $logoExt = $isClubExt
+                        ? $logoClub
+                        : ($playing->getLogoClubExt() ?? null);
+
                     $playingList[] = [
                         'date'        => $playing->getDatePlaying(),
                         'competitionName' => $playing->getCompetition()->getName(),
@@ -115,9 +132,9 @@ class DefaultController extends AbstractController
                         'scoreExt'    => $playing->getScoreExt(),
                         'isAmical'    => $playing->isAmical(),
                         'equipeDom'   => $playing->getClubDom(),
-                        'logoDom'   => $playing->getLogoClubDom(),
+                        'logoDom'   => $logoDom,
                         'equipeExt'   => $playing->getClubExt(),
-                        'logoExt'   => $playing->getLogoClubExt(),
+                        'logoExt'   => $logoExt,
                         'numJournee'   => $playing->getNumJourney(),
                         'playingUsers' => $playingUsers,
                         'externalPlayers' => $playing->getExternalPlayer(),
@@ -145,6 +162,7 @@ class DefaultController extends AbstractController
                     $isClubExt = $equipeExt && $equipeExt == $club->getName();
 
                     $logoClub = $club->getLogo();
+                    $logoClub = $_ENV["APP_SITE_URL"]."/uploads/".$logoClub;
 
                     $logoDom = $isClubDom
                         ? $logoClub

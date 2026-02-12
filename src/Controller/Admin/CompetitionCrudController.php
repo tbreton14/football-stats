@@ -41,7 +41,6 @@ class CompetitionCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             AssociationField::new('category', 'Catégorie'),
-//            TextField::new('season', 'Saison'),
             AssociationField::new('season', 'Saison'),
             ChoiceField::new('nameCompet', 'Liste des compétitions du club')->setChoices($this->competitions)->setFormTypeOption('mapped', false),
             TextField::new('name', 'Nom de la compétition'),
@@ -50,8 +49,8 @@ class CompetitionCrudController extends AbstractCrudController
             TextField::new('numPoule', 'API num poule'),
             TextField::new('numPoulePhase2', 'API num poule phase 2'),
             BooleanField::new('playingPersonnal', "Gestion perso du calendrier"),
-            BooleanField::new('seeScorersRanking', "Liste des buteurs"),
-            BooleanField::new('seePassersRanking', "Liste des passeurs"),
+            //BooleanField::new('seeScorersRanking', "Liste des buteurs"),
+            //BooleanField::new('seePassersRanking', "Liste des passeurs"),
             TextField::new('googleAlbumId', 'Google Album ID')->hideOnIndex(),
 
         ];

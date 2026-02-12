@@ -27,6 +27,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IntegerField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\ImageField;
 use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -119,13 +120,7 @@ class PlayingUserCrudController extends AbstractCrudController
                 "mapped" => false,
                 "query_builder" => function (UserRepository $er) {
                     return $er->createQueryBuilder('u')
-//                        ->leftJoin("u.categories","uc")
-//                        ->leftJoin("uc.category","c")
                         ->leftJoin("u.userPoste","p")
-//                        ->andWhere("uc.season = :season")
-//                        ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
-//                        ->andWhere("c.name = :nameCategory")
-//                        ->setParameter("nameCategory", "U16")
                         ->orderBy('p.zOrder','asc');
                 }
             ])
@@ -214,13 +209,7 @@ class PlayingUserCrudController extends AbstractCrudController
                 "mapped" => false,
                 "query_builder" => function (UserRepository $er) {
                     return $er->createQueryBuilder('u')
-//                        ->leftJoin("u.categories","uc")
-//                        ->leftJoin("uc.category","c")
                         ->leftJoin("u.userPoste","p")
-//                        ->andWhere("uc.season = :season")
-//                        ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
-//                        ->andWhere("c.name = :nameCategory")
-//                        ->setParameter("nameCategory", "U16")
                         ->orderBy('p.zOrder','asc');
                 }
             ])
@@ -279,13 +268,7 @@ class PlayingUserCrudController extends AbstractCrudController
                 "mapped" => false,
                 "query_builder" => function (UserRepository $er) {
                     return $er->createQueryBuilder('u')
-//                        ->leftJoin("u.categories","uc")
-//                        ->leftJoin("uc.category","c")
                         ->leftJoin("u.userPoste","p")
-//                        ->andWhere("uc.season = :season")
-//                        ->setParameter("season", $_ENV["APP_ACTUAL_SEASON"])
-//                        ->andWhere("c.name = :nameCategory")
-//                        ->setParameter("nameCategory", "U16")
                         ->orderBy('p.zOrder','asc');
                 }
             ])
@@ -384,6 +367,7 @@ class PlayingUserCrudController extends AbstractCrudController
             IntegerField::new('nbPassD', 'Nombre de passe déc.'),
             IntegerField::new('nbCartonJ', 'Carton jaune'),
             IntegerField::new('nbCartonR', 'Carton rouge'),
+//            ImageField::new('logoDom', 'Logo'),
         ];
     }
 

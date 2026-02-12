@@ -1,13 +1,31 @@
 {% extends '@EasyAdmin/layout.html.twig' %}
 
 {% block main %}
+<div class="container mt-4">
 
+    <h2 class="mb-4">Dashboard Controller</h2>
+
+    <div class="card p-4 shadow-sm" style="max-width: 500px;">
+        <form name="formCategoryChoice" action="{{ path('app_choice_compo') }}" method="POST">
+            <div class="mb-5">
+                <select class="form-select" name="categoryChoice" id="categoryChoice" required>
+                <option value="" disabled selected>Choisir une catégorie</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <button type="submit" id="suivieCompo" class="btn btn-primary w-100">
+                Saisie Compo
+            </button>
+        </form>
+    </div>
+
+</div>
 {% endblock %}
 
 {% block body_javascript %}
-
-    <script>
-
-    </script>
-
-{% endblock body_javascript %}
+<script>
+</script>
+{% endblock %}

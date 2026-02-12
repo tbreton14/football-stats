@@ -39,8 +39,7 @@
                 <div class="col playing-club playing-club-dom d-flex align-items-center">
                     {% if playing.logoDom %} 
                     <div class="d-flex align-items-center justify-content-center" style= 'width: 50px'>
-                        <img src="{{ playing.logoDom starts with 'https' ? playing.logoDom : asset('images/' ~ playing.logoDom) }}"
-                             alt="{{ playing.equipeDom }}" class="me-2" />
+                        <img src="{{ playing.logoDom }}" alt="{{ playing.equipeDom }}" class="me-2" />
                              </div>
                     {% endif %}
                     <span class="playing-club-title">{{ playing.equipeDom }}</span>
@@ -61,8 +60,7 @@
                     <span class="playing-club-title">{{ playing.equipeExt }}</span>
                     {% if playing.logoExt %}
                     <div class="d-flex align-items-center justify-content-center" style= 'width: 50px'>
-                        <img src="{{ playing.logoExt starts with 'https' ? playing.logoExt : asset('images/' ~ playing.logoExt) }}"
-                             alt="{{ playing.equipeExt }}" class="ms-2" />
+                        <img src="{{ playing.logoExt }}" alt="{{ playing.equipeExt }}" class="ms-2" />
                              </div>
                     {% endif %}
                 </div>

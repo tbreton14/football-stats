@@ -30,4 +30,4 @@ class ScorerCrudController extends AbstractCrudController
         ];
     }
 
-}
+} 
