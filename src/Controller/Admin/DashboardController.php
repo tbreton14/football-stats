@@ -24,12 +24,14 @@ use EasyCorp\Bundle\EasyAdminBundle\Router\AdminUrlGenerator;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use App\Repository\CategoryRepository;
+use App\Service\FffApiClient;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Action;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Crud;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -77,20 +79,197 @@ class DashboardController extends AbstractDashboardController
     }
 
     #[Route(path: '/admin/saisieCompo/{category}', name: 'app_saisie_compo')]
-    public function saisie_compo(Request $request, $category): Response
+    public function saisie_compo(Request $request, $category, FffApiClient $fffApiClient): Response
     {
         $seasonEntity = $this->em->getRepository(Season::class)->findOneBy(["label"=>$_ENV["APP_ACTUAL_SEASON"]]);
         $categoryEntity = $this->em->getRepository(Category::class)->find($category);
-        $competitions = $this->em->getRepository(Competition::class)->findBy(["season"=>$seasonEntity,"category"=>$category]);
-        $effectif = $this->em->getRepository(User::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category);
+        $competitions = $this->em->getRepository(Competition::class)->findBy(["season"=>$seasonEntity,"category"=>$categoryEntity]);
+        $effectif = $this->em->getRepository(User::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $categoryEntity->getId()->toBinary());
+  
+        //calendrier
+        $playingGlobal = [];
+        foreach ($competitions as $competition) {
+            if($competition->isPlayingPersonnal()) {
+                $otherPlayings = null;
+                $playings = $this->em->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()], ["datePlaying"=>"ASC"]);
+                array_push($playingGlobal, $playings);
+            } else {
+                $otherPlayings = $this->em->getRepository(Playing::class)->findBy(["competition" => $competition->getId()->toBinary()], ["datePlaying"=>"ASC"]);
+                if($otherPlayings){
+                    array_push($playingGlobal, $otherPlayings);
+                }
+                if($competition->getNumPhase() == 2) {
+                    $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase()-1, $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
+                    $playingsPhase1 = $playingsPhase1["hydra:member"];
+                    $playingsPhase2 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoulePhase2(), $_ENV['APP_API_CLUB_ID']);
+                    $playingsPhase2 = $playingsPhase2["hydra:member"];
+
+                    $playings = array_merge($playingsPhase1, $playingsPhase2);
+                    array_push($playingGlobal, $playings);
+                } else {
+                    
+                    if($competition->getCodeCompetition()) {
+                        $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
+                        $playings = $playingsPhase1["hydra:member"];
+                        usort($playings, function ($a, $b) {
+                            return strcmp($a["date"], $b["date"]);
+                        });
+                        array_push($playingGlobal, $playings);
+                    }
+                }
+            }
+        }
+
+        $playingList = [];
+        //dd($playings);
+
+        foreach ($playingGlobal as $playings) {
+            foreach ($playings as $playing) {
+
+                if ($playing instanceof Playing) {
+                
+                    $playingList[] = [
+                        'date'        => $playing->getDatePlaying(),
+                        'equipeDom'   => $playing->getClubDom(),
+                        'equipeExt'   => $playing->getClubExt(),
+                        'id' => $playing->getId()
+                    ];
+
+                } else {
+
+                    $idPlaying = $playing['ma_no'];
+                    $equipeDom = $playing['home']['short_name'] ?? null;
+                    $equipeExt = $playing['away']['short_name'] ?? null;
+
+                    $playingList[] = [
+                        'date' => new \DateTime($playing['date']),
+                        'equipeDom' => $equipeDom,
+                        'equipeExt' => $equipeExt,
+                        'id' => $idPlaying,
+                    ];
+                }
+
+
+            }
+        }
+
+        usort($playingList, function ($a, $b) {
+            return strcmp($a["date"]->format('Ymd'), $b["date"]->format('Ymd'));
+        });
 
         $url = $this->adminUrlGenerator
             ->setController(DashboardController::class)
             ->generateUrl();
 
+        if($request->getMethod() == 'POST') {
+            $rencontreId = $request->request->get('rencontreChoice');
+            $joueurs = $request->request->all('effectifSelected');
+
+            $nbButs = $request->request->all('nbButs');
+            $nbPassD = $request->request->all('nbPassD');
+            $sp = $request->request->all('sp');
+            $nbCartonJ = $request->request->all('nbcartonJ');
+            $nbCartonR = $request->request->all('nbcartonR');
+
+            try {
+                $playing = $this->em->getRepository(Playing::class)->find($rencontreId);
+            } catch(\Exception $e) {
+                $playing = $rencontreId;
+            }
+
+            if (!$playing || empty($joueurs)) {
+                $this->addFlash('danger', "Sélection obligatoire d'au moins 1 joueur.");
+                return $this->redirectToRoute('app_saisie_compo', ['category'=>$category]);
+            }
+
+            foreach ($joueurs as $joueurId) {
+
+                $user = $this->em->getRepository(User::class)->find($joueurId);
+
+                if (!$user) {
+                    continue;
+                }
+
+                if ($playing instanceof Playing) {
+                    $playingUser = $this->em->getRepository(PlayingUser::class)
+                        ->findOneBy([
+                            'playing' => $playing,
+                            'user' => $user
+                        ]);
+                } else {
+                    $playingUser = $this->em->getRepository(PlayingUser::class)
+                        ->findOneBy([
+                            'external_playing_id' => $playing,
+                            'user' => $user
+                        ]);
+                }
+
+                if (!$playingUser) {
+                    $playingUser = new PlayingUser();
+
+                    if ($playing instanceof Playing) {
+                        $playingUser->setPlaying($playing);
+                    } else {
+                        $playingUser->setExternalPlayingId($playing);
+                    }
+
+                    $playingUser->setUser($user);
+                }
+
+                $playingUser->setNbButs((int) $nbButs[$joueurId] ?? 0);
+                $playingUser->setNbPassD((int) $nbPassD[$joueurId] ?? 0);
+                $playingUser->setSp((int) $sp[$joueurId] ?? 0);
+                $playingUser->setNbCartonJ((int) $nbCartonJ[$joueurId] ?? 0);
+                $playingUser->setNbCartonR((int) $nbCartonR[$joueurId] ?? 0);
+
+                $playingUser->setSeason($seasonEntity);
+
+                $this->em->persist($playingUser);
+            }
+
+            $this->em->flush();
+            $this->addFlash('success', "Saisie compo ajouté !");
+            return $this->redirectToRoute('admin');
+        }    
+
         return $this->render('admin/saisiecompo.html.twig', [
             'returnLink' => $url,
+            'effectif' => $effectif,
+            'playingList' => $playingList,
+            'category' => $category
         ]);
+    }
+
+    #[Route('/admin/ajax/playingusers', name: 'admin_ajax_playingusers')]
+    public function admin_ajax_playingusers(Request $request): Response
+    {
+        $rencontreId = $request->request->get('rencontreChoice');
+         try {
+            $playing = $this->em->getRepository(Playing::class)->find($rencontreId);
+        } catch(\Exception $e) {
+            $playing = $rencontreId;
+        }
+
+        if ($playing instanceof Playing) {
+            $playingUsers = $playing->getPlayingUsers();
+        } else {
+             $playingUsers = $this->em->getRepository(PlayingUser::class)
+                ->findBy([
+                    'external_playing_id' => $playing,
+                ]);
+        }
+
+        $ids = [];
+
+        foreach ($playingUsers as $playingUser) {
+            $ids[$playingUser->getUser()->getId()->toRfc4122()]["nbButs"] = $playingUser->getNbButs();
+            $ids[$playingUser->getUser()->getId()->toRfc4122()]["sp"] = $playingUser->getSp();
+            $ids[$playingUser->getUser()->getId()->toRfc4122()]["nbPassD"] = $playingUser->getNbPassD();
+            $ids[$playingUser->getUser()->getId()->toRfc4122()]["nbCartonJ"] = $playingUser->getNbCartonJ();
+            $ids[$playingUser->getUser()->getId()->toRfc4122()]["nbCartonJR"] = $playingUser->getNbCartonR();
+        }
+
+        return new JsonResponse($ids);
     }
 
     #[Route(path: '/admin/google/authenticate', name: "admin_google_authenticate")]
@@ -204,10 +383,10 @@ class DashboardController extends AbstractDashboardController
             MenuItem::linkToCrud('Clubs', 'fas fa-building', Club::class),
             MenuItem::linkToCrud('Saisons', 'fas fa-list', Season::class),
             MenuItem::linkToCrud('Catégories', 'fas fa-list', Category::class),
+            MenuItem::linkToCrud('Catégorie - Saison', 'fas fa-users-gear', CategorySeason::class),
             MenuItem::linkToCrud('Postes', 'fas fa-list', Poste::class),
             MenuItem::linkToCrud('Championnats', 'fas fa-list', Competition::class),
             MenuItem::linkToCrud('Joueurs', 'fas fa-users', User::class),
-            MenuItem::linkToCrud('Joueurs-Catégorie', 'fas fa-users-gear', CategorySeason::class),
 //          MenuItem::linkToCrud('Buteurs', 'fas fa-futbol', Scorer::class),
 //          MenuItem::linkToCrud('Convocations', 'fas fa-list', Summon::class),
 
@@ -221,13 +400,14 @@ class DashboardController extends AbstractDashboardController
             ->addWebpackEncoreEntry('easy-admin-custom')
             ;
     }
-    public function configureActions(): Actions
+    /*public function configureActions(): Actions
     {
         $choiceAction = Action::new('choiceCompo', 'Saisie Compo')
             ->linkToRoute('app_choice_compo');
 
         return Actions::new()
             ->add(Crud::PAGE_INDEX, $choiceAction);
-    }
+    }*/
+
 
 }

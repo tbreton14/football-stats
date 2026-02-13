@@ -72,11 +72,11 @@ class Playing
     private ?Competition $competition = null;
 
     #[ORM\OneToMany(mappedBy: 'playing', targetEntity: PlayingUser::class)]
-    private $playingUser;
+    private $playingUsers;
 
     public function __construct()
     {
-        $this->playingUser = new ArrayCollection();
+        $this->playingUsers = new ArrayCollection();
         $this->report = false;
     }
 
@@ -177,17 +177,17 @@ class Playing
     /**
      * @return ArrayCollection
      */
-    public function getPlayingUser()
+    public function getPlayingUsers()
     {
-        return $this->playingUser;
+        return $this->playingUsers;
     }
 
     /**
-     * @param ArrayCollection $playingUser
+     * @param ArrayCollection $playingUsers
      */
-    public function setPlayingUser($playingUser)
+    public function setPlayingUsers($playingUsers)
     {
-        $this->playingUser = $playingUser;
+        $this->playingUsers = $playingUsers;
     }
 
     /**

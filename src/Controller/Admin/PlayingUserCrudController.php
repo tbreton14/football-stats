@@ -53,30 +53,6 @@ class PlayingUserCrudController extends AbstractCrudController
         return PlayingUser::class;
     }
 
-    public function configureActions(Actions $actions): Actions
-    {
-        return $actions
-
-            ->add(Crud::PAGE_INDEX,
-                EasyAdminAction::new('convoc',"Ajouter convocations CP")
-                    ->linkToCrudAction('convoc')
-                    ->createAsGlobalAction()
-            )
-
-            ->add(Crud::PAGE_INDEX,
-                EasyAdminAction::new('convoc_cnp',"Ajouter convocations CNP")
-                    ->linkToCrudAction('convoc_cnp')
-                    ->createAsGlobalAction()
-            )
-
-            ->add(Crud::PAGE_INDEX,
-                EasyAdminAction::new('addScorer',"Ajouter buteurs")
-                    ->linkToCrudAction('addScorer')
-                    ->createAsGlobalAction()
-            )
-            ;
-    }
-
     public function addScorer(AdminContext $context, EntityManagerInterface $entityManager, FffApiClient $fffApiClient): Response
     {
 
@@ -317,6 +293,8 @@ class PlayingUserCrudController extends AbstractCrudController
         return $filters
             ->add('user')
             ->add('playing')
+            ->add('season')
+            ->add('external_playing_id')
             ;
     }
 
@@ -325,6 +303,8 @@ class PlayingUserCrudController extends AbstractCrudController
     {
         return [
             IdField::new('id')->hideOnForm(),
+            AssociationField::new('season', 'Saison'),
+            TextField::new(propertyName: 'external_playing_id'),
             AssociationField::new('user', 'Joueurs')->setFormTypeOptions([
                 "query_builder" => function (UserRepository $er) {
                     return $er->createQueryBuilder('u')

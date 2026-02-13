@@ -49,8 +49,8 @@ class PlayingUser
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $external_playing_id = null;
 
-    #[ORM\Column(type: 'integer', nullable: false)]
-    private ?int $sp;
+    #[ORM\Column(type: 'integer', options: ['default' => 0], nullable: false)]
+    private ?int $sp = 0;
 
     #[ORM\ManyToOne(inversedBy: 'playingUsers')]
     #[ORM\JoinColumn("season_id")]

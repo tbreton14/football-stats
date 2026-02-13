@@ -1,15 +1,159 @@
 {% extends '@EasyAdmin/page/content.html.twig' %}
 
-{% block content_title %}Ajouter une convocation{% endblock %}
+{% block content_title %}Saisie des compositions{% endblock %}
 
 {% block page_actions %}
-<a href="{{ returnLink }}" class="btn btn-secondary">Retour</a>
+    <a href="{{ returnLink }}" class="btn btn-secondary">Retour</a>
 {% endblock %}
 
 {% block main %}
+<div class="container mt-4 saisiecompo">
+    <div class="row">
+        <div class="col-12">
+            <form name="formCategoryChoice" action="{{ path('app_saisie_compo',{'category':category}) }}" method="POST">
+                <div class="mb-3">
+                    <h5 class="mb-3" >Choisir une rencontre</h5>
+                    <select class="form-select" name="rencontreChoice" id="rencontreChoice" data-href="{{path('admin_ajax_playingusers')}}" required>
+                        <option value="" disabled selected>Choisir une rencontre</option>
+                        {% for playing in playingList %}
+                            <option value="{{ playing.id }}">{{ playing.equipeDom }}-{{ playing.equipeExt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
+                <h5 class="mt-4 mb-3">Sélection des joueurs</h5>
+                    {% for joueur in effectif %}
+                        <div class="form-check">
+                            <input 
+                                class="form-check-input joueur-checkbox" 
+                                type="checkbox" 
+                                name="effectifSelected[]" 
+                                value="{{ joueur.id }}"
+                                id="joueur_{{ joueur.id }}"
+                                data-target="collapse_{{ joueur.id }}"
+                            >
+                            <label class="form-check-label" for="joueur_{{ joueur.id }}">
+                                {{ joueur }}
+                            </label>
+                        </div>
+
+                        <div class="collapse" id="collapse_{{ joueur.id }}">
+                            <div class="mb-3 d-flex flex-column flex-sm-row">
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text" id="field1">NbButs</span>
+                                    <input type="number" min="0" class="form-control" name="nbButs[{{ joueur.id }}]"  aria-describedby="field1">
+                                </div>  
+                                <div class="input-group mb-3 ms-0 ms-sm-3">
+                                    <span class="input-group-text" id="field2">Sp</span>  
+                                    <input type="number" min="0" class="form-control" name="sp[{{ joueur.id }}]">
+                                </div>
+                                <div class="input-group mb-3 ms-0 ms-sm-3">
+                                    <span class="input-group-text" id="field3">NbPassD</span>
+                                    <input type="number" min="0" class="form-control" name="nbPassD[{{ joueur.id }}]">
+                                </div>
+                                <div class="input-group mb-3 ms-0 ms-sm-3">
+                                    <span class="input-group-text" id="field4">NbCartonJ</span>
+                                    <input type="number" min="0" class="form-control" name="nbcartonJ[{{ joueur.id }}]">
+                                </div>
+                                <div class="input-group mb-3 ms-0 ms-sm-3">
+                                    <span class="input-group-text" id="field5">NbCartonR</span>
+                                    <input type="number" min="0" class="form-control" name="nbcartonR[{{ joueur.id }}]">
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                <button type="submit" id="valider" class="btn btn-primary w-100 mt-3">
+                    Valider
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block body_javascript %}
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-{% endblock body_javascript %}
+    const checkboxes = document.querySelectorAll(".joueur-checkbox");
+    const rencontreSelect = document.getElementById("rencontreChoice");
+
+    function toggleCollapse(checkbox) {
+        const targetId = checkbox.dataset.target;
+        const collapseElement = document.getElementById(targetId);
+
+        if (checkbox.checked) {
+            collapseElement.classList.add("show");
+        } else {
+            collapseElement.classList.remove("show");
+        }
+    }
+
+    // Gestion ouverture / fermeture manuelle
+    checkboxes.forEach(function (checkbox) {
+        checkbox.addEventListener("change", function () {
+            toggleCollapse(this);
+        });
+    });
+
+    rencontreSelect.addEventListener("change", function () {
+
+        const rencontreId = this.value;
+
+        fetch(this.dataset.href, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: new URLSearchParams({ rencontreChoice: rencontreId })
+        })
+        .then(response => response.json())
+        .then(data => {
+
+            // data = objet { joueurId: {stats} }
+
+            checkboxes.forEach(cb => {
+
+                const joueurId = cb.value;
+
+                if (data[joueurId]) {
+
+                    // ✅ coche la case
+                    cb.checked = true;
+                    toggleCollapse(cb);
+
+                    // ✅ remplit les stats
+                    document.querySelector(`input[name="nbButs[${joueurId}]"]`).value = data[joueurId].nbButs ?? 0;
+                    document.querySelector(`input[name="sp[${joueurId}]"]`).value = data[joueurId].sp ?? 0;
+                    document.querySelector(`input[name="nbPassD[${joueurId}]"]`).value = data[joueurId].nbPassD ?? 0;
+                    document.querySelector(`input[name="nbcartonJ[${joueurId}]"]`).value = data[joueurId].nbCartonJ ?? 0;
+                    document.querySelector(`input[name="nbcartonR[${joueurId}]"]`).value = data[joueurId].nbCartonJR ?? 0;
+
+                } else {
+
+                    // ❌ décoche si pas présent
+                    cb.checked = false;
+                    toggleCollapse(cb);
+
+                    // reset champs
+                    document.querySelector(`input[name="nbButs[${joueurId}]"]`).value = "";
+                    document.querySelector(`input[name="sp[${joueurId}]"]`).value = "";
+                    document.querySelector(`input[name="nbPassD[${joueurId}]"]`).value = "";
+                    document.querySelector(`input[name="nbcartonJ[${joueurId}]"]`).value = "";
+                    document.querySelector(`input[name="nbcartonR[${joueurId}]"]`).value = "";
+                }
+
+            });
+
+        })
+        .catch(error => console.error("Erreur AJAX :", error));
+
+    });
+
+});
+</script>
+{% endblock %}
+
+
+
