@@ -59,6 +59,9 @@ final class Version20260127103630 extends AbstractMigration
         'user_id'              => $row['user_id'],
         'external_playing_id'  => $row['id_playing'],
         'nb_buts'              => (int) $stats['nb_buts'],
+        'nb_pass_d'            => 0,
+        'nb_carton_j'          => 0,
+        'nb_carton_r'          => 0,
         'sp'                   => (int) $stats['sp'],
     ]);
         }
