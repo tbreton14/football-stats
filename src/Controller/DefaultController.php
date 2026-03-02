@@ -300,7 +300,7 @@ class DefaultController extends AbstractController
 
         return $this->render('default/index.html.twig', [
             "nbTotalJoueur" => count($effectif),
-            "seePassersRanking" => $categorySeason->getSeePasserssRanking(),
+            "seePassersRanking" => $categorySeason->getSeePassersRanking(),
             "seeScorersRanking" => $categorySeason->getSeeScorersRanking(),
             "listEffectif" => $listEffectif,
             "listButeurs" => $listButeurs,
