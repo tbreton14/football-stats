@@ -49,6 +49,7 @@ class CompetitionCrudController extends AbstractCrudController
             TextField::new('numPoule', 'API num poule'),
             TextField::new('numPoulePhase2', 'API num poule phase 2'),
             BooleanField::new('playingPersonnal', "Gestion perso du calendrier"),
+            BooleanField::new('isDefault', "Compétition défaut"),
             //BooleanField::new('seeScorersRanking', "Liste des buteurs"),
             //BooleanField::new('seePassersRanking', "Liste des passeurs"),
             TextField::new('googleAlbumId', 'Google Album ID')->hideOnIndex(),

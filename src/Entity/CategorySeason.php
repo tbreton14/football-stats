@@ -41,7 +41,7 @@ class CategorySeason
     private $seeScorersRanking;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
-    private $seePasserssRanking;
+    private $seePassersRanking;
 
 
     /*****************************************************************************************************************
@@ -104,19 +104,19 @@ class CategorySeason
     }
 
     /**
-     * Get the value of seePasserssRanking
+     * Get the value of seePassersRanking
      */
-    public function getSeePasserssRanking()
+    public function getSeePassersRanking()
     {
-        return $this->seePasserssRanking;
+        return $this->seePassersRanking;
     }
 
     /**
-     * Set the value of seePasserssRanking
+     * Set the value of seePassersRanking
      */
-    public function setSeePasserssRanking($seePasserssRanking): self
+    public function setSeePassersRanking($seePassersRanking): self
     {
-        $this->seePasserssRanking = $seePasserssRanking;
+        $this->seePassersRanking = $seePassersRanking;
 
         return $this;
     }
