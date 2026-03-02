@@ -63,6 +63,8 @@ final class Version20260127103630 extends AbstractMigration
         'nb_carton_j'          => 0,
         'nb_carton_r'          => 0,
         'sp'                   => (int) $stats['sp'],
+        'created_at'           => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
+        'updated_at'           => (new \DateTimeImmutable())->format('Y-m-d H:i:s'),
     ]);
         }
 
