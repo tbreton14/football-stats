@@ -61,7 +61,9 @@ const appHome = createApp({
                 document.querySelectorAll(".nav-link").forEach(item =>
                     item.classList.remove("active")
                 );
-                document.getElementById('nav-link-phase'+numPhase).classList.add("active");
+                if(document.contains(document.getElementById('nav-link-phase'+numPhase))) {
+                    document.getElementById('nav-link-phase' + numPhase).classList.add("active");
+                }
 
                 const parser = new DOMParser();
                 const dataHtml = parser.parseFromString(response.data, "text/html");

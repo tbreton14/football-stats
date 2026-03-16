@@ -74,6 +74,9 @@ class Competition
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $typePhase1ModeChampionnat = false;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $phase2WithoutPhase1 = false;
+
 
     public function __construct()
     {
@@ -253,6 +256,17 @@ class Competition
     {
         $this->typePhase1ModeChampionnat = $typePhase1ModeChampionnat;
     }
+
+    public function isPhase2WithoutPhase1(): bool
+    {
+        return $this->phase2WithoutPhase1;
+    }
+
+    public function setPhase2WithoutPhase1(bool $phase2WithoutPhase1): void
+    {
+        $this->phase2WithoutPhase1 = $phase2WithoutPhase1;
+    }
+
 
 
 }
