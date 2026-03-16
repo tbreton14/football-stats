@@ -68,6 +68,12 @@ class Competition
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $isDefault = false;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isChampionnat = false;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $typePhase1ModeChampionnat = false;
+
 
     public function __construct()
     {
@@ -227,4 +233,26 @@ class Competition
     {
         $this->playing = $playing;
     }
+
+    public function isChampionnat(): bool
+    {
+        return $this->isChampionnat;
+    }
+
+    public function setIsChampionnat(bool $isChampionnat): void
+    {
+        $this->isChampionnat = $isChampionnat;
+    }
+
+    public function isTypePhase1ModeChampionnat(): bool
+    {
+        return $this->typePhase1ModeChampionnat;
+    }
+
+    public function setTypePhase1ModeChampionnat(bool $typePhase1ModeChampionnat): void
+    {
+        $this->typePhase1ModeChampionnat = $typePhase1ModeChampionnat;
+    }
+
+
 }

@@ -124,10 +124,22 @@ class DefaultController extends AbstractController
                         ? $logoClub
                         : ($playing->getLogoClubExt() ?? null);
 
+                    $typeCompetition = null;
+                    if($playing->getCompetition()->isChampionnat()) {
+                        $typeCompetition = 'CH';
+                    } else {
+                        if($playing->getCompetition()->isTypePhase1ModeChampionnat()) {
+                            $typeCompetition = 'CH';
+                        } else {
+                            $typeCompetition = 'CP';
+                        }
+                    }
+
                     $playingList[] = [
                         'date'        => $playing->getDatePlaying(),
                         'competitionName' => $playing->getCompetition()->getName(),
                         'competitionCode' => $playing->getCompetition()->getCodeCompetition(),
+                        'competitionType' => $typeCompetition,
                         'scoreDom'    => $playing->getScoreDom(),
                         'scoreExt'    => $playing->getScoreExt(),
                         'isAmical'    => $playing->isAmical(),
@@ -181,6 +193,7 @@ class DefaultController extends AbstractController
                         'date' => new \DateTime($playing['date']),
                         'competitionName' => $playing['competition']['name'] ?? null,
                         'competitionCode' => $playing['competition']['cp_no'] ?? null,
+                        'competitionType' => $playing['phase']['type'] ?? null,
                         'scoreDom' => $playing['home_score'] ?? null,
                         'scoreExt' => $playing['away_score'] ?? null,
                         'equipeDom' => $equipeDom,
@@ -217,8 +230,10 @@ class DefaultController extends AbstractController
         //dd($playingList);
         
         //Effectif
-        $effectif = $doctrine->getRepository(User::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category->getId()->toBinary());
+        $effectif = $doctrine->getRepository(User::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category->getId()->toBinary(), false);
+        $staff = $doctrine->getRepository(User::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category->getId()->toBinary(), true);
         $listEffectif = [];
+        $listStaff = [];
         foreach ($effectif as $key => $joueur) {
             $idUser = $joueur->getId()->toBase32();
             $listEffectif[$idUser]["id"] = $joueur->getId();
@@ -228,6 +243,14 @@ class DefaultController extends AbstractController
             $listEffectif[$idUser]["totalMatch"] = 0;
 
             $listEffectif[$idUser]["totalMatch"] = $listEffectif[$idUser]["totalMatch"] + $joueur->getNbPlayingsUserBySeason($seasonEntity);
+        }
+
+        foreach ($staff as $key => $joueur) {
+            $idUser = $joueur->getId()->toBase32();
+            $listStaff[$idUser]["id"] = $joueur->getId();
+            $listStaff[$idUser]["fullName"] = $joueur->getFullName();
+            $listStaff[$idUser]["birthDate"] = $joueur->getBirthDate();
+            $listStaff[$idUser]["userPoste"] = $joueur->getUserPoste()->getName();
         }
 
         //dd($listEffectif);
@@ -308,6 +331,7 @@ class DefaultController extends AbstractController
             "seePassersRanking" => $categorySeason->getSeePassersRanking(),
             "seeScorersRanking" => $categorySeason->getSeeScorersRanking(),
             "listEffectif" => $listEffectif,
+            "listStaff" => $listStaff,
             "listButeurs" => $listButeurs,
             "listPasseurs" => $listPasseurs,
             "listSeasons" => $listSeasons,

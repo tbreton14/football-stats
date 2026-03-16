@@ -23,6 +23,9 @@ class Poste
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $zOrder;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $isStaff = false;
+
     #[ORM\OneToMany(mappedBy: 'userPoste', targetEntity: User::class)]
     private $users;
 

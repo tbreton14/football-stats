@@ -51,7 +51,7 @@
                         <span>Classement</span>
                         <div class="d-flex align-items-center">
                             <div>
-                                <select class="form-select" name="competitions" id="competitions" v-on:change="changePhase" data-phase="1" data-href="{{ path("ajax_app_classement", {"codeCompetition":"__codeCompetition__", "numPhase": 1}) }}">
+                                <select class="form-select form-select-sm" name="competitions" id="competitions" v-on:change="changePhase" data-phase="1" data-href="{{ path("ajax_app_classement", {"codeCompetition":"__codeCompetition__", "numPhase": 1}) }}">
                                     {% for competition in competitions %}
                                         <option value={{competition.codeCompetition}}>{{competition.name}}</option>
                                     {% endfor %}

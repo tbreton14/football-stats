@@ -84,7 +84,7 @@ class DashboardController extends AbstractDashboardController
         $seasonEntity = $this->em->getRepository(Season::class)->findOneBy(["label"=>$_ENV["APP_ACTUAL_SEASON"]]);
         $categoryEntity = $this->em->getRepository(Category::class)->find($category);
         $competitions = $this->em->getRepository(Competition::class)->findBy(["season"=>$seasonEntity,"category"=>$categoryEntity]);
-        $effectif = $this->em->getRepository(User::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $categoryEntity->getId()->toBinary());
+        $effectif = $this->em->getRepository(User::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $categoryEntity->getId()->toBinary(), false);
   
         //calendrier
         $playingGlobal = [];

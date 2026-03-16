@@ -40,7 +40,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
-    public function findBySeasonAndCategorie($season, $category): array
+    public function findBySeasonAndCategorie($season, $category, $isStaff): array
     {
         return $this->createQueryBuilder('u')
             ->addSelect('u,p')
@@ -50,6 +50,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->setParameter('category', $category)
             ->andWhere("cs.season = :season")
             ->setParameter("season", $season)
+            ->andWhere("p.isStaff = :isStaff")
+            ->setParameter("isStaff", $isStaff)
             ->orderBy('p.zOrder','asc')
             ->getQuery()
             ->getResult()

@@ -22,6 +22,20 @@
                 </tr>
                 {% set poste = joueur["userPoste"] %}
             {% endfor %}
+
+            <hr>
+
+            {% set poste = null%}
+            {% for staff in listStaff %}
+                <tr {% if poste != staff["userPoste"] and poste != null %} style="border-top: 2px solid #C5C5C5;" {% endif %}>
+                    <td><a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user',{'id':staff["id"] }) }}?season=__season__">{{ staff["fullName"] }}</a></td>
+                    <td>{% if staff["birthDate"] %} {{ staff["birthDate"] | date('d/m/Y') }} {% endif %}</td>
+                    <td>{{ staff["userPoste"] }}</td>
+                    <td></td>
+                </tr>
+                {% set poste = staff["userPoste"] %}
+            {% endfor %}
+
             </tbody>
         </table>
     </div>
