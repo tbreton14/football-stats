@@ -413,6 +413,10 @@ class DefaultController extends AbstractController
     {
         $competition = $doctrine->getRepository(Competition::class)->findOneByCodeCompetition($codeCompetition);
 
+        if($competition->isPhase2WithoutPhase1()) {
+            $numPhase = 2;
+        }
+
         if($numPhase == 2) {
             $numPoule = $competition->getNumPoulePhase2();
         } else {
