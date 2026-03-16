@@ -125,14 +125,17 @@ class DefaultController extends AbstractController
                         : ($playing->getLogoClubExt() ?? null);
 
                     $typeCompetition = null;
+                    $typePhase = null;
                     if($playing->getCompetition()->isChampionnat()) {
                         $typeCompetition = 'CH';
                     } else {
-                        if($playing->getCompetition()->isTypePhase1ModeChampionnat()) {
-                            $typeCompetition = 'CH';
-                        } else {
-                            $typeCompetition = 'CP';
-                        }
+                        $typeCompetition = 'CP';
+                    }
+
+                    if($playing->getCompetition()->isTypePhase1ModeChampionnat()) {
+                        $typePhase = 'CH';
+                    } else {
+                        $typePhase = 'CP';
                     }
 
                     $playingList[] = [
@@ -140,6 +143,7 @@ class DefaultController extends AbstractController
                         'competitionName' => $playing->getCompetition()->getName(),
                         'competitionCode' => $playing->getCompetition()->getCodeCompetition(),
                         'competitionType' => $typeCompetition,
+                        'phaseType' => $typePhase,
                         'scoreDom'    => $playing->getScoreDom(),
                         'scoreExt'    => $playing->getScoreExt(),
                         'isAmical'    => $playing->isAmical(),
@@ -193,7 +197,8 @@ class DefaultController extends AbstractController
                         'date' => new \DateTime($playing['date']),
                         'competitionName' => $playing['competition']['name'] ?? null,
                         'competitionCode' => $playing['competition']['cp_no'] ?? null,
-                        'competitionType' => $playing['phase']['type'] ?? null,
+                        'competitionType' => $playing['competition']['type'] ?? null,
+                        'phaseType' => $playing['phase']['type'] ?? null,
                         'scoreDom' => $playing['home_score'] ?? null,
                         'scoreExt' => $playing['away_score'] ?? null,
                         'equipeDom' => $equipeDom,
