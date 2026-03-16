@@ -53,12 +53,12 @@
                             <div>
                                 <select class="form-select form-select-sm" name="competitions" id="competitions" v-on:change="changePhase" data-phase="1" data-href="{{ path("ajax_app_classement", {"codeCompetition":"__codeCompetition__", "numPhase": 1}) }}">
                                     {% for competition in competitionsForClassement %}
-                                        <option value={{competition.codeCompetition}}>{{competition.name}}</option>
+                                        <option value={{competition.codeCompetition}} {% if competition == defaultCompetition %} selected {% endif %}>{{competition.name}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                             
-                            {% if defaultCompetition.numPhase == 2 %}
+                            {% if defaultCompetition.numPhase == 2 and defaultCompetition.isPhase2WithoutPhase1() == false %}
                             <div class="ms-3">
                                 <ul class="nav nav-pills nav-phase" id="nav-phase">
                                     <li class="nav-item">
