@@ -46,6 +46,18 @@ class CompetitionRepository extends ServiceEntityRepository
             ;
     }
 
+    public function findCompetitionBySeasonCategoryAndTypeChampionnat($season, $category) {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.category = :category')
+            ->setParameter('category', $category)
+            ->andWhere('c.season = :season')
+            ->setParameter('season', $season)
+            ->andWhere('c.isChampionnat = true OR c.typePhase1ModeChampionnat = true')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
 //    public function findOneBySomeField($value): ?Competition
 //    {
 //        return $this->createQueryBuilder('c')

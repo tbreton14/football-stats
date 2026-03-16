@@ -53,7 +53,7 @@ class DefaultController extends AbstractController
         $category = $doctrine->getRepository(Category::class)->findOneBy(["name" => $categorySelect]);
         $categorySeason = $doctrine->getRepository(CategorySeason::class)->findOneBy(["season"=>$seasonEntity,"category"=>$category]);
         $competitions = $doctrine->getRepository(Competition::class)->findBy(["season"=>$seasonEntity,"category"=>$category]);
-        $competitionsForClassement = $doctrine->getRepository(Competition::class)->findBy(["season"=>$seasonEntity,"category"=>$category, "isChampionnat"=>true]);
+        $competitionsForClassement = $doctrine->getRepository(Competition::class)->findCompetitionBySeasonCategoryAndTypeChampionnat($seasonEntity->getId()->toBinary(), $category->getId()->toBinary());
         $playingsUsers = $doctrine->getRepository(PlayingUser::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category->getId()->toBinary());
         $listSeasons = $doctrine->getRepository(Season::class)->findAll();
         $listCategories = $doctrine->getRepository(Category::class)->findBySeason($seasonEntity->getId()->toBinary());
