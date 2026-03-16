@@ -80,6 +80,16 @@ class Poste
         $this->users = $users;
     }
 
+    public function isStaff(): bool
+    {
+        return $this->isStaff;
+    }
+
+    public function setIsStaff(bool $isStaff): void
+    {
+        $this->isStaff = $isStaff;
+    }
+
 
 
 
