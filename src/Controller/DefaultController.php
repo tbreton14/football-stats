@@ -172,6 +172,11 @@ class DefaultController extends AbstractController
                         ? $logoClub
                         : ($playing['away']['club']['logo'] ?? null);
 
+                    $isReport = null;
+                    if(!$playing['date']) {
+                        $isReport = true;
+                    }
+
                     $playingList[] = [
                         'date' => new \DateTime($playing['date']),
                         'competitionName' => $playing['competition']['name'] ?? null,
@@ -194,7 +199,7 @@ class DefaultController extends AbstractController
                         'externalPlayers' => null,
                         'isAmical' => null,
                         'id' => $idPlaying,
-                        'isReport' => null,
+                        'isReport' => $isReport,
                         'totalButs' => $totalButs,
                     ];
                 }
