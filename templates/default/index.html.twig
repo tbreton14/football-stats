@@ -50,6 +50,7 @@
                     <div class="content-block-header d-flex align-items-center justify-content-between">
                         <span>Classement</span>
                         <div class="d-flex align-items-center">
+                            {% if defaultCompetition is not null %}
                             <div>
                                 <select class="form-select form-select-sm" name="competitions" id="competitions" v-on:change="changePhase" data-phase="1" data-href="{{ path("ajax_app_classement", {"codeCompetition":"__codeCompetition__", "numPhase": 1}) }}">
                                     {% for competition in competitionsForClassement %}
@@ -70,6 +71,7 @@
                                 </ul>
                             </div>
                             {% endif %}
+                            {% endif %}
                         </div>
                     </div>
                     <div class="content-block-body">
@@ -89,6 +91,7 @@
                                 <th class="d-none d-sm-table-cell">Dif</th>
                             </thead>
                             <tbody id="classement-content">
+                                {% if defaultCompetition is not null %}
                                 {% for equipe in classement[defaultCompetition.codeCompetition] %}
                                     <tr>
                                         <td>{{ equipe["rank"] }}</td>
@@ -105,6 +108,7 @@
                                         <td class="d-none d-sm-table-cell">{% if equipe["goals_for_count"] < equipe["goals_against_count"] %}-{% endif %}{{ equipe["goals_diff"] }}</td>
                                     </tr>
                                 {% endfor %}
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>

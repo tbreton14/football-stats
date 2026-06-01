@@ -317,8 +317,12 @@ class DefaultController extends AbstractController
                 $classement[$competition->getCodeCompetition()] = $c["hydra:member"];
             }
         }
+
+        if (!$defaultCompetition && count($competitionsForClassement) > 0) {
+            $defaultCompetition = $competitionsForClassement[0];
+        }
         
-        //dd($playingList);
+        //dd($competitionsForClassement);
 
 
         // Album GooglePhotos

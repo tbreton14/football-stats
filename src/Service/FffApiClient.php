@@ -51,6 +51,8 @@ class FffApiClient
 
     private array $currentRequestParams = [];
 
+    private string $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
     /**
      * Api constructor.
      */
@@ -125,6 +127,7 @@ class FffApiClient
         $response = $this->client->request('GET', $this->options['base_url'] . '/clubs/'.$this->options['club_id'].'/equipes', [
                 'headers' => [
                     'Content-Type' => '',
+                    'User-Agent' => $this->userAgent,
                 ],
                 'extra' => [
                     'no_cache' => true,
@@ -145,6 +148,7 @@ class FffApiClient
         $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/classement_journees', [
                 'headers' => [
                     'Content-Type' => '',
+                    'User-Agent' => $this->userAgent,
                 ],
                 'extra' => [
                     'no_cache' => true,
@@ -162,9 +166,10 @@ class FffApiClient
      */
     public function getCalendrierEquipe($codeCompetition,$numPhase,$numPoule,$numClub): ?array
     {
-        $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/matchs?clNo='.$numClub, [
+        $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/matchs?clNo='.$numClub.'&page=1', [
                 'headers' => [
                     'Content-Type' => '',
+                    'User-Agent' => $this->userAgent,
                 ],
                 'extra' => [
                     'no_cache' => true,
@@ -185,6 +190,7 @@ class FffApiClient
         $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/matchs?pjNo='.$journee, [
                 'headers' => [
                     'Content-Type' => '',
+                    'User-Agent' => $this->userAgent,
                 ],
                 'extra' => [
                     'no_cache' => true,
