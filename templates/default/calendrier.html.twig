@@ -1,4 +1,9 @@
 {% for playing in playingList %}
+{% if playing == "OFFLINE" %}
+    <div class="alert alert-danger text-center">
+        <i class="fas fa-exclamation-triangle"></i> Le calendrier est indisponible car l'accès à l'API FFF est bloqué par leur pare-feu.
+    </div>
+{% else %}
     <div class="playing row mb-4">
         <div class="col-12 text-center mb-2">
             {{ playing.date | date("l j F Y") | format_date('full', locale='fr') }}
@@ -183,5 +188,6 @@
             </div>
         </div>
     </div>
+{% endif %}
 {% endfor %}
 

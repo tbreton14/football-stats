@@ -51,7 +51,24 @@ class FffApiClient
 
     private array $currentRequestParams = [];
 
-    private string $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36';
+    private string $userAgent = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/149.0.0.0 Safari/537.36';
+
+    private function getHeaders(): array
+    {
+        return [
+            'accept' => 'application/json, text/plain, */*',
+            'accept-language' => 'fr-FR,fr;q=0.9,en-US;q=0.8,en;q=0.7,it;q=0.6,es;q=0.5',
+            'origin' => 'https://foot14.fff.fr',
+            'referer' => 'https://foot14.fff.fr/',
+            'sec-ch-ua' => '"Google Chrome";v="149", "Chromium";v="149", "Not)A;Brand";v="24"',
+            'sec-ch-ua-mobile' => '?0',
+            'sec-ch-ua-platform' => '"Linux"',
+            'sec-fetch-dest' => 'empty',
+            'sec-fetch-mode' => 'cors',
+            'sec-fetch-site' => 'same-site',
+            'user-agent' => $this->userAgent,
+        ];
+    }
 
     /**
      * Api constructor.
@@ -100,8 +117,8 @@ class FffApiClient
                 return null;
             }
             if ($e->getCode() === 403) {
-                $this->logger->error(sprintf('HTTP 403 Forbidden for URL: %s', $response->getInfo('url')));
-                return null;
+                $this->logger->error(sprintf('HTTP 403 Forbidden for URL: %s. Content: %s', $response->getInfo('url'), substr($response->getContent(false), 0, 200)));
+                return ['error' => 403];
             }
             if ($e->getCode() == 401) {
                 $this->cache->delete("app.managin.api.token");
@@ -129,12 +146,7 @@ class FffApiClient
     public function getEquipes(): ?array
     {
         $response = $this->client->request('GET', $this->options['base_url'] . '/clubs/'.$this->options['club_id'].'/equipes', [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'User-Agent' => $this->userAgent,
-                    'Accept-Language' => 'fr,fr-FR;q=0.9,en;q=0.8',
-                    'Referer' => 'https://www.fff.fr/',
-                ],
+                'headers' => $this->getHeaders(),
                 'extra' => [
                     'no_cache' => true,
                 ]
@@ -151,13 +163,8 @@ class FffApiClient
      */
     public function getClassementEquipe($codeCompetition,$numPhase,$numPoule): ?array
     {
-        $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/classement_journees', [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'User-Agent' => $this->userAgent,
-                    'Accept-Language' => 'fr,fr-FR;q=0.9,en;q=0.8',
-                    'Referer' => 'https://www.fff.fr/',
-                ],
+        $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/classement_journees?page=1', [
+                'headers' => $this->getHeaders(),
                 'extra' => [
                     'no_cache' => true,
                 ]
@@ -175,12 +182,7 @@ class FffApiClient
     public function getCalendrierEquipe($codeCompetition,$numPhase,$numPoule,$numClub): ?array
     {
         $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/matchs?clNo='.$numClub.'&page=1', [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'User-Agent' => $this->userAgent,
-                    'Accept-Language' => 'fr,fr-FR;q=0.9,en;q=0.8',
-                    'Referer' => 'https://www.fff.fr/',
-                ],
+                'headers' => $this->getHeaders(),
                 'extra' => [
                     'no_cache' => true,
                 ]
@@ -198,12 +200,7 @@ class FffApiClient
     public function getResultatsJournee($codeCompetition,$numPhase,$numPoule,$journee): ?array
     {
         $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/matchs?pjNo='.$journee, [
-                'headers' => [
-                    'Accept' => 'application/json',
-                    'User-Agent' => $this->userAgent,
-                    'Accept-Language' => 'fr,fr-FR;q=0.9,en;q=0.8',
-                    'Referer' => 'https://www.fff.fr/',
-                ],
+                'headers' => $this->getHeaders(),
                 'extra' => [
                     'no_cache' => true,
                 ]

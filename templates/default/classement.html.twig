@@ -15,6 +15,13 @@
         <th class="d-none d-sm-table-cell">Dif</th>
         </thead>
         <tbody id="classement-content">
+        {% if classement == "OFFLINE" %}
+            <tr>
+                <td colspan="12" class="text-center text-danger">
+                    <i class="fas fa-exclamation-triangle"></i> L'API FFF est actuellement indisponible (Accès bloqué).
+                </td>
+            </tr>
+        {% else %}
         {% for equipe in classement %}
             <tr>
                 <td>{{ equipe["rank"] }}</td>
@@ -31,6 +38,7 @@
                 <td class="d-none d-sm-table-cell">{% if equipe["goals_for_count"] < equipe["goals_against_count"] %}-{% endif %}{{ equipe["goals_diff"] }}</td>
             </tr>
         {% endfor %}
+        {% endif %}
         </tbody>
     </table>
 </div>

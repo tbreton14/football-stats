@@ -100,20 +100,31 @@ class DashboardController extends AbstractDashboardController
                 }
                 if($competition->getNumPhase() == 2) {
                     $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase()-1, $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
-                    $playingsPhase1 = $playingsPhase1["hydra:member"];
+                    $error1 = $playingsPhase1["error"] ?? null;
+                    $playingsPhase1 = $playingsPhase1["hydra:member"] ?? ($error1 === 403 ? ["OFFLINE"] : []);
+                    
                     $playingsPhase2 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoulePhase2(), $_ENV['APP_API_CLUB_ID']);
-                    $playingsPhase2 = $playingsPhase2["hydra:member"];
+                    $error2 = $playingsPhase2["error"] ?? null;
+                    $playingsPhase2 = $playingsPhase2["hydra:member"] ?? ($error2 === 403 ? ["OFFLINE"] : []);
 
-                    $playings = array_merge($playingsPhase1, $playingsPhase2);
+                    if (in_array("OFFLINE", $playingsPhase1) || in_array("OFFLINE", $playingsPhase2)) {
+                        $playings = ["OFFLINE"];
+                    } else {
+                        $playings = array_merge($playingsPhase1, $playingsPhase2);
+                    }
                     array_push($playingGlobal, $playings);
                 } else {
                     
                     if($competition->getCodeCompetition()) {
                         $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
-                        $playings = $playingsPhase1["hydra:member"];
-                        usort($playings, function ($a, $b) {
-                            return strcmp($a["date"], $b["date"]);
-                        });
+                        $error = $playingsPhase1["error"] ?? null;
+                        $playings = $playingsPhase1["hydra:member"] ?? ($error === 403 ? ["OFFLINE"] : []);
+                        
+                        if (!in_array("OFFLINE", $playings)) {
+                            usort($playings, function ($a, $b) {
+                                return strcmp($a["date"], $b["date"]);
+                            });
+                        }
                         array_push($playingGlobal, $playings);
                     }
                 }
@@ -125,6 +136,16 @@ class DashboardController extends AbstractDashboardController
 
         foreach ($playingGlobal as $playings) {
             foreach ($playings as $playing) {
+
+                if ($playing === "OFFLINE") {
+                    $playingList[] = [
+                        'date' => new \DateTime(),
+                        'equipeDom' => "OFFLINE",
+                        'equipeExt' => "OFFLINE",
+                        'id' => "OFFLINE",
+                    ];
+                    continue;
+                }
 
                 if ($playing instanceof Playing) {
                 

@@ -72,16 +72,21 @@ class PlayingUserCrudController extends AbstractCrudController
         $allPlayings = [];
         foreach ($competitions as $competition) {
             $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
-            $playings = $playingsPhase1["hydra:member"];
-            usort($playings, function ($a, $b) {
-                return strcmp($a["date"], $b["date"]);
-            });
-            $allPlayings = array_merge($allPlayings, $playings);
+            $error = $playingsPhase1["error"] ?? null;
+            $playings = $playingsPhase1["hydra:member"] ?? ($error === 403 ? ["OFFLINE"] : []);
+            
+            if (!in_array("OFFLINE", $playings)) {
+                usort($playings, function ($a, $b) {
+                    return strcmp($a["date"], $b["date"]);
+                });
+                $allPlayings = array_merge($allPlayings, $playings);
+            }
         }
 
         $playingList = [];
 
         foreach ($allPlayings as $playing) {
+            if ($playing === "OFFLINE") continue;
             $playingList[$playing["home"]["short_name"]." - ".$playing["away"]["short_name"]] = $playing["ma_no"];
         }
 
@@ -161,16 +166,21 @@ class PlayingUserCrudController extends AbstractCrudController
         $allPlayings = [];
         foreach ($competitions as $competition) {
             $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
-            $playings = $playingsPhase1["hydra:member"];
-            usort($playings, function ($a, $b) {
-                return strcmp($a["date"], $b["date"]);
-            });
-            $allPlayings = array_merge($allPlayings, $playings);
+            $error = $playingsPhase1["error"] ?? null;
+            $playings = $playingsPhase1["hydra:member"] ?? ($error === 403 ? ["OFFLINE"] : []);
+            
+            if (!in_array("OFFLINE", $playings)) {
+                usort($playings, function ($a, $b) {
+                    return strcmp($a["date"], $b["date"]);
+                });
+                $allPlayings = array_merge($allPlayings, $playings);
+            }
         }
 
         $playingList = [];
 
         foreach ($allPlayings as $playing) {
+            if ($playing === "OFFLINE") continue;
             $playingList[$playing["home"]["short_name"]." - ".$playing["away"]["short_name"]] = $playing["ma_no"];
         }
 

@@ -1,6 +1,11 @@
 <div id="resultat-journee">
     <div class="content-block border-0">
         <div class="content-block-body content-block-playings content-block-playings-resultJournee">
+        {% if resultatJournee == "OFFLINE" %}
+            <div class="alert alert-danger text-center">
+                <i class="fas fa-exclamation-triangle"></i> Données indisponibles (Accès API bloqué).
+            </div>
+        {% else %}
         {% for cal in resultatJournee %}
             <div class="playing row">
                 <div class="col-12">
@@ -43,6 +48,7 @@
                 </div>
             </div>
         {% endfor %}
+        {% endif %}
         </div>
     </div>
 </div>
