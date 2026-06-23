@@ -74,9 +74,9 @@ class DefaultController extends AbstractController
                 }
                 if($competition->getNumPhase() == 2) {
                     $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase()-1, $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
-                    $playingsPhase1 = $playingsPhase1["hydra:member"];
+                    $playingsPhase1 = $playingsPhase1["hydra:member"] ?? [];
                     $playingsPhase2 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoulePhase2(), $_ENV['APP_API_CLUB_ID']);
-                    $playingsPhase2 = $playingsPhase2["hydra:member"];
+                    $playingsPhase2 = $playingsPhase2["hydra:member"] ?? [];
 
                     $playings = array_merge($playingsPhase1, $playingsPhase2);
                     array_push($playingGlobal, $playings);
@@ -84,7 +84,7 @@ class DefaultController extends AbstractController
                     
                     if($competition->getCodeCompetition()) {
                         $playingsPhase1 = $fffApiClient->getCalendrierEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $competition->getNumPoule(), $_ENV['APP_API_CLUB_ID']);
-                        $playings = $playingsPhase1["hydra:member"];
+                        $playings = $playingsPhase1["hydra:member"] ?? [];
                         usort($playings, function ($a, $b) {
                             return strcmp($a["date"], $b["date"]);
                         });
@@ -314,7 +314,7 @@ class DefaultController extends AbstractController
                     $numPoule = $competition->getNumPoule();
                 }
                 $c = $fffApiClient->getClassementEquipe($competition->getCodeCompetition(), $competition->getNumPhase(), $numPoule);
-                $classement[$competition->getCodeCompetition()] = $c["hydra:member"];
+                $classement[$competition->getCodeCompetition()] = $c["hydra:member"] ?? [];
             }
         }
 
@@ -428,7 +428,7 @@ class DefaultController extends AbstractController
         }
 
         $classement = $fffApiClient->getClassementEquipe($competition->getCodeCompetition(), $numPhase, $numPoule);
-        $classement = $classement["hydra:member"];
+        $classement = $classement["hydra:member"] ?? [];
 
         return $this->render('default/classement.html.twig', [
             "classement" => $classement
@@ -443,7 +443,7 @@ class DefaultController extends AbstractController
         $resultatJournee = $fffApiClient->getResultatsJournee($codeCompetition, $competition->getNumPhase(), $competition->getNumPoule(), $numJ);
 
         return $this->render('default/resultatJournee.html.twig', [
-            "resultatJournee" => $resultatJournee["hydra:member"]
+            "resultatJournee" => $resultatJournee["hydra:member"] ?? []
         ]);
     }
 

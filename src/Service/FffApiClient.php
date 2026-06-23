@@ -51,7 +51,7 @@ class FffApiClient
 
     private array $currentRequestParams = [];
 
-    private string $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+    private string $userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36';
 
     /**
      * Api constructor.
@@ -91,12 +91,16 @@ class FffApiClient
      *
      * @return array|null
      */
-    protected function toArrayOrNullIf404(ResponseInterface $response)
+    protected function toArrayOrNullIf404(ResponseInterface $response): ?array
     {
         try {
             return $response->toArray();
         } catch (ClientExceptionInterface $e) {
             if ($e->getCode() === 404) {
+                return null;
+            }
+            if ($e->getCode() === 403) {
+                $this->logger->error(sprintf('HTTP 403 Forbidden for URL: %s', $response->getInfo('url')));
                 return null;
             }
             if ($e->getCode() == 401) {
@@ -126,8 +130,10 @@ class FffApiClient
     {
         $response = $this->client->request('GET', $this->options['base_url'] . '/clubs/'.$this->options['club_id'].'/equipes', [
                 'headers' => [
-                    'Content-Type' => '',
+                    'Accept' => 'application/json',
                     'User-Agent' => $this->userAgent,
+                    'Accept-Language' => 'fr,fr-FR;q=0.9,en;q=0.8',
+                    'Referer' => 'https://www.fff.fr/',
                 ],
                 'extra' => [
                     'no_cache' => true,
@@ -147,8 +153,10 @@ class FffApiClient
     {
         $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/classement_journees', [
                 'headers' => [
-                    'Content-Type' => '',
+                    'Accept' => 'application/json',
                     'User-Agent' => $this->userAgent,
+                    'Accept-Language' => 'fr,fr-FR;q=0.9,en;q=0.8',
+                    'Referer' => 'https://www.fff.fr/',
                 ],
                 'extra' => [
                     'no_cache' => true,
@@ -168,8 +176,10 @@ class FffApiClient
     {
         $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/matchs?clNo='.$numClub.'&page=1', [
                 'headers' => [
-                    'Content-Type' => '',
+                    'Accept' => 'application/json',
                     'User-Agent' => $this->userAgent,
+                    'Accept-Language' => 'fr,fr-FR;q=0.9,en;q=0.8',
+                    'Referer' => 'https://www.fff.fr/',
                 ],
                 'extra' => [
                     'no_cache' => true,
@@ -189,8 +199,10 @@ class FffApiClient
     {
         $response = $this->client->request('GET', $this->options['base_url'] . '/compets/'.$codeCompetition.'/phases/'.$numPhase.'/poules/'.$numPoule.'/matchs?pjNo='.$journee, [
                 'headers' => [
-                    'Content-Type' => '',
+                    'Accept' => 'application/json',
                     'User-Agent' => $this->userAgent,
+                    'Accept-Language' => 'fr,fr-FR;q=0.9,en;q=0.8',
+                    'Referer' => 'https://www.fff.fr/',
                 ],
                 'extra' => [
                     'no_cache' => true,

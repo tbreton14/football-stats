@@ -21,12 +21,14 @@ class CompetitionCrudController extends AbstractCrudController
     {
         $equipes = $this->fffApiClient->getEquipes();
 
-        foreach ($equipes["hydra:member"] as $equipe) {
-//            if($equipe["category_code"] == "U15") {
-                foreach($equipe["engagements"] as $compet) {
-                    $this->competitions[$compet["competition"]["name"]] = $compet["competition"]["name"];
+        if ($equipes && isset($equipes["hydra:member"])) {
+            foreach ($equipes["hydra:member"] as $equipe) {
+                if (isset($equipe["engagements"])) {
+                    foreach($equipe["engagements"] as $compet) {
+                        $this->competitions[$compet["competition"]["name"]] = $compet["competition"]["name"];
+                    }
                 }
-//            }
+            }
         }
     }
 
