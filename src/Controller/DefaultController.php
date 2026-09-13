@@ -323,7 +323,7 @@ class DefaultController extends AbstractController
         //classement
         $classement = [];
         $defaultCompetition = null;
-        
+
         foreach ($competitionsForClassement as $competition) {
 
             if($competition->isDefault()){
