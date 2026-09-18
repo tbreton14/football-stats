@@ -62,7 +62,7 @@
 
                 <div class="row playing-details">
                     {% if otherPlaying.clubDom | upper == "USON MONDEVILLE" %}
-                        <div class="col d-flex flex-column align-items-end justify-content-end">
+                        <div class="col col-dom d-flex flex-column align-items-end justify-content-end">
                             {% if otherPlaying.nbButCsc %}
                                 {% for i in 1..otherPlaying.nbButCsc %}
                                     <div class="d-flex align-items-center playing-buteur-item">
@@ -93,7 +93,7 @@
                         <div class="col"></div>
                     {% else %}
                         <div class="col"></div>
-                        <div class="col">
+                        <div class="col col-ext">
                             {% if otherPlaying.nbButCsc %}
                                 {% for i in 1..otherPlaying.nbButCsc %}
                                     <div class="d-flex align-items-center playing-buteur-item">
