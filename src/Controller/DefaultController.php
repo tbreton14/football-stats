@@ -347,13 +347,11 @@ class DefaultController extends AbstractController
         }
 
         // Album GooglePhotos
-        /*
         $photos = [];
         $albumGoogleId = $competition->getGoogleAlbumId();
         if($albumGoogleId) {
             $photos = $googlePhotosApiService->getPhotosInAlbum($albumGoogleId);
         }
-        */
 
         //dd($playingList);
 
