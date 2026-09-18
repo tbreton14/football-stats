@@ -138,10 +138,6 @@
                 {% endif %}
             </div>
 
-            {% if photos | length > 0 %}
-                {% include 'default/gallerie.html.twig' %}
-            {% endif %}
-
             <div class="modal modal-xl" tabindex="-1" role="dialog" id="modal-result-journey">
                 <div class="modal-dialog modal-dialog-centered" role="document">
                     <div class="modal-content">
@@ -170,6 +166,11 @@
                 </div>
             </div>
 
+        </div>
+        <div class="row">
+            {% if photos | length > 0 %}
+                {% include 'default/gallerie.html.twig' %}
+            {% endif %}
         </div>
     </div>
 
