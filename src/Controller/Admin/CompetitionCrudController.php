@@ -57,8 +57,6 @@ class CompetitionCrudController extends AbstractCrudController
             BooleanField::new('phase2WithoutPhase1')->hideOnIndex(),
             //BooleanField::new('seeScorersRanking', "Liste des buteurs"),
             //BooleanField::new('seePassersRanking', "Liste des passeurs"),
-            TextField::new('googleAlbumId', 'Google Album ID')->hideOnIndex(),
-
         ];
     }
 

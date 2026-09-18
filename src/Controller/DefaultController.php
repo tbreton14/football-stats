@@ -8,13 +8,13 @@ use App\Entity\Club;
 use App\Entity\Competition;
 use App\Entity\Playing;
 use App\Entity\PlayingUser;
+use App\Entity\Photo;
 use App\Entity\Scorer;
 use App\Entity\Season;
 use App\Entity\Summon;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Service\FffApiClient;
-use App\Service\GooglePhotosApi;
 use Doctrine\Persistence\ManagerRegistry;
 use http\Env;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,7 +33,7 @@ use Symfony\Component\Uid\Uuid;
 class DefaultController extends AbstractController
 {
     #[Route('/', name: 'app_home')]
-    public function index_home(Request $request, ManagerRegistry $doctrine, FffApiClient $fffApiClient, GooglePhotosApi $googlePhotosApiService): Response
+    public function index_home(Request $request, ManagerRegistry $doctrine, FffApiClient $fffApiClient): Response
     {
         $season = $request->get('season');
         $categorySelect = $request->get('category');
@@ -263,23 +263,45 @@ class DefaultController extends AbstractController
         $staff = $doctrine->getRepository(User::class)->findBySeasonAndCategorie($seasonEntity->getId()->toBinary(), $category->getId()->toBinary(), true);
         $listEffectif = [];
         $listStaff = [];
+        $listAnniversaires = [];
+        $currentMonth = (new \DateTime())->format('m');
+
         foreach ($effectif as $key => $joueur) {
             $idUser = $joueur->getId()->toBase32();
             $listEffectif[$idUser]["id"] = $joueur->getId();
+            $listEffectif[$idUser]["firstName"] = $joueur->getFirstName();
+            $listEffectif[$idUser]["lastName"] = $joueur->getLastName();
             $listEffectif[$idUser]["fullName"] = $joueur->getFullName();
             $listEffectif[$idUser]["birthDate"] = $joueur->getBirthDate();
-            $listEffectif[$idUser]["userPoste"] = $joueur->getUserPoste()->getName();
+            $listEffectif[$idUser]["photo"] = $joueur->getProfilePicture();
+            $listEffectif[$idUser]["profilePicture"] = $joueur->getProfilePicture();
+            $listEffectif[$idUser]["userPoste"] = $joueur->getUserPoste() ? $joueur->getUserPoste()->getName() : null;
             $listEffectif[$idUser]["totalMatch"] = 0;
 
             $listEffectif[$idUser]["totalMatch"] = $listEffectif[$idUser]["totalMatch"] + $joueur->getNbPlayingsUserBySeason($seasonEntity);
+
+            if ($joueur->getBirthDate() && $joueur->getBirthDate()->format('m') === $currentMonth) {
+                $listAnniversaires[$idUser] = $listEffectif[$idUser];
+            }
         }
+
+        uasort($listAnniversaires, function ($a, $b) {
+            if (!$a['birthDate'] || !$b['birthDate']) {
+                return 0;
+            }
+            return (int)$a['birthDate']->format('d') <=> (int)$b['birthDate']->format('d');
+        });
 
         foreach ($staff as $key => $joueur) {
             $idUser = $joueur->getId()->toBase32();
             $listStaff[$idUser]["id"] = $joueur->getId();
+            $listStaff[$idUser]["firstName"] = $joueur->getFirstName();
+            $listStaff[$idUser]["lastName"] = $joueur->getLastName();
             $listStaff[$idUser]["fullName"] = $joueur->getFullName();
             $listStaff[$idUser]["birthDate"] = $joueur->getBirthDate();
-            $listStaff[$idUser]["userPoste"] = $joueur->getUserPoste()->getName();
+            $listStaff[$idUser]["photo"] = $joueur->getProfilePicture();
+            $listStaff[$idUser]["profilePicture"] = $joueur->getProfilePicture();
+            $listStaff[$idUser]["userPoste"] = $joueur->getUserPoste() ? $joueur->getUserPoste()->getName() : null;
         }
 
         //dd($listEffectif);
@@ -346,11 +368,14 @@ class DefaultController extends AbstractController
             $defaultCompetition = $competitionsForClassement[0];
         }
 
-        // Album GooglePhotos
+        // Galerie Photos
         $photos = [];
-        $albumGoogleId = $defaultCompetition->getGoogleAlbumId();
-        if($albumGoogleId) {
-            $photos = $googlePhotosApiService->getPhotosInAlbum($albumGoogleId);
+        if ($seasonEntity) {
+            $photoRepo = $doctrine->getRepository(Photo::class);
+            $photos = $photoRepo->findBySeasonAndOptionalFilters($seasonEntity, $category, $defaultCompetition);
+            if (empty($photos)) {
+                $photos = $photoRepo->findBy(['season' => $seasonEntity], ['createdAt' => 'DESC']);
+            }
         }
 
         //dd($playingList);
@@ -361,6 +386,7 @@ class DefaultController extends AbstractController
             "seeScorersRanking" => $categorySeason->getSeeScorersRanking(),
             "listEffectif" => $listEffectif,
             "listStaff" => $listStaff,
+            "listAnniversaires" => $listAnniversaires,
             "listButeurs" => $listButeurs,
             "listPasseurs" => $listPasseurs,
             "listSeasons" => $listSeasons,

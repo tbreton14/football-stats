@@ -1,0 +1,72 @@
+<div class="content-block mb-3">
+    <div class="content-block-header">
+        Anniversaire du mois
+    </div>
+    <div class="content-block-body">
+        {% set currentMonth = "now"|date("m") %}
+        {% set anniversaryPlayers = [] %}
+        {% if listAnniversaires is defined and listAnniversaires is not empty %}
+            {% set anniversaryPlayers = listAnniversaires %}
+        {% elseif listEffectif is defined and listEffectif is not empty %}
+            {% for joueur in listEffectif %}
+                {% if joueur.birthDate is defined and joueur.birthDate and joueur.birthDate|date('m') == currentMonth %}
+                    {% set anniversaryPlayers = anniversaryPlayers|merge([joueur]) %}
+                {% endif %}
+            {% endfor %}
+        {% elseif effectif is defined and effectif is not empty %}
+            {% for joueur in effectif %}
+                {% if joueur.birthDate is defined and joueur.birthDate and joueur.birthDate|date('m') == currentMonth %}
+                    {% set anniversaryPlayers = anniversaryPlayers|merge([joueur]) %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        {% if listAnniversaires is not defined or listAnniversaires is empty %}
+            {% set anniversaryPlayers = anniversaryPlayers|sort((a, b) => (a.birthDate ? a.birthDate|date('d') : 0) <=> (b.birthDate ? b.birthDate|date('d') : 0)) %}
+        {% endif %}
+
+        {% if anniversaryPlayers is not empty %}
+            <div class="row g-2">
+                {% for joueur in anniversaryPlayers %}
+                    {% set photoUrl = asset('images/no-user-image.gif') %}
+                    {% if joueur.profilePicture is defined and joueur.profilePicture %}
+                        {% set photoUrl = asset('uploads/users/' ~ joueur.profilePicture) %}
+                    {% elseif joueur.photo is defined and joueur.photo %}
+                        {% set photoUrl = asset('uploads/users/' ~ joueur.photo) %}
+                    {% endif %}
+                    {% set playerFullName = joueur.fullName|default(joueur.firstName ~ ' ' ~ joueur.lastName) %}
+
+                    <div class="col-6 mb-2 text-center">
+                        <div class="anniversary-card">
+                            {% if joueur.id is defined and joueur.id %}
+                                <a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user', {'id': joueur.id}) }}?season=__season__">
+                                    <img src="{{ photoUrl }}" alt="{{ playerFullName }}" class="w-100 rounded mb-1" style="aspect-ratio: 1/1; object-fit: cover; border: 1px solid #E5E5E5;">
+                                </a>
+                            {% else %}
+                                <img src="{{ photoUrl }}" alt="{{ playerFullName }}" class="w-100 rounded mb-1" style="aspect-ratio: 1/1; object-fit: cover; border: 1px solid #E5E5E5;">
+                            {% endif %}
+                            <div class="text-truncate" style="font-size: 0.85rem; font-weight: 500;" title="{{ playerFullName }}">
+                                {% if joueur.id is defined and joueur.id %}
+                                    <a href="#" @click="showUserDetails" data-href="{{ path('ajax_app_details_user', {'id': joueur.id}) }}?season=__season__" class="text-decoration-none">
+                                        {{ joueur.firstName }} {{ joueur.lastName }}
+                                    </a>
+                                {% else %}
+                                    <span>{{ joueur.firstName }} {{ joueur.lastName }}</span>
+                                {% endif %}
+                            </div>
+                            {% if joueur.birthDate is defined and joueur.birthDate %}
+                                <div class="text-muted small" style="font-size: 0.75rem;">
+                                    {{ joueur.birthDate|date('d/m') }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center text-muted py-3">
+                Aucun anniversaire ce mois-ci
+            </div>
+        {% endif %}
+    </div>
+</div>

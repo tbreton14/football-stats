@@ -10,11 +10,11 @@ use App\Entity\Competition;
 use App\Entity\Playing;
 use App\Entity\PlayingUser;
 use App\Entity\Poste;
+use App\Entity\Photo;
 use App\Entity\Scorer;
 use App\Entity\Season;
 use App\Entity\Summon;
 use App\Entity\User;
-use App\Service\GooglePhotosApi;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Asset;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Assets;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
@@ -44,18 +44,15 @@ class DashboardController extends AbstractDashboardController
 
     private EntityManagerInterface $em;
     private AdminUrlGenerator $adminUrlGenerator;
-    private GooglePhotosApi $googlePhotosApiService;
     private CacheInterface $cache;
 
     public function __construct(
         EntityManagerInterface $em,
         AdminUrlGenerator $adminUrlGenerator,
-        GooglePhotosApi $googlePhotosApiService,
         CacheInterface $cache
     ) {
         $this->em = $em;
         $this->adminUrlGenerator = $adminUrlGenerator;
-        $this->googlePhotosApiService = $googlePhotosApiService;
         $this->cache = $cache;
     }
 
@@ -293,57 +290,6 @@ class DashboardController extends AbstractDashboardController
         return new JsonResponse($ids);
     }
 
-    #[Route(path: '/admin/google/authenticate', name: "admin_google_authenticate")]
-    public function indexTestGooglePhoto(Request $request): Response
-    {
-        $urlToRedirect = $this->googlePhotosApiService->generateGoogleRedirectUrl();
-        return $this->redirect($urlToRedirect);
-    }
-
-    #[Route(path: '/admin/google/oauth/redirect', name: "admin_google_redirect")]
-    public function testGooglePhotoRedirect(Request $request): Response
-    {
-        $code = $request->query->get("code");
-        if (!$code) {
-            throw new BadRequestHttpException("Missing params");
-        }
-
-        $token = $this->googlePhotosApiService->handleRedirect($code);
-
-        if (!empty($token["error"])) {
-            throw new BadRequestHttpException("Cannot get access token from google, try to authenticate again");
-        }
-
-        // Delete old access token
-        $this->cache->delete("google_access_token");
-
-        // Only to set access token in cache
-        $this->cache->get("google_access_token", function (ItemInterface $item) use ($token) {
-            $item->expiresAfter($token["expires_in"] - 100);
-            return $token["access_token"];
-        });
-
-        return new Response($token["refresh_token"]);
-    }
-
-    #[Route(path: "/admin/google/albums/list", name: "admin_google_album_list")]
-    public function getAlbums(Request $request): Response
-    {
-        $url = $this->adminUrlGenerator
-            ->setController(DashboardController::class)
-            ->generateUrl();
-
-        try {
-            $albums = $this->googlePhotosApiService->getAlbums();
-            return $this->render('admin/dashboard/google_albums.html.twig', [
-                "albums" => $albums,
-                "returnLink" => $url
-            ]);
-        } catch (\Exception $exception) {
-            throw new BadRequestHttpException($exception->getMessage());
-        }
-    }
-
     public function configureDashboard(): Dashboard
     {
         // the name visible to end users
@@ -393,12 +339,10 @@ class DashboardController extends AbstractDashboardController
     {
         return [
             MenuItem::linkToDashboard('Dashboard', 'fa fa-home'),
-            MenuItem::section('Google'),
-            MenuItem::linkToRoute("Get refresh token google", "fa fa-home", "admin_google_authenticate"),
-            MenuItem::linkToRoute("Albums google", "fa fa-home", "admin_google_album_list"),
             MenuItem::section('Données'),
             MenuItem::linkToCrud('Rencontres', 'fas fa-futbol', Playing::class),
             MenuItem::linkToCrud('Joueurs-Rencontres', 'fas fa-list-check', PlayingUser::class),
+            MenuItem::linkToCrud('Galerie Photos', 'fas fa-images', Photo::class),
 
             MenuItem::section('Paramètres / Listes'),
             MenuItem::linkToCrud('Clubs', 'fas fa-building', Club::class),

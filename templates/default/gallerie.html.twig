@@ -1,20 +1,18 @@
 <div class="col-12">
     <div class="content-block mb-3">
         <div class="content-block-header">
-            Gallerie
+            Galerie
         </div>
         <div class="content-block-body">
-            <div class="row" id="googlePhoto-list">
+            <div class="row" id="photo-list">
                 {% for photo in photos %}
-                    <div class="col-6 col-lg-4">
-                        {% if photo.mime_type == "image/jpeg" or photo.mime_type == "image/png" or photo.mime_type == "image/gif" %}
-                            <a class="linkGooglePhoto" href="{{ photo.base_url }}" data-fslightbox="gallery" data-type="image">
-                                <img src="{{ photo.base_url }}" class="w-100 mb-2 img-google" />
-                            </a>
-                        {% else %}
-                            <a class="linkGooglePhoto" href="{{ photo.base_url }}=dv" data-fslightbox="gallery" data-type="video">
-                                <video controls class="w-100 mb-2"><source src="{{ photo.base_url }}=dv" type="{{ photo.mime_type }}"></video>
-                            </a>
+                    {% set photoUrl = asset(photo.imagePath) %}
+                    <div class="col-6 col-lg-4 mb-3">
+                        <a class="linkGooglePhoto" href="{{ photoUrl }}" data-fslightbox="gallery" data-type="image">
+                            <img src="{{ photoUrl }}" alt="{{ photo.title|default('Photo') }}" class="w-100 mb-2 img-google" style="object-fit: cover; height: 200px;" />
+                        </a>
+                        {% if photo.title %}
+                            <div class="text-muted small text-center">{{ photo.title }}</div>
                         {% endif %}
                     </div>
                 {% endfor %}
