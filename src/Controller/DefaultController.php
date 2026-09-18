@@ -348,7 +348,7 @@ class DefaultController extends AbstractController
 
         // Album GooglePhotos
         $photos = [];
-        $albumGoogleId = $competition->getGoogleAlbumId();
+        $albumGoogleId = $defaultCompetition->getGoogleAlbumId();
         if($albumGoogleId) {
             $photos = $googlePhotosApiService->getPhotosInAlbum($albumGoogleId);
         }
