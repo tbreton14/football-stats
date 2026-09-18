@@ -367,7 +367,7 @@ class DefaultController extends AbstractController
             "listCategories" => $listCategories,
             "classement" => $classement,
             "club" => $club,
-            "photos" => null,
+            "photos" => $photos,
             "season" => $season,
             "categorySelect" => $categorySelect,
             "playingList" => $playingList,
